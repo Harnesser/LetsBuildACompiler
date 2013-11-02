@@ -113,22 +113,25 @@ void Subtract(void)
 	Match('-');
 	Term();
 	EmitLn("SUB D1,D0");
+	EmitLn("NEG D0");
 }
 
 void Expression(void)
 {
 	Term();
-	EmitLn("MOVE D0,D1");
-	switch (Look) {
-	case '+':
-		Add();
-		break;
-	case '-':
-		Subtract();
-		break;
-	default:
-		Expected("Addop");
-		break;
+	while (Look=='+' || Look=='-') {
+		EmitLn("MOVE D0,D1");
+		switch (Look) {
+		case '+':
+			Add();
+			break;
+		case '-':
+			Subtract();
+			break;
+		default:
+			Expected("Addop");
+			break;
+		}
 	}
 }
 
