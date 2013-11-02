@@ -94,11 +94,42 @@ void Init(void)
 }
 
 /* Expression */
+void Term(void)
+{
+	char str[MAXMSG];
+	snprintf(str, MAXMSG, "MOVE #%c,D0", GetNum() );
+	EmitLn(str);
+}
+
+void Add(void)
+{
+	Match('+');
+	Term();
+	EmitLn("ADD D1,D0");
+}
+
+void Subtract(void)
+{
+	Match('-');
+	Term();
+	EmitLn("SUB D1,D0");
+}
+
 void Expression(void)
 {
-	char msg[MAXMSG];
-	snprintf(msg, MAXMSG, "MOVE #%c, D0", GetNum() );
-	EmitLn(msg);
+	Term();
+	EmitLn("MOVE D0,D1");
+	switch (Look) {
+	case '+':
+		Add();
+		break;
+	case '-':
+		Subtract();
+		break;
+	default:
+		Expected("Addop");
+		break;
+	}
 }
 
 /* -------------------------------------------------------------------- */
