@@ -74,6 +74,7 @@ char GetNum(void)
 	}
 	num = Look;
 	GetChar();
+	return num;
 }
 
 void Emit(const char *msg)
@@ -92,11 +93,20 @@ void Init(void)
 	GetChar();
 }
 
+/* Expression */
+void Expression(void)
+{
+	char msg[MAXMSG];
+	snprintf(msg, MAXMSG, "MOVE #%c, D0", GetNum() );
+	EmitLn(msg);
+}
 
 /* -------------------------------------------------------------------- */
+
 int main(int argc, char *argv[])
 {
 	Init();
+	Expression();
 }
 
 
