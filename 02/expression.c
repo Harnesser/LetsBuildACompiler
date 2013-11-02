@@ -94,33 +94,69 @@ void Init(void)
 }
 
 /* Expression */
-void Term(void)
+void Factor(void)
 {
 	char str[MAXMSG];
 	snprintf(str, MAXMSG, "MOVE #%c,D0", GetNum() );
 	EmitLn(str);
 }
 
+void Multiply(void)
+{
+	Match('*');
+	Factor();
+	EmitLn("MULS (SP)+,D0");
+}
+
+void Divide(void)
+{
+	Match('/');
+	Factor();
+	EmitLn("MOVE (SP)+,D1");
+	EmitLn("DIVS D1,D0");
+}
+
+void Term(void)
+{
+	Factor();
+	while (Look=='*' || Look=='/') {
+		EmitLn("MOVE D0,-(SP)");
+		switch (Look) {
+		case '*' : 
+			Multiply();
+			break;
+		case '/' :
+			Divide();
+			break;
+		default:
+			Expected("Mulop");
+			break;
+		}
+	}
+}
+
 void Add(void)
 {
 	Match('+');
 	Term();
-	EmitLn("ADD D1,D0");
+	EmitLn("ADD (SP)+,D0");
 }
 
 void Subtract(void)
 {
 	Match('-');
 	Term();
-	EmitLn("SUB D1,D0");
+	EmitLn("SUB (SP)+,D0");
 	EmitLn("NEG D0");
 }
 
+// push: -(SP)
+// pop: (SP)+
 void Expression(void)
 {
 	Term();
 	while (Look=='+' || Look=='-') {
-		EmitLn("MOVE D0,D1");
+		EmitLn("MOVE D0,-(SP)"); // push
 		switch (Look) {
 		case '+':
 			Add();
