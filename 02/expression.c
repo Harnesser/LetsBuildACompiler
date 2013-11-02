@@ -94,11 +94,19 @@ void Init(void)
 }
 
 /* Expression */
+void Expression(void);
+
 void Factor(void)
 {
 	char str[MAXMSG];
-	snprintf(str, MAXMSG, "MOVE #%c,D0", GetNum() );
-	EmitLn(str);
+	if (Look=='(') {
+		Match('(');
+		Expression();
+		Match(')');
+	} else {
+		snprintf(str, MAXMSG, "MOVE #%c,D0", GetNum() );
+		EmitLn(str);
+	}
 }
 
 void Multiply(void)
