@@ -163,12 +163,24 @@ void Subtract(void)
 	EmitLn("neg %eax");
 }
 
+int IsAddop(const char tok)
+{
+	if (tok=='-' || tok=='+' ) {
+		return 1;
+	}
+	return 0;
+}
+
 // push: -(SP)
 // pop: (SP)+
 void Expression(void)
 {
-	Term();
-	while (Look=='+' || Look=='-') {
+	if (IsAddop(Look)) {
+		EmitLn("clr %eax");
+	} else {
+		Term();
+	}
+	while (IsAddop(Look)) {
 		EmitLn("pushl %eax");
 		switch (Look) {
 		case '+':
