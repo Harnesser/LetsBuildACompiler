@@ -44,6 +44,7 @@ void Match(const char tok)
 	char msg[MAXMSG];
 	if (Look == tok) {
 		GetChar();
+		SkipWhite();
 	} else {
 		snprintf(msg, MAXMSG, "\"%c\"", tok);
 		Expected(msg);
@@ -65,6 +66,18 @@ int IsAlNum(const char tok)
 	return isalnum(tok);
 }
 
+int IsWhite(const char tok)
+{
+	return isblank(tok);
+}
+
+void SkipWhite(void)
+{
+	while (IsWhite(Look)) {
+		GetChar();
+	}
+}
+
 char *GetName(void)
 {
 	int i=0;
@@ -76,6 +89,7 @@ char *GetName(void)
 		GetChar();
 	}
 	Name[i] = '\0';
+	SkipWhite();
 	return Name;
 }
 
@@ -90,6 +104,7 @@ char *GetNum(void)
 		GetChar();
 	}
 	Num[i] = '\0';
+	SkipWhite();
 	return Num;
 }
 
@@ -108,6 +123,7 @@ void Init(void)
 {
 	lineno=1;
 	GetChar();
+	SkipWhite();
 }
 
 /* Expression */
