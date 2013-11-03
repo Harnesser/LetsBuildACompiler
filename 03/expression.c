@@ -221,6 +221,9 @@ int main(int argc, char *argv[])
 	Init();
 	while (Look != EOF) {
 		Expression();
+		if (Look != '\n' ) {
+			Expected("Newline");
+		} 
 		Match('\n');
 	}
 }
