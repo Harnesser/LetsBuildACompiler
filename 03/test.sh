@@ -1,6 +1,6 @@
 #! /usr/bin/env sh
 
-for _file in ../test_data/*.txt; do
+for _file in ../test_data/assignments/*.txt; do
 	echo "=============================================================="
 	echo $_file
 	expr_in=$(cat $_file)

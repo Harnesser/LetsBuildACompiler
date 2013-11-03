@@ -18,7 +18,11 @@
 #          %ebx holds the return status
 #
 .section .data
-
+A:	.space 4
+B:	.space 4
+C:	.space 4
+D:	.space 4
+E:	.space 4
 .section .text
 .globl _start
 _start:

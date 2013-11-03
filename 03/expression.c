@@ -109,7 +109,9 @@ void Ident(void)
 		snprintf(str, MAXMSG, "bsr %c", name);
 	} else {
 		/* variable */
-		EmitLn("...");
+		snprintf(str, MAXMSG, "movl $%c, %%edx", name);
+		EmitLn(str);
+		EmitLn("movl (%edx), %eax");
 	}	
 }
 
@@ -214,19 +216,27 @@ void Expression(void)
 	}
 }
 
+void Assignment(void)
+{
+	char name;
+	char str[MAXMSG];
+	name = GetName();
+	Match('=');
+	Expression();
+	snprintf(str, MAXMSG, "movl $%c,%%edx", name);
+	EmitLn(str);
+	EmitLn("movl %eax,(%edx)");
+}
 /* -------------------------------------------------------------------- */
 
 int main(int argc, char *argv[])
 {
 	Init();
 	while (Look != EOF) {
-		Expression();
+		Assignment();
 		if (Look != '\n' ) {
 			Expected("Newline");
 		} 
 		Match('\n');
 	}
 }
-
-
-
