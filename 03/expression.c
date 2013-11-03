@@ -6,8 +6,12 @@
 
 const int TAB = '\t';
 const int MAXMSG = 100;
+const int MAXNAME = 25;
+
+int lineno;
 
 char Look;  /* lookahead character */
+char Name[25];  /* identifier name */
 
 void GetChar(void)
 {
@@ -17,7 +21,7 @@ void GetChar(void)
 void Error(const char *msg)
 {
 	printf("\n");
-	printf("Error: %s.\n", msg);
+	printf("Error: %s. (Line %d)\n", msg, lineno);
 }
 
 void Abort(const char *msg)
@@ -55,15 +59,23 @@ int IsDigit(const char tok)
 	return isdigit(tok);
 }
 
-char GetName(void)
+int IsAlNum(const char tok)
 {
-	char name;
+	return isalnum(tok);
+}
+
+char *GetName(void)
+{
+	int i=0;
 	if (!IsAlpha(Look)) {
 		Expected("Name");
 	}
-	name = toupper(Look);
-	GetChar();
-	return name;
+	while ( (IsAlNum(Look)) && i<MAXNAME-1 ) {
+		Name[i++] = toupper(Look);
+		GetChar();
+	}
+	Name[i] = '\0';
+	return Name;
 }
 
 char GetNum(void)
@@ -90,6 +102,7 @@ void EmitLn(const char *msg)
 
 void Init(void)
 {
+	lineno=1;
 	GetChar();
 }
 
@@ -98,7 +111,7 @@ void Expression(void);
 
 void Ident(void)
 {
-	char name;
+	char *name;
 	char str[MAXMSG];
 
 	name = GetName();
@@ -106,10 +119,10 @@ void Ident(void)
 		/* function call */
 		Match('(');
 		Match(')'); // empty arg list for now
-		snprintf(str, MAXMSG, "bsr %c", name);
+		snprintf(str, MAXMSG, "bsr %s", name);
 	} else {
 		/* variable */
-		snprintf(str, MAXMSG, "movl $%c, %%edx", name);
+		snprintf(str, MAXMSG, "movl $%s, %%edx", name);
 		EmitLn(str);
 		EmitLn("movl (%edx), %eax");
 	}	
@@ -218,12 +231,12 @@ void Expression(void)
 
 void Assignment(void)
 {
-	char name;
+	char lname[MAXNAME];
 	char str[MAXMSG];
-	name = GetName();
+	strncpy(lname, GetName(), MAXNAME);
 	Match('=');
 	Expression();
-	snprintf(str, MAXMSG, "movl $%c,%%edx", name);
+	snprintf(str, MAXMSG, "movl $%s,%%edx", lname);
 	EmitLn(str);
 	EmitLn("movl %eax,(%edx)");
 }
@@ -238,5 +251,6 @@ int main(int argc, char *argv[])
 			Expected("Newline");
 		} 
 		Match('\n');
+		lineno++;
 	}
 }

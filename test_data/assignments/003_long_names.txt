@@ -1,0 +1,3 @@
+a0=3
+count=5
+answer=a0+count

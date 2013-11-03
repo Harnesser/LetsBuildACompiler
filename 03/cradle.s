@@ -23,6 +23,9 @@ B:	.space 4
 C:	.space 4
 D:	.space 4
 E:	.space 4
+A0:	.space 4
+COUNT:	.space 4
+ANSWER:	.space 4
 .section .text
 .globl _start
 _start:
