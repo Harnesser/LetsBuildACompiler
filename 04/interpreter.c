@@ -68,13 +68,16 @@ char GetName(void)
 
 int GetNum(void)
 {
-	char num;
+	int value;
+	value = 0;
 	if (!IsDigit(Look)) {
 		Expected("Integer");
 	}
-	num = Look;
-	GetChar();
-	return (int)(num - '0');
+	while (IsDigit(Look)) {
+		value = (10*value) + (int)(Look-'0');
+		GetChar();
+	}
+	return value;
 }
 
 void Emit(const char *msg)
