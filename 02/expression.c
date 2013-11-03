@@ -113,15 +113,18 @@ void Multiply(void)
 {
 	Match('*');
 	Factor();
-	EmitLn("IMUL %%eax, (SP)+,D0");
+	EmitLn("popl %ebx");
+	EmitLn("imul %ebx");
 }
 
 void Divide(void)
 {
 	Match('/');
 	Factor();
-	EmitLn("MOVE (SP)+,D1");
-	EmitLn("DIVS D1,D0");
+	EmitLn("movl %eax,%ebx");
+	EmitLn("popl %eax");
+	EmitLn("movl $0,%edx");
+	EmitLn("divl %ebx");
 }
 
 void Term(void)
