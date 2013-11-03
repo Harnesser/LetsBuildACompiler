@@ -47,7 +47,7 @@ void Match(const char tok)
 
 int IsAlpha(const char tok)
 {
-	return isalnum(tok);
+	return isalpha(tok);
 }
 
 int IsDigit(const char tok)
@@ -96,6 +96,23 @@ void Init(void)
 /* Expression */
 void Expression(void);
 
+void Ident(void)
+{
+	char name;
+	char str[MAXMSG];
+
+	name = GetName();
+	if (Look=='(') {
+		/* function call */
+		Match('(');
+		Match(')'); // empty arg list for now
+		snprintf(str, MAXMSG, "bsr %c", name);
+	} else {
+		/* variable */
+		EmitLn("...");
+	}	
+}
+
 void Factor(void)
 {
 	char str[MAXMSG];
@@ -103,6 +120,8 @@ void Factor(void)
 		Match('(');
 		Expression();
 		Match(')');
+	} else if (IsAlpha(Look)) {
+		Ident();
 	} else {
 		snprintf(str, MAXMSG, "movl $%c,%%eax", GetNum() );
 		EmitLn(str);
@@ -171,8 +190,6 @@ int IsAddop(const char tok)
 	return 0;
 }
 
-// push: -(SP)
-// pop: (SP)+
 void Expression(void)
 {
 	if (IsAddop(Look)) {
@@ -180,6 +197,7 @@ void Expression(void)
 	} else {
 		Term();
 	}
+
 	while (IsAddop(Look)) {
 		EmitLn("pushl %eax");
 		switch (Look) {
@@ -201,7 +219,10 @@ void Expression(void)
 int main(int argc, char *argv[])
 {
 	Init();
-	Expression();
+	while (Look != EOF) {
+		Expression();
+		Match('\n');
+	}
 }
 
 
