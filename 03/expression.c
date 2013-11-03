@@ -12,6 +12,7 @@ int lineno;
 
 char Look;  /* lookahead character */
 char Name[25];  /* identifier name */
+char Num[25]; /* number string */
 
 void GetChar(void)
 {
@@ -70,7 +71,7 @@ char *GetName(void)
 	if (!IsAlpha(Look)) {
 		Expected("Name");
 	}
-	while ( (IsAlNum(Look)) && i<MAXNAME-1 ) {
+	while ( IsAlNum(Look) && i<MAXNAME-1 ) {
 		Name[i++] = toupper(Look);
 		GetChar();
 	}
@@ -78,15 +79,18 @@ char *GetName(void)
 	return Name;
 }
 
-char GetNum(void)
+char *GetNum(void)
 {
-	char num;
+	int i=0;
 	if (!IsDigit(Look)) {
 		Expected("Integer");
 	}
-	num = Look;
-	GetChar();
-	return num;
+	while ( IsDigit(Look) && i<MAXNAME-1 ) {
+		Num[i++] = Look;
+		GetChar();
+	}
+	Num[i] = '\0';
+	return Num;
 }
 
 void Emit(const char *msg)
@@ -138,7 +142,7 @@ void Factor(void)
 	} else if (IsAlpha(Look)) {
 		Ident();
 	} else {
-		snprintf(str, MAXMSG, "movl $%c,%%eax", GetNum() );
+		snprintf(str, MAXMSG, "movl $%s,%%eax", GetNum() );
 		EmitLn(str);
 	}
 }
