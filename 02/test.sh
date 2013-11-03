@@ -10,7 +10,13 @@ for _file in data/*.txt; do
 	rm -f machinecode
 	make -f Assembly.mk
 	./machinecode
-	echo "Result: $?"
+	res=$?
+	if [ $res -gt 128 ]
+	then
+		echo "Negative"
+		res=$(expr $res - 256)
+	fi
+	echo "Result: $res"
 done
 
 
