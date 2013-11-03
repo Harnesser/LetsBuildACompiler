@@ -214,12 +214,46 @@ void Assignment(void)
 
 
 /* -------------------------------------------------------------------- */
+void Input(void)
+{
+	char name;
+	int ti;
+	int value;
+	Match('?');
+	name = GetName();
+	ti = name - 'A';
+	value = GetNum();
+	Table[ti] = value;
+}
+
+void Output(void)
+{
+	char name;
+	int ti;
+	int value;
+	Match('!');
+	name = GetName();
+	ti = name - 'A';
+	value = Table[ti];
+	printf("%c is %d\n", name, value);
+}
+/* -------------------------------------------------------------------- */
 
 int main(int argc, char *argv[])
 {
 	Init();
 	while (Look != EOF) {
-		Assignment();
+		switch(Look) {
+		case '?':
+			Input();
+			break;
+		case '!':
+			Output();
+			break;
+		default:
+			Assignment();
+			break;
+		}
 		while (Look == '\n' ) {
 			Match('\n');
 		}
