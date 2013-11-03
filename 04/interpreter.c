@@ -118,20 +118,6 @@ void Ident(void)
 	}	
 }
 
-void Factor(void)
-{
-	char str[MAXMSG];
-	if (Look=='(') {
-		Match('(');
-		Expression();
-		Match(')');
-	} else if (IsAlpha(Look)) {
-		Ident();
-	} else {
-		snprintf(str, MAXMSG, "movl $%c,%%eax", GetNum() );
-		EmitLn(str);
-	}
-}
 
 int IsAddop(const char tok)
 {
@@ -141,19 +127,32 @@ int IsAddop(const char tok)
 	return 0;
 }
 
+int Factor(void)
+{
+	int factor;
+	if (Look=='(') {
+		Match('(');
+		factor = Expression();
+		Match(')');
+	} else {
+		factor = GetNum();
+	}
+	return factor;
+}
+
 int Term(void)
 {
 	int value;
-	value = GetNum();
+	value = Factor();
 	while ( (Look=='*') || (Look=='/') ) {
 		switch(Look) {
 		case '*':
 			Match('*');
-			value *= GetNum();
+			value *= Factor();
 			break;
 		case '/':
 			Match('/');
-			value /= GetNum();
+			value /= Factor();
 			break;
 		}
 	}
