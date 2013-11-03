@@ -6,6 +6,7 @@
 
 const int TAB = '\t';
 const int MAXMSG = 100;
+int Table[26];
 
 char Look;  /* lookahead character */
 
@@ -91,8 +92,17 @@ void EmitLn(const char *msg)
 	printf("\n");
 }
 
+void InitTable(void)
+{
+	int i;
+	for (i=0; i<26; i++) {
+		Table[i] = 0;
+	}
+}
+
 void Init(void)
 {
+	InitTable();
 	GetChar();
 }
 
@@ -130,10 +140,16 @@ int IsAddop(const char tok)
 int Factor(void)
 {
 	int factor;
+	int ti;
+	char name;
 	if (Look=='(') {
 		Match('(');
 		factor = Expression();
 		Match(')');
+	} else if ( IsAlpha(Look) ) {
+		name = GetName();
+		ti = (int)(name- 'A');
+		factor = Table[ti];	
 	} else {
 		factor = GetNum();
 	}
@@ -183,16 +199,29 @@ int Expression(void)
 	return value;
 }
 
+void Assignment(void)
+{
+	char name;
+	int ti;
+	int value;
+	name = GetName();
+	Match('=');
+	ti = (int)(name - 'A');
+	value = Expression();
+	Table[ti] = value;
+	printf("# %c = %d\n", name, value);
+}
+
+
 /* -------------------------------------------------------------------- */
 
 int main(int argc, char *argv[])
 {
 	Init();
 	while (Look != EOF) {
-		printf("Res: %d\n", Expression() );
-		if (Look != '\n' ) {
-			Expected("Newline");
-		} 
-		Match('\n');
+		Assignment();
+		while (Look == '\n' ) {
+			Match('\n');
+		}
 	}
 }
