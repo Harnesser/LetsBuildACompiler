@@ -104,7 +104,7 @@ void Factor(void)
 		Expression();
 		Match(')');
 	} else {
-		snprintf(str, MAXMSG, "MOVE #%c,D0", GetNum() );
+		snprintf(str, MAXMSG, "movl $%c,%%eax", GetNum() );
 		EmitLn(str);
 	}
 }
@@ -113,7 +113,7 @@ void Multiply(void)
 {
 	Match('*');
 	Factor();
-	EmitLn("MULS (SP)+,D0");
+	EmitLn("IMUL %%eax, (SP)+,D0");
 }
 
 void Divide(void)
@@ -128,7 +128,7 @@ void Term(void)
 {
 	Factor();
 	while (Look=='*' || Look=='/') {
-		EmitLn("MOVE D0,-(SP)");
+		EmitLn("pushl %eax");
 		switch (Look) {
 		case '*' : 
 			Multiply();
@@ -147,15 +147,17 @@ void Add(void)
 {
 	Match('+');
 	Term();
-	EmitLn("ADD (SP)+,D0");
+	EmitLn("popl %ebx");
+	EmitLn("addl %ebx, %eax");
 }
 
 void Subtract(void)
 {
 	Match('-');
 	Term();
-	EmitLn("SUB (SP)+,D0");
-	EmitLn("NEG D0");
+	EmitLn("popl %ebx");
+	EmitLn("subl %ebx, %eax");
+	EmitLn("neg %eax");
 }
 
 // push: -(SP)
@@ -164,7 +166,7 @@ void Expression(void)
 {
 	Term();
 	while (Look=='+' || Look=='-') {
-		EmitLn("MOVE D0,-(SP)"); // push
+		EmitLn("pushl %eax");
 		switch (Look) {
 		case '+':
 			Add();
