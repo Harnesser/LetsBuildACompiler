@@ -1,7 +1,9 @@
 <program> ::= <block> END
 <block> ::= [ <statement> ]*
-<condition> ::= <statement>
+<condition> ::= <statement> // NULL atm
 
 IF <condition> <block> [ ELSE <block> ] ENDIF
+WHILE <condition> <block> ENDWHILE
+
 
 

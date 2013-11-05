@@ -129,8 +129,8 @@ void Block(void)
 		case 'i':
 			DoIf();
 			break;
-		case 'o':
-			Other();
+		case 'w':
+			DoWhile();
 			break;
 		default:
 			Other();
@@ -166,6 +166,7 @@ void DoIf(void)
 	Block();
 	if (Look=='l') {
 		Match('l');
+		printf("#ELSE\n");
 		NewLabel();
 		strncpy(l2, label, MAXLBL);
 		snprintf(code, MAXMSG, "jmp .%s", l2); 
@@ -174,8 +175,37 @@ void DoIf(void)
 		Block();
 	}
 	Match('e'); // ENDIF
+	printf("#ENDIF\n");
 	PostLabel(l2);
 }
+
+void DoWhile(void)
+{
+        char code[MAXMSG];
+        char l1[MAXLBL];
+        char l2[MAXLBL];
+
+        Match('w');
+        NewLabel();
+        strncpy(l1, label, MAXLBL);
+	NewLabel();
+        strncpy(l2, label, MAXLBL);
+
+        PostLabel(l1);
+	Condition();
+
+        snprintf(code, MAXMSG, "je .%s", l2);
+        EmitLn(code);
+	Block();
+
+	Match('e'); // ENDWHILE
+	printf("#ENDWHILE\n");
+	snprintf(code, MAXMSG, "jmp .%s", l1);
+	EmitLn(code);
+
+	PostLabel(l2);
+}
+
 
 void DoProgram(void)
 {
@@ -184,7 +214,7 @@ void DoProgram(void)
 		Expected("End");
 	}
 	Match('e');
-	EmitLn("#END");
+	printf("#ENDPROGRAM\n");
 }
 
 
