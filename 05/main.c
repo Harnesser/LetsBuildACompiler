@@ -124,7 +124,7 @@ void DoIf(void);
 
 void Block(void)
 {
-	while ( Look != 'e' ) {
+	while ( (Look != 'e') ) { // && (Look !='l') ) {
 		switch (Look) {
 		case 'i':
 			DoIf();
@@ -147,21 +147,32 @@ void Condition(void)
 void DoIf(void)
 {
         char code[MAXMSG];
-	char lbl[MAXLBL];
+	char l1[MAXLBL];
+	char l2[MAXLBL];
 
 	Match('i');
 	NewLabel();
-	strncpy(lbl, label, MAXLBL);
-
+	strncpy(l1, label, MAXLBL);
+	strncpy(l2, label, MAXLBL);
 	Condition();
 
-        snprintf(code, MAXMSG, "jz .%s", lbl);
+        snprintf(code, MAXMSG, "je .%s", l1);
 	EmitLn(code);
 
 	Block();
-
 	Match('e');
-	PostLabel(lbl);
+	if (Look=='l') {
+		printf("#elsing\n");
+		Match('l');
+		NewLabel();
+		strncpy(l2, label, MAXLBL);
+		snprintf(code, MAXMSG, "jmp .%s", l2); 
+		EmitLn(code);
+		PostLabel(l1);
+		Block();
+	Match('e');
+	}
+	PostLabel(l2);
 }
 
 void DoProgram(void)
