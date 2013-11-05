@@ -124,7 +124,7 @@ void DoIf(void);
 
 void Block(void)
 {
-	while ( (Look != 'e') ) { // && (Look !='l') ) {
+	while ( (Look != 'e') && (Look !='l') ) {
 		switch (Look) {
 		case 'i':
 			DoIf();
@@ -159,10 +159,12 @@ void DoIf(void)
         snprintf(code, MAXMSG, "je .%s", l1);
 	EmitLn(code);
 
+	// here, tutorial 05 only matches 'e' once, after the if statement
+	// this doesn't seem to work unless i add Look=='l' to the test in
+	// Blocks().
+
 	Block();
-	Match('e');
 	if (Look=='l') {
-		printf("#elsing\n");
 		Match('l');
 		NewLabel();
 		strncpy(l2, label, MAXLBL);
@@ -170,8 +172,8 @@ void DoIf(void)
 		EmitLn(code);
 		PostLabel(l1);
 		Block();
-	Match('e');
 	}
+	Match('e'); // ENDIF
 	PostLabel(l2);
 }
 

@@ -1,0 +1,7 @@
+<program> ::= <block> END
+<block> ::= [ <statement> ]*
+<condition> ::= <statement>
+
+IF <condition> <block> [ ELSE <block> ] ENDIF
+
+
