@@ -132,6 +132,9 @@ void Block(void)
 		case 'w':
 			DoWhile();
 			break;
+		case 'p':
+			DoLoop();
+			break;
 		default:
 			Other();
 			break;
@@ -206,6 +209,23 @@ void DoWhile(void)
 	PostLabel(l2);
 }
 
+void DoLoop(void)
+{
+        char code[MAXMSG];
+        char l1[MAXLBL];
+
+        Match('p');
+        NewLabel();
+        strncpy(l1, label, MAXLBL);
+
+	PostLabel(l1);
+	Block();
+	Match('e');
+	printf("#ENDLOOP\n");
+	
+        snprintf(code, MAXMSG, "jmp .%s", l1);
+        EmitLn(code);
+}
 
 void DoProgram(void)
 {

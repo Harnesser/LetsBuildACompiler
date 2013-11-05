@@ -4,6 +4,7 @@
 
 IF <condition> <block> [ ELSE <block> ] ENDIF
 WHILE <condition> <block> ENDWHILE
+LOOP <block> ENDLOOP
 
 
 
