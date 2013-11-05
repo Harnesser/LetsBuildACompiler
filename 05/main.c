@@ -124,7 +124,7 @@ void DoIf(void);
 
 void Block(void)
 {
-	while ( (Look != 'e') && (Look !='l') ) {
+	while ( (Look != 'e') && (Look !='l') && (Look !='u') ) {
 		switch (Look) {
 		case 'i':
 			DoIf();
@@ -134,6 +134,9 @@ void Block(void)
 			break;
 		case 'p':
 			DoLoop();
+			break;
+		case 'r':
+			DoRepeat();
 			break;
 		default:
 			Other();
@@ -224,6 +227,24 @@ void DoLoop(void)
 	printf("#ENDLOOP\n");
 	
         snprintf(code, MAXMSG, "jmp .%s", l1);
+        EmitLn(code);
+}
+
+
+void DoRepeat(void)
+{
+        char code[MAXMSG];
+        char l1[MAXLBL];
+
+        Match('r');
+        NewLabel();
+        strncpy(l1, label, MAXLBL);
+        PostLabel(l1);
+	Block();
+	Match('u');
+	Condition();
+
+        snprintf(code, MAXMSG, "je .%s", l1);
         EmitLn(code);
 }
 
