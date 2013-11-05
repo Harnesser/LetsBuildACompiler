@@ -6,8 +6,13 @@
 
 const int TAB = '\t';
 const int MAXMSG = 100;
+const int MAXLBL = 8+1;
+
+int lineno;
+int labelno;
 
 char Look;  /* lookahead character */
+char label[9]; /* label for machine code  conditionals */
 
 void GetChar(void)
 {
@@ -17,7 +22,7 @@ void GetChar(void)
 void Error(const char *msg)
 {
 	printf("\n");
-	printf("Error: %s.\n", msg);
+	printf("Error: \"%s\" at line %d\n", msg, lineno);
 }
 
 void Abort(const char *msg)
@@ -90,6 +95,8 @@ void EmitLn(const char *msg)
 
 void Init(void)
 {
+	lineno = 1;
+	labelno = 0;
 	GetChar();
 }
 
@@ -103,6 +110,69 @@ void Other(void)
 	EmitLn(msg);
 }
 
+void NewLabel(void){
+	snprintf(label, MAXLBL, "L%d", labelno);
+	labelno++;
+}
+
+void PostLabel(char *label)
+{
+        printf(".%s:\n", label);
+}
+
+void DoIf(void);
+
+void Block(void)
+{
+	while ( Look != 'e' ) {
+		switch (Look) {
+		case 'i':
+			DoIf();
+			break;
+		case 'o':
+			Other();
+			break;
+		default:
+			Other();
+			break;
+		}
+	}
+}
+
+void Condition(void)
+{
+	EmitLn("# <condition>");
+}
+
+void DoIf(void)
+{
+        char code[MAXMSG];
+	char lbl[MAXLBL];
+
+	Match('i');
+	NewLabel();
+	strncpy(lbl, label, MAXLBL);
+
+	Condition();
+
+        snprintf(code, MAXMSG, "jz .%s", lbl);
+	EmitLn(code);
+
+	Block();
+
+	Match('e');
+	PostLabel(lbl);
+}
+
+void DoProgram(void)
+{
+	Block();
+	if (Look != 'e') {
+		Expected("End");
+	}
+	Match('e');
+	EmitLn("#END");
+}
 
 
 /* -------------------------------------------------------------------- */
@@ -111,9 +181,10 @@ int main(int argc, char *argv[])
 {
 	Init();
 	while (Look != EOF) {
-		Other();
+		DoProgram();
 		while (Look=='\n') {
 			Match('\n');
+			lineno++;
 		}
 	}
 }
