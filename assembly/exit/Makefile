@@ -1,4 +1,5 @@
-all: exit
+# ------------------------
+runexit: exit
 	./exit
 
 exit: exit.o 
@@ -7,6 +8,7 @@ exit: exit.o
 exit.o: exit.s
 	as exit.s -o exit.o
 
+# --------------------------
 clean:
 	\rm -f exit.o exit
 

@@ -121,6 +121,10 @@ void PostLabel(char *label)
 }
 
 void DoIf(void);
+void DoWhile(void);
+void DoLoop(void);
+void DoRepeat(void);
+void DoFor(void);
 
 void Block(void)
 {
@@ -138,6 +142,9 @@ void Block(void)
 		case 'r':
 			DoRepeat();
 			break;
+		case 'f':
+			DoFor();
+			break;
 		default:
 			Other();
 			break;
@@ -148,6 +155,11 @@ void Block(void)
 void Condition(void)
 {
 	EmitLn("# <condition>");
+}
+
+void Expression(void)
+{
+	EmitLn("# <expression>");
 }
 
 void DoIf(void)
@@ -256,6 +268,52 @@ void DoProgram(void)
 	}
 	Match('e');
 	printf("#ENDPROGRAM\n");
+}
+
+void DoFor(void)
+{
+        char code[MAXMSG];
+        char l1[MAXLBL];
+        char l2[MAXLBL];
+
+        Match('f');
+        NewLabel();
+        strncpy(l1, label, MAXLBL);
+	NewLabel();
+        strncpy(l2, label, MAXLBL);
+
+	GetName();
+	Match('=');
+	Expression(); // expr1 = initial value
+	// no TO? have to 'e' instead?
+	Expression(); // expr2 = target value
+
+	EmitLn("pushl <expr2>");
+	EmitLn("pushl <expr1>");
+
+        PostLabel(l1);
+	EmitLn("popl, %ecx");
+	EmitLn("popl, %eax");
+	EmitLn("pushl, %eax");
+	EmitLn("pushl, %ecx");
+
+	// test
+	EmitLn("cmp %eax, %ecx");
+        snprintf(code, MAXMSG, "jg .%s", l2);
+        EmitLn(code);
+	
+	Block();
+
+	// loopback
+	EmitLn("popl %ecx");
+	EmitLn("push %ecx");
+	snprintf(code, MAXMSG, "jmp .%s", l1);
+        EmitLn(code);
+	PostLabel(l2);
+
+	Match('e'); // ENDWHILE
+	printf("#ENDFOR\n");
+
 }
 
 
