@@ -125,6 +125,7 @@ void DoWhile(void);
 void DoLoop(void);
 void DoRepeat(void);
 void DoFor(void);
+void DoDo(void);
 
 void Block(void)
 {
@@ -144,6 +145,9 @@ void Block(void)
 			break;
 		case 'f':
 			DoFor();
+			break;
+		case 'd':
+			DoDo();
 			break;
 		default:
 			Other();
@@ -306,6 +310,7 @@ void DoFor(void)
 
 	// loopback
 	EmitLn("popl %ecx");
+	EmitLn("inc %eac");
 	EmitLn("push %ecx");
 	snprintf(code, MAXMSG, "jmp .%s", l1);
         EmitLn(code);
@@ -313,6 +318,37 @@ void DoFor(void)
 
 	Match('e'); // ENDWHILE
 	printf("#ENDFOR\n");
+
+}
+
+void DoDo(void)
+{
+        char code[MAXMSG];
+        char l1[MAXLBL];
+
+        Match('d');
+        NewLabel();
+        strncpy(l1, label, MAXLBL);
+
+	Expression(); // expr1 = repeat count
+	EmitLn("pushl <expr1>");
+	EmitLn("popl %eac");
+	EmitLn("dec %eac");
+	EmitLn("pushl %eac");
+
+        PostLabel(l1);
+	Block();
+
+	EmitLn("popl, %ecx");
+	EmitLn("dec %ecx");
+	EmitLn("pushl, %ecx");
+
+	// test
+        snprintf(code, MAXMSG, "jnz .%s", l1);
+        EmitLn(code);
+	
+	Match('e'); // ENDWHILE
+	printf("#ENDDO\n");
 
 }
 
