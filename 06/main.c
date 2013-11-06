@@ -76,6 +76,20 @@ int IsOrOp(char tok)
 	return 0;
 }
 
+int IsRelop(char tok)
+{
+	switch(tok){
+	case '=': // fallthru
+	case '>': // fallthru
+	case '<': // fallthru
+	case '#': // fallthru
+		return 1;
+		break; // yeah...
+	}
+	return 0;
+}
+
+
 char GetName(void)
 {
 	char name;
@@ -129,16 +143,18 @@ void Init(void)
 }
 
 /* -------------------------------------------------------------------- */
+void Relation(void);
 
 void BoolFactor(void)
 {
-	if (!IsBoolean(Look)) {
-		Expected("Boolean Literal");
-	}
-	if (GetBoolean()) {
-		EmitLn("movl $-1,%eax");
+	if (IsBoolean(Look)) {
+		if (GetBoolean()) {
+			EmitLn("movl $-1,%eax");
+		} else {
+			EmitLn("movl $0,%eax");
+		}
 	} else {
-		EmitLn("movl $0,%eax");
+		Relation();
 	}
 }
 
@@ -191,6 +207,54 @@ void BoolExpression(void)
 		case '^': BoolXor(); break;
 		}
 	}
+}
+
+void Equals(void){
+	Match('=');
+	Expression();
+	EmitLn("popl %edx");
+	EmitLn("cmp %edx, %eax");
+	EmitLn("sete %eax");
+}
+
+void NotEquals(void){
+	Match('#');
+	Expression();
+	EmitLn("popl %edx");
+	EmitLn("cmp %edx, %eax");
+	EmitLn("setne %eax");
+}
+
+void Less(void){
+	Match('<');
+	Expression();
+	EmitLn("popl %edx");
+	EmitLn("cmp %edx, %eax");
+	EmitLn("setl %eax");
+}
+
+void Greater(void){
+	Match('>');
+	Expression();
+	EmitLn("popl %edx");
+	EmitLn("cmp %edx, %eax");
+	EmitLn("setg %eax");
+}
+
+
+void Relation(void)
+{
+	Expression();
+	if (!IsRelop(Look)) {
+		return;
+	}
+	switch(Look) {
+		case '=' : Equals(); break;
+		case '>' : Greater(); break;
+		case '<' : Less(); break;
+		case '#' : NotEquals(); break;
+	}
+	EmitLn("test %eax, %eax");
 }
 
 /* -------------------------------------------------------------------- */
