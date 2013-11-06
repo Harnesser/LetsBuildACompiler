@@ -8,4 +8,5 @@ LOOP <block> ENDLOOP
 REPEAT <block> UNTIL <condition>
 FOR <ident> = <expr1> TO <expr2> <block> ENDFOR
 DO <expr> <block> ENDDO
+BREAK
 

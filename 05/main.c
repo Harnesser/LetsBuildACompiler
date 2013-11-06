@@ -120,19 +120,20 @@ void PostLabel(char *label)
         printf(".%s:\n", label);
 }
 
-void DoIf(void);
+void DoIf(char *exit_label);
 void DoWhile(void);
 void DoLoop(void);
 void DoRepeat(void);
 void DoFor(void);
 void DoDo(void);
+void DoBreak(char *exit_label);
 
-void Block(void)
+void Block(char *exit_label)
 {
 	while ( (Look != 'e') && (Look !='l') && (Look !='u') ) {
 		switch (Look) {
 		case 'i':
-			DoIf();
+			DoIf(exit_label);
 			break;
 		case 'w':
 			DoWhile();
@@ -148,6 +149,9 @@ void Block(void)
 			break;
 		case 'd':
 			DoDo();
+			break;
+		case 'b':
+			DoBreak(exit_label);
 			break;
 		default:
 			Other();
@@ -166,7 +170,7 @@ void Expression(void)
 	EmitLn("# <expression>");
 }
 
-void DoIf(void)
+void DoIf(char *exit_label)
 {
         char code[MAXMSG];
 	char l1[MAXLBL];
@@ -185,7 +189,7 @@ void DoIf(void)
 	// this doesn't seem to work unless i add Look=='l' to the test in
 	// Blocks().
 
-	Block();
+	Block(exit_label);
 	if (Look=='l') {
 		Match('l');
 		printf("#ELSE\n");
@@ -194,7 +198,7 @@ void DoIf(void)
 		snprintf(code, MAXMSG, "jmp .%s", l2); 
 		EmitLn(code);
 		PostLabel(l1);
-		Block();
+		Block(exit_label);
 	}
 	Match('e'); // ENDIF
 	printf("#ENDIF\n");
@@ -218,7 +222,7 @@ void DoWhile(void)
 
         snprintf(code, MAXMSG, "je .%s", l2);
         EmitLn(code);
-	Block();
+	Block(l2);
 
 	Match('e'); // ENDWHILE
 	printf("#ENDWHILE\n");
@@ -232,18 +236,21 @@ void DoLoop(void)
 {
         char code[MAXMSG];
         char l1[MAXLBL];
+        char l2[MAXLBL];
 
         Match('p');
         NewLabel();
         strncpy(l1, label, MAXLBL);
+	NewLabel();
+	strncpy(l2, label, MAXLBL); // exit point
 
 	PostLabel(l1);
-	Block();
+	Block(l2);
 	Match('e');
-	printf("#ENDLOOP\n");
-	
         snprintf(code, MAXMSG, "jmp .%s", l1);
         EmitLn(code);
+	printf("#ENDLOOP\n");	
+        PostLabel(l2);
 }
 
 
@@ -251,22 +258,26 @@ void DoRepeat(void)
 {
         char code[MAXMSG];
         char l1[MAXLBL];
+        char l2[MAXLBL];
 
         Match('r');
         NewLabel();
         strncpy(l1, label, MAXLBL);
+        NewLabel();
+        strncpy(l2, label, MAXLBL);
         PostLabel(l1);
-	Block();
+	Block(l2);
 	Match('u');
 	Condition();
-
         snprintf(code, MAXMSG, "je .%s", l1);
         EmitLn(code);
+
+	PostLabel(l2); // exit point
 }
 
 void DoProgram(void)
 {
-	Block();
+	Block("");
 	if (Look != 'e') {
 		Expected("End");
 	}
@@ -306,7 +317,7 @@ void DoFor(void)
         snprintf(code, MAXMSG, "jg .%s", l2);
         EmitLn(code);
 	
-	Block();
+	Block(l2);
 
 	// loopback
 	EmitLn("popl %ecx");
@@ -325,10 +336,13 @@ void DoDo(void)
 {
         char code[MAXMSG];
         char l1[MAXLBL];
+        char l2[MAXLBL];
 
         Match('d');
         NewLabel();
         strncpy(l1, label, MAXLBL);
+        NewLabel();
+        strncpy(l2, label, MAXLBL); // exit point
 
 	Expression(); // expr1 = repeat count
 	EmitLn("pushl <expr1>");
@@ -337,7 +351,7 @@ void DoDo(void)
 	EmitLn("pushl %eac");
 
         PostLabel(l1);
-	Block();
+	Block(l2);
 
 	EmitLn("popl, %ecx");
 	EmitLn("dec %ecx");
@@ -349,9 +363,20 @@ void DoDo(void)
 	
 	Match('e'); // ENDWHILE
 	printf("#ENDDO\n");
-
+	PostLabel(l2);
 }
 
+void DoBreak(char *exit_label)
+{
+	char code[MAXMSG];
+	Match('b');
+	if ( strncmp(exit_label, "", MAXLBL) != 0 ) {
+		snprintf(code, MAXMSG, "jmp .%s", exit_label);
+		EmitLn(code);
+	} else {
+		Abort("No loop to break from");
+	}
+}
 
 /* -------------------------------------------------------------------- */
 
