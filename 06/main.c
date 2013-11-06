@@ -68,6 +68,14 @@ int IsBoolean(char tok)
 	return 0;
 }
 
+int IsOrOp(char tok)
+{
+	if ( (tok=='|') || (tok=='^') ) {
+		return 1;
+	}
+	return 0;
+}
+
 char GetName(void)
 {
 	char name;
@@ -99,6 +107,7 @@ int GetBoolean(void)
 	}
 	tokup = toupper(Look);
 	truth = (tokup == 'T');
+	GetChar();
 	return truth;
 }
 
@@ -121,6 +130,68 @@ void Init(void)
 
 /* -------------------------------------------------------------------- */
 
+void BoolFactor(void)
+{
+	if (!IsBoolean(Look)) {
+		Expected("Boolean Literal");
+	}
+	if (GetBoolean()) {
+		EmitLn("movl $-1,%eax");
+	} else {
+		EmitLn("movl $0,%eax");
+	}
+}
+
+void NotFactor(void)
+{
+	if (Look=='!') {
+		Match('!');
+		BoolFactor();
+		EmitLn("not %eax");
+	} else {
+		BoolFactor();
+	}
+}
+
+void BoolTerm(void)
+{
+	NotFactor();
+	while (Look=='&') {
+		EmitLn("pushl %eax");
+		Match('&');
+		NotFactor();
+		EmitLn("popl %edx");
+		EmitLn("andl %edx, %eax");
+	}
+}
+
+void BoolOr(void)
+{
+	Match('|');
+	BoolTerm();
+	EmitLn("popl %edx");
+	EmitLn("orl %edx, %eax");
+}
+
+void BoolXor(void)
+{
+	Match('^');
+	BoolTerm();
+	EmitLn("popl %edx");
+	EmitLn("xorl %edx, %eax");
+}
+
+void BoolExpression(void)
+{
+	BoolTerm();
+	while (IsOrOp(Look)) {
+		EmitLn("push %eax");
+		switch(Look) {
+		case '|': BoolOr(); break;
+		case '^': BoolXor(); break;
+		}
+	}
+}
 
 /* -------------------------------------------------------------------- */
 
@@ -132,7 +203,7 @@ int main(int argc, char *argv[])
 			Match('\n');
 			lineno++;
 		}
-		printf("%c is %d\n", Look, GetBoolean());
+		BoolExpression();
 		GetChar();
 	}
 }
