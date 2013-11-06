@@ -144,6 +144,7 @@ void Init(void)
 
 /* -------------------------------------------------------------------- */
 void Relation(void);
+void Expression(void);
 
 void BoolFactor(void)
 {
@@ -209,36 +210,45 @@ void BoolExpression(void)
 	}
 }
 
+/* NOTE: do logical opposite then subtract 1 to get true == all ones*/
 void Equals(void){
 	Match('=');
 	Expression();
 	EmitLn("popl %edx");
-	EmitLn("cmp %edx, %eax");
-	EmitLn("sete %eax");
+	EmitLn("cmp %eax, %edx");
+	EmitLn("setne %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
 }
 
 void NotEquals(void){
 	Match('#');
 	Expression();
 	EmitLn("popl %edx");
-	EmitLn("cmp %edx, %eax");
-	EmitLn("setne %eax");
+	EmitLn("cmp %eax, %edx");
+	EmitLn("sete %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
 }
 
 void Less(void){
 	Match('<');
 	Expression();
 	EmitLn("popl %edx");
-	EmitLn("cmp %edx, %eax");
-	EmitLn("setl %eax");
+	EmitLn("cmp %eax, %edx");
+	EmitLn("setge %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
 }
 
 void Greater(void){
 	Match('>');
 	Expression();
 	EmitLn("popl %edx");
-	EmitLn("cmp %edx, %eax");
-	EmitLn("setg %eax");
+	EmitLn("cmp %eax, %edx");
+	EmitLn("setle %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
 }
 
 
@@ -248,6 +258,7 @@ void Relation(void)
 	if (!IsRelop(Look)) {
 		return;
 	}
+	EmitLn("pushl %eax");
 	switch(Look) {
 		case '=' : Equals(); break;
 		case '>' : Greater(); break;
@@ -255,6 +266,140 @@ void Relation(void)
 		case '#' : NotEquals(); break;
 	}
 	EmitLn("test %eax, %eax");
+}
+
+/* -------------------------------------------------------------------- */
+
+void Ident(void)
+{
+	char name;
+	char str[MAXMSG];
+
+	name = GetName();
+	if (Look=='(') {
+		/* function call */
+		Match('(');
+		Match(')'); // empty arg list for now
+		snprintf(str, MAXMSG, "bsr %c", name);
+	} else {
+		/* variable */
+		snprintf(str, MAXMSG, "movl $%c, %%edx", name);
+		EmitLn(str);
+		EmitLn("movl (%edx), %eax");
+	}	
+}
+
+void Factor(void)
+{
+	char str[MAXMSG];
+	if (Look=='(') {
+		Match('(');
+		Expression();
+		Match(')');
+	} else if (IsAlpha(Look)) {
+		Ident();
+	} else {
+		snprintf(str, MAXMSG, "movl $%d,%%eax", GetNum() );
+		EmitLn(str);
+	}
+}
+
+void Multiply(void)
+{
+	Match('*');
+	Factor();
+	EmitLn("popl %ebx");
+	EmitLn("imul %ebx");
+}
+
+void Divide(void)
+{
+	Match('/');
+	Factor();
+	EmitLn("movl %eax,%ebx");
+	EmitLn("popl %eax");
+	EmitLn("movl $0,%edx");
+	EmitLn("divl %ebx");
+}
+
+void Term(void)
+{
+	Factor();
+	while (Look=='*' || Look=='/') {
+		EmitLn("pushl %eax");
+		switch (Look) {
+		case '*' : 
+			Multiply();
+			break;
+		case '/' :
+			Divide();
+			break;
+		default:
+			Expected("Mulop");
+			break;
+		}
+	}
+}
+
+void Add(void)
+{
+	Match('+');
+	Term();
+	EmitLn("popl %ebx");
+	EmitLn("addl %ebx, %eax");
+}
+
+void Subtract(void)
+{
+	Match('-');
+	Term();
+	EmitLn("popl %ebx");
+	EmitLn("subl %ebx, %eax");
+	EmitLn("neg %eax");
+}
+
+int IsAddop(const char tok)
+{
+	if (tok=='-' || tok=='+' ) {
+		return 1;
+	}
+	return 0;
+}
+
+void Expression(void)
+{
+	if (IsAddop(Look)) {
+		EmitLn("clr %eax");
+	} else {
+		Term();
+	}
+
+	while (IsAddop(Look)) {
+		EmitLn("pushl %eax");
+		switch (Look) {
+		case '+':
+			Add();
+			break;
+		case '-':
+			Subtract();
+			break;
+		default:
+			Expected("Addop");
+			break;
+		}
+	}
+}
+
+void Assignment(void)
+{
+	char name;
+	char str[MAXMSG];
+	name = GetName();
+	Match('=');
+	Expression();
+	snprintf(str, MAXMSG, "movl $%c,%%edx", name);
+	EmitLn(str);
+	EmitLn("movl %eax,(%edx)");
 }
 
 /* -------------------------------------------------------------------- */
