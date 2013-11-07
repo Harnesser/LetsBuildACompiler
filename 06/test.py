@@ -4,6 +4,7 @@ from subprocess import check_call
 tests = {
 	'do_loop': 5,
 	'do_loop_2': -10,
+	'small_accumulator': 15,
 	}
 
 results = {}
@@ -22,6 +23,6 @@ for test in tests.keys():
 print("========== RESULTS =================================")
 
 for test in tests.keys():
-	print test, results[test]
+	print "%-25s %s" % (test, results[test])
 
 

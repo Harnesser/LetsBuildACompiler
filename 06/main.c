@@ -31,6 +31,7 @@ void Fin(void)
 	if (Look=='\n') {
 		GetChar();
 		colno = 0;
+		lineno++;
 	}
 }
 

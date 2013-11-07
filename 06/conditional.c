@@ -62,6 +62,7 @@ void DoIf(char *exit_label)
 	char l2[MAXLBL];
 
 	Match('i');
+	printf("# IF\n");
 	NewLabel();
 	strncpy(l1, label, MAXLBL);
 	strncpy(l2, label, MAXLBL);
@@ -69,7 +70,7 @@ void DoIf(char *exit_label)
 
         snprintf(code, MAXMSG, "je .%s", l1);
 	EmitLn(code);
-
+	printf("# TRUE\n");
 	// here, tutorial 05 only matches 'e' once, after the if statement
 	// this doesn't seem to work unless i add Look=='l' to the test in
 	// Blocks().
@@ -146,6 +147,7 @@ void DoRepeat(void)
         char l2[MAXLBL];
 
         Match('r');
+	printf("# REPEAT\n");
         NewLabel();
         strncpy(l1, label, MAXLBL);
         NewLabel();
@@ -153,8 +155,9 @@ void DoRepeat(void)
         PostLabel(l1);
 	Block(l2);
 	Match('u');
+	printf("# UNTIL\n");
 	BoolExpression();
-        snprintf(code, MAXMSG, "je .%s", l1);
+        snprintf(code, MAXMSG, "je .%s\t\t#repeat loop", l1);
         EmitLn(code);
 
 	PostLabel(l2); // exit point

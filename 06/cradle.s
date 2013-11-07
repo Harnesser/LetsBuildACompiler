@@ -19,10 +19,10 @@
 #
 .section .data
 A:	.space 4
-B:	.space 4
 C:	.space 4
-D:	.space 4
-E:	.space 4
+X:	.space 4
+Y:	.space 4
+Z:	.space 4
 A0:	.space 4
 COUNT:	.space 4
 ANSWER:	.space 4

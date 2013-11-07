@@ -1,5 +1,5 @@
 test: main
-	./test.sh
+	./test.py
 
 expression: main.c
 	gcc main.c -o main
