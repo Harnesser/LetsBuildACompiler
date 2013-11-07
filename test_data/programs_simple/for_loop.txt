@@ -1,0 +1,7 @@
+x=0
+y=0
+fa=09x=x+ay=y+1e
+y=y-1
+iy=9x=xlx=-xe
+x=x
+e

@@ -24,6 +24,7 @@ void Block(char *exit_label)
 {
 	while ( (Look != 'e') && (Look !='l') && (Look !='u') ) {
 		Fin();
+		printf("# BLOCK start\n");
 		switch (Look) {
 		case 'i':
 			DoIf(exit_label);
@@ -51,6 +52,7 @@ void Block(char *exit_label)
 			break;
 		}
 		Fin();
+		printf("# BLOCK end\n");
 	}
 }
 
@@ -165,47 +167,58 @@ void DoRepeat(void)
 
 void DoFor(void)
 {
+	char name;
         char code[MAXMSG];
         char l1[MAXLBL];
         char l2[MAXLBL];
 
         Match('f');
+	printf("# FOR\n");
         NewLabel();
         strncpy(l1, label, MAXLBL);
 	NewLabel();
         strncpy(l2, label, MAXLBL);
 
-	GetName();
+	// could call Assignment here, but I need to keep the loop counter handle
+	name = GetName();
 	Match('=');
 	Expression(); // expr1 = initial value
-	// no TO? have to 'e' instead?
+	snprintf(code, MAXMSG, "movl $%c,%%edx", name);
+	EmitLn(code);
+	EmitLn("movl %eax,(%edx)\t\t# assignment");
+
 	Expression(); // expr2 = target value
+	EmitLn("pushl %eax    \t\t # put target count on stack");
 
-	EmitLn("pushl <expr2>");
-	EmitLn("pushl <expr1>");
-
-        PostLabel(l1);
-	EmitLn("popl, %ecx");
-	EmitLn("popl, %eax");
-	EmitLn("pushl, %eax");
-	EmitLn("pushl, %ecx");
+        // Loop: 
+	PostLabel(l1);
+	EmitLn("popl %eax  \t\t# recover tgt");
+	EmitLn("pushl %eax");
+        snprintf(code, MAXMSG, "movl $%c,%%edx", name);
+        EmitLn(code);
+	EmitLn("movl (%edx), %ecx  \t\t # Grab loop counter");
 
 	// test
-	EmitLn("cmp %eax, %ecx");
+	EmitLn("cmpl %eax, %ecx\t\t# for test");
         snprintf(code, MAXMSG, "jg .%s", l2);
         EmitLn(code);
 	
 	Block(l2);
+	//EmitLn("popl %ecx  \t\t# don't need return val");
 
 	// loopback
-	EmitLn("popl %ecx");
-	EmitLn("inc %eac");
-	EmitLn("push %ecx");
+        snprintf(code, MAXMSG, "movl $%c,%%edx", name); 
+	EmitLn(code);
+	EmitLn("movl (%edx), %ecx    \t\t # grab loop counter");
+	EmitLn("inc %ecx  \t\t # i++");
+	EmitLn("movl %ecx, (%edx)");
 	snprintf(code, MAXMSG, "jmp .%s", l1);
         EmitLn(code);
 	PostLabel(l2);
 
-	Match('e'); // ENDWHILE
+	Match('e'); // ENDWHILE 
+	EmitLn("popl %eax");
+
 	printf("#ENDFOR\n");
 
 }
