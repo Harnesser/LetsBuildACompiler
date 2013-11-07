@@ -13,6 +13,8 @@ const int MAXOPER = 5;
 int lineno;
 int colno;
 int labelno;
+typedef enum { T_IF, T_ELSE, T_ENDIF, T_END, T_IDENT, T_NUMBER, T_OPER } e_token;
+e_token TokenId;
 
 char Name[25];  /* identifier name */
 char Num[25];   /* number string */
@@ -131,10 +133,22 @@ void Init(void)
 
 int main(int argc, char *argv[])
 {
+	int iskw;
 	Init();
 	while (Look != EOF || Look != '.') {
 		Scan();
-		printf("Scanned: %s\n", Token);
+		iskw = Lookup(Token);
+		switch(TokenId) {
+		case(T_IDENT)  : printf("IDENT: "); break;
+		case(T_OPER)   : printf("OPERATOR: "); break;
+		case(T_NUMBER) : printf("NUMBER: "); break;
+		case(T_IF)     :
+		case(T_ELSE)   :
+		case(T_ENDIF)  :
+		case(T_END)    : printf("KEYWORD: "); break;
+		default  : printf("< ?????? >: "); break;
+		}
+		printf("%s\n", Token);
 		if (Token[0]=='\n') {
 			Fin();
 		}

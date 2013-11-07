@@ -2,6 +2,15 @@
 // Scanning functions
 //
 
+char *Keywords[] = {
+	"IF",
+	"ELSE",
+	"ENDIF",
+	"END"
+	};
+
+#define NUMKEYWORDS sizeof(Keywords)/sizeof(Keywords[0])
+
 int IsOp(char c)
 {
 	switch(c){
@@ -78,20 +87,54 @@ void clear_ident(char *ident)
 char *Scan(void) 
 {
 	char *ident;
+	int iskw;
+
 	if ( IsAlpha(Look) ) {
 		ident = GetName();
+		iskw = Lookup(ident);
+		if (iskw == 0 ) {
+			TokenId = T_IDENT;
+		} else {
+			TokenId = iskw;
+		}
 	} else if ( IsDigit(Look) ) {
 		ident = GetNum();
+		TokenId = T_NUMBER;
 	} else if ( IsOp(Look) ) {
 		ident = GetOp();
+		TokenId = T_OPER;
 	} else {
 		clear_ident(Name);
 		Name[0] = Look;
 		ident = Name;
 		GetChar();
+		TokenId = T_OPER;
 	}
 	SkipWhite();
 	strncpy(Token, ident, MAXNAME);
 	return Token;
+}	
+
+// If the input string matches an entry in the table, return
+// the entry index+1. If not, return 0.
+// brute force. maybe in future explore gperf
+int Lookup(char *token) 
+{
+	int found;
+	int i;
+
+	//printf("Is %s in the list of keywords?\n", token);	
+	i = NUMKEYWORDS;
+	found = 0;
+	while ( (i>0) && (found==0) ) {
+		//printf(" \"%s\" vs \"%s\" -> ", Keywords[i-1], token);
+		//printf(" %d\n", strncmp(token, Keywords[i-1], MAXNAME) );
+		if ( strncmp(token, Keywords[i-1], MAXNAME) == 0 ) {
+			found = 1;
+		} else {
+			i--;
+		}
+	}
+	return i;
 }	
 
