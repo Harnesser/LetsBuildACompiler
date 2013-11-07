@@ -32,6 +32,7 @@ int IsOp(char c)
 	
 char *GetName(void)
 {
+	int iskw=0;
 	int i=0;
 	if (!IsAlpha(Look)) {
 		Expected("Name");
@@ -41,6 +42,12 @@ char *GetName(void)
 		GetChar();
 	}
 	Name[i] = '\0';
+	iskw = Lookup(Name);
+	if (iskw==0 ) {
+		TokenId = T_IDENT;
+	} else {
+		TokenId = iskw;
+	}
 	SkipWhite();
 	return Name;
 }
@@ -56,6 +63,7 @@ char *GetNum(void)
 		GetChar();
 	}
 	Num[i] = '\0';
+	TokenId = T_NUMBER;
 	SkipWhite();
 	return Num;
 }
@@ -71,6 +79,7 @@ char *GetOp(void)
 		GetChar();
 	}
 	Oper[i] = '\0';
+	TokenId = T_OPER;
 	SkipWhite();
 	return Oper;
 }
@@ -92,23 +101,16 @@ char *Scan(void)
 	if ( IsAlpha(Look) ) {
 		ident = GetName();
 		iskw = Lookup(ident);
-		if (iskw == 0 ) {
-			TokenId = T_IDENT;
-		} else {
-			TokenId = iskw;
-		}
 	} else if ( IsDigit(Look) ) {
 		ident = GetNum();
-		TokenId = T_NUMBER;
 	} else if ( IsOp(Look) ) {
 		ident = GetOp();
-		TokenId = T_OPER;
 	} else {
 		clear_ident(Name);
 		Name[0] = Look;
 		ident = Name;
 		GetChar();
-		TokenId = T_OPER;
+		TokenId = T_OTHER;
 	}
 	SkipWhite();
 	strncpy(Token, ident, MAXNAME);

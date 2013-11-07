@@ -13,7 +13,7 @@ const int MAXOPER = 5;
 int lineno;
 int colno;
 int labelno;
-typedef enum { T_IF, T_ELSE, T_ENDIF, T_END, T_IDENT, T_NUMBER, T_OPER } e_token;
+typedef enum { T_IF, T_ELSE, T_ENDIF, T_END, T_IDENT, T_NUMBER, T_OPER, T_OTHER } e_token;
 e_token TokenId;
 
 char Name[25];  /* identifier name */
