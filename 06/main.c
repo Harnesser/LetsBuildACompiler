@@ -9,8 +9,11 @@ const int MAXMSG = 100;
 const int MAXLBL = 8+1;
 
 int lineno;
+int labelno;
 
 char Look;  /* lookahead character */
+char label[9]; /* label for machine code  conditionals */
+
 
 void GetChar(void)
 {
@@ -103,6 +106,7 @@ void Expression(void);
 // stuff
 #include "boolean.c"
 #include "arithmetic.c"
+#include "conditional.c"
 
 /* -------------------------------------------------------------------- */
 
