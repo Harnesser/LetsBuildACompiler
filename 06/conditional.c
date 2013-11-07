@@ -2,15 +2,6 @@
 // Conditional Stuff
 //
 
-void Other(void)
-{
-	char tok;
-	char msg[MAXMSG];
-	tok = GetName();
-	snprintf(msg, MAXMSG, "# \"%c\"", tok);
-	EmitLn(msg);
-}
-
 void NewLabel(void){
 	snprintf(label, MAXLBL, "L%d", labelno);
 	labelno++;
@@ -32,6 +23,7 @@ void DoBreak(char *exit_label);
 void Block(char *exit_label)
 {
 	while ( (Look != 'e') && (Look !='l') && (Look !='u') ) {
+		Fin();
 		switch (Look) {
 		case 'i':
 			DoIf(exit_label);
@@ -55,9 +47,10 @@ void Block(char *exit_label)
 			DoBreak(exit_label);
 			break;
 		default:
-			Other();
+			Assignment();
 			break;
 		}
+		Fin();
 	}
 }
 
@@ -167,16 +160,6 @@ void DoRepeat(void)
 	PostLabel(l2); // exit point
 }
 
-void DoProgram(void)
-{
-	Block("");
-	if (Look != 'e') {
-		Expected("End");
-	}
-	Match('e');
-	printf("#ENDPROGRAM\n");
-}
-
 void DoFor(void)
 {
         char code[MAXMSG];
@@ -235,19 +218,17 @@ void DoDo(void)
         strncpy(l1, label, MAXLBL);
         NewLabel();
         strncpy(l2, label, MAXLBL); // exit point
+	printf("# DO\n");
 
 	Expression(); // expr1 = repeat count
-	EmitLn("pushl <expr1>");
-	EmitLn("popl %eac");
-	EmitLn("dec %eac");
-	EmitLn("pushl %eac");
+	EmitLn("pushl %eax\t\t# repeat count");
 
         PostLabel(l1);
 	Block(l2);
 
-	EmitLn("popl, %ecx");
+	EmitLn("popl %ecx");
 	EmitLn("dec %ecx");
-	EmitLn("pushl, %ecx");
+	EmitLn("pushl %ecx");
 
 	// test
         snprintf(code, MAXMSG, "jnz .%s", l1);

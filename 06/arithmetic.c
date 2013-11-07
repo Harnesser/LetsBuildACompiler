@@ -122,10 +122,10 @@ void Assignment(void)
 	char str[MAXMSG];
 	name = GetName();
 	Match('=');
-	Expression();
+	BoolExpression();
 	snprintf(str, MAXMSG, "movl $%c,%%edx", name);
 	EmitLn(str);
-	EmitLn("movl %eax,(%edx)");
+	EmitLn("movl %eax,(%edx)\t\t# assignment");
 }
 
 

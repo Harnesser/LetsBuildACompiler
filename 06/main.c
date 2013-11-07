@@ -9,6 +9,7 @@ const int MAXMSG = 100;
 const int MAXLBL = 8+1;
 
 int lineno;
+int colno;
 int labelno;
 
 char Look;  /* lookahead character */
@@ -18,19 +19,25 @@ char label[9]; /* label for machine code  conditionals */
 void GetChar(void)
 {
 	Look = getchar();
+	if (Look==EOF) {
+		printf("# Done\n");
+		exit(0);
+	}
+	colno++;
 }
 
 void Fin(void)
 {
 	if (Look=='\n') {
 		GetChar();
+		colno = 0;
 	}
 }
 
 void Error(const char *msg)
 {
 	printf("\n");
-	printf("Error: \"%s\" at line %d\n", msg, lineno);
+	printf("Error: \"%s\" at line %d column %d\n", msg, lineno, colno);
 }
 
 void Abort(const char *msg)
@@ -93,6 +100,8 @@ void EmitLn(const char *msg)
 void Init(void)
 {
 	lineno = 1;
+	labelno = 0;
+	colno = 0;
 	GetChar();
 }
 
@@ -129,6 +138,15 @@ void Ident(void)
        }       
 }
 
+void DoProgram(void)
+{
+	Block("");
+	if (Look != 'e') {
+		Expected("End");
+	}
+	Match('e');
+	printf("#ENDPROGRAM\n");
+}
 
 /* -------------------------------------------------------------------- */
 
@@ -136,12 +154,7 @@ int main(int argc, char *argv[])
 {
 	Init();
 	while (Look != EOF) {
-		while (Look=='\n') {
-			Match('\n');
-			lineno++;
-		}
-		BoolExpression();
-		GetChar();
+		DoProgram();
 	}
 }
 
