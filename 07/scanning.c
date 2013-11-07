@@ -2,6 +2,25 @@
 // Scanning functions
 //
 
+int IsOp(char c)
+{
+	switch(c){
+	// fallthru everywhere
+	case '+':
+	case '-':
+	case '/':
+	case '*':
+	case '<':
+	case '>':
+	case ':':
+	case '=':
+		return 1;
+		break;
+	}
+	return 0;
+}
+
+	
 char *GetName(void)
 {
 	int i=0;
@@ -32,6 +51,22 @@ char *GetNum(void)
 	return Num;
 }
 
+char *GetOp(void)
+{
+	int i=0;
+	if (!IsOp(Look)) {
+		Expected("Operator");
+	}
+	while ( IsOp(Look) && i<MAXOPER-1 ) {
+		Oper[i++] = Look;
+		GetChar();
+	}
+	Oper[i] = '\0';
+	SkipWhite();
+	return Oper;
+}
+
+
 void clear_ident(char *ident)
 {
 	int i;
@@ -47,6 +82,8 @@ char *Scan(void)
 		ident = GetName();
 	} else if ( IsDigit(Look) ) {
 		ident = GetNum();
+	} else if ( IsOp(Look) ) {
+		ident = GetOp();
 	} else {
 		clear_ident(Name);
 		Name[0] = Look;

@@ -8,6 +8,7 @@ const int TAB = '\t';
 const int MAXMSG = 100;
 const int MAXLBL = 8+1;
 const int MAXNAME = 25;
+const int MAXOPER = 5;
 
 int lineno;
 int colno;
@@ -16,6 +17,7 @@ int labelno;
 char Name[25];  /* identifier name */
 char Num[25];   /* number string */
 char Token[25]; /* scanned token */
+char Oper[5]; /* an operator token */
 
 char Look;  /* lookahead character */
 char label[9]; /* label for machine code  conditionals */
@@ -130,9 +132,12 @@ void Init(void)
 int main(int argc, char *argv[])
 {
 	Init();
-	while (Look != EOF) {
+	while (Look != EOF || Look != '.') {
 		Scan();
 		printf("Scanned: %s\n", Token);
+		if (Token[0]=='\n') {
+			Fin();
+		}
 	}
 }
 
