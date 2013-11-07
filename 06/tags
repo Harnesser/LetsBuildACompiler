@@ -1,0 +1,79 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+A	cradle.s	/^A:	.space 4$/;"	l
+A0	cradle.s	/^A0:	.space 4$/;"	l
+ANSWER	cradle.s	/^ANSWER:	.space 4$/;"	l
+Abort	main.c	/^void Abort(const char *msg)$/;"	f
+Add	arithmetic.c	/^void Add(void)$/;"	f
+Assignment	arithmetic.c	/^void Assignment(void)$/;"	f
+B	cradle.s	/^B:	.space 4$/;"	l
+Block	conditional.c	/^void Block(char *exit_label)$/;"	f
+BoolExpression	boolean.c	/^void BoolExpression(void)$/;"	f
+BoolFactor	boolean.c	/^void BoolFactor(void)$/;"	f
+BoolOr	boolean.c	/^void BoolOr(void)$/;"	f
+BoolTerm	boolean.c	/^void BoolTerm(void)$/;"	f
+BoolXor	boolean.c	/^void BoolXor(void)$/;"	f
+C	cradle.s	/^C:	.space 4$/;"	l
+COUNT	cradle.s	/^COUNT:	.space 4$/;"	l
+D	cradle.s	/^D:	.space 4$/;"	l
+Divide	arithmetic.c	/^void Divide(void)$/;"	f
+DoBreak	conditional.c	/^void DoBreak(char *exit_label)$/;"	f
+DoDo	conditional.c	/^void DoDo(void)$/;"	f
+DoFor	conditional.c	/^void DoFor(void)$/;"	f
+DoIf	conditional.c	/^void DoIf(char *exit_label)$/;"	f
+DoLoop	conditional.c	/^void DoLoop(void)$/;"	f
+DoProgram	main.c	/^void DoProgram(void)$/;"	f
+DoRepeat	conditional.c	/^void DoRepeat(void)$/;"	f
+DoWhile	conditional.c	/^void DoWhile(void)$/;"	f
+E	cradle.s	/^E:	.space 4$/;"	l
+Emit	main.c	/^void Emit(const char *msg)$/;"	f
+EmitLn	main.c	/^void EmitLn(const char *msg)$/;"	f
+Equals	boolean.c	/^void Equals(void){$/;"	f
+Error	main.c	/^void Error(const char *msg)$/;"	f
+Expected	main.c	/^void Expected(const char *msg)$/;"	f
+Expression	arithmetic.c	/^void Expression(void)$/;"	f
+Factor	arithmetic.c	/^void Factor(void)$/;"	f
+Fin	main.c	/^void Fin(void)$/;"	f
+GetBoolean	boolean.c	/^int GetBoolean(void)$/;"	f
+GetChar	main.c	/^void GetChar(void)$/;"	f
+GetName	main.c	/^char GetName(void)$/;"	f
+GetNum	arithmetic.c	/^int GetNum(void)$/;"	f
+Greater	boolean.c	/^void Greater(void){$/;"	f
+Ident	main.c	/^void Ident(void)$/;"	f
+Init	main.c	/^void Init(void)$/;"	f
+IsAddop	arithmetic.c	/^int IsAddop(const char tok)$/;"	f
+IsAlpha	main.c	/^int IsAlpha(const char tok)$/;"	f
+IsBoolean	boolean.c	/^int IsBoolean(char tok)$/;"	f
+IsDigit	main.c	/^int IsDigit(const char tok)$/;"	f
+IsOrOp	boolean.c	/^int IsOrOp(char tok)$/;"	f
+IsRelop	boolean.c	/^int IsRelop(char tok)$/;"	f
+Less	boolean.c	/^void Less(void){$/;"	f
+Look	main.c	/^char Look;  \/* lookahead character *\/$/;"	v
+MAXLBL	main.c	/^const int MAXLBL = 8+1;$/;"	v
+MAXMSG	main.c	/^const int MAXMSG = 100;$/;"	v
+Match	main.c	/^void Match(const char tok)$/;"	f
+Multiply	arithmetic.c	/^void Multiply(void)$/;"	f
+NewLabel	conditional.c	/^void NewLabel(void){$/;"	f
+NotEquals	boolean.c	/^void NotEquals(void){$/;"	f
+NotFactor	boolean.c	/^void NotFactor(void)$/;"	f
+PostLabel	conditional.c	/^void PostLabel(char *label)$/;"	f
+Relation	boolean.c	/^void Relation(void)$/;"	f
+Subtract	arithmetic.c	/^void Subtract(void)$/;"	f
+TAB	main.c	/^const int TAB = '\\t';$/;"	v
+Term	arithmetic.c	/^void Term(void)$/;"	f
+_start	cradle.s	/^_start:$/;"	l
+colno	main.c	/^int colno;$/;"	v
+expect	test.py	/^	expect = tests[test]$/;"	v
+int	cradle.s	/^int $0x80           # call$/;"	l
+label	main.c	/^char label[9]; \/* label for machine code  conditionals *\/$/;"	v
+labelno	main.c	/^int labelno;$/;"	v
+lineno	main.c	/^int lineno;$/;"	v
+main	main.c	/^int main(int argc, char *argv[])$/;"	f
+movl	cradle.s	/^movl $1, %eax      # sys_exit$/;"	l
+movl	cradle.s	/^movl %eax,%ebx$/;"	l
+results	test.py	/^results = {}$/;"	v
+tests	test.py	/^tests = {$/;"	v
