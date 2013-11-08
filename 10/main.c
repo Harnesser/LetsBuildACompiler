@@ -112,6 +112,10 @@ void Decl(void)
 	char name;
 	Match('v');
 	Alloc(GetName());
+	while (Look==',') {
+		GetChar();
+		Alloc(GetName());
+	}
 }
 
 void TopDecls(void)
