@@ -7,6 +7,8 @@ tests = {
 	'topdecls': 0,
 	'vars_initialised': 0,
 	'var_list': 0,
+	'var_negatives': 0,
+	'var_double_decl': 127,
 	}
 
 results = {}

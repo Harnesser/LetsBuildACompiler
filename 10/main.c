@@ -15,7 +15,7 @@ int labelno;
 
 char Look;  /* lookahead character */
 char label[9]; /* label for machine code  conditionals */
-
+int ST[26];
 
 void GetChar(void)
 {
@@ -89,15 +89,26 @@ void EmitLn(const char *msg)
 
 void Init(void)
 {
+	int i;
 	lineno = 1;
 	labelno = 0;
 	colno = 0;
 	GetChar();
+	for(i=0;i<26;i++) {
+		ST[i] = 0;
+	}
 }
 
 /* -------------------------------------------------------------------- */
 
 // forward declarations
+
+int InTable(char c)
+{
+	int i;
+	i = c - 'A';
+	return ST[i];
+}
 
 // stuff
 #include "assembly.c"
