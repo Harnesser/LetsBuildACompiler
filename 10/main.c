@@ -106,11 +106,12 @@ void Init(void)
 //#include "arithmetic.c"
 //#include "conditional.c"
 
+
 void Decl(void)
 {
+	char name;
 	Match('v');
-	//Alloc(GetName);
-	GetChar();
+	Alloc(GetName());
 }
 
 void TopDecls(void)

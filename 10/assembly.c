@@ -19,4 +19,6 @@ void Header(void) { printf("%s\n", asm_header); }
 void Prolog(void) { printf("%s\n", asm_prolog); }
 void Epilog(void) { printf("%s\n", asm_epilog); }
 
-
+void Alloc(char name) {
+	printf("%c:\t.space 4\n", name);
+}
