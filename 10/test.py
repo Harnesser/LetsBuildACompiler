@@ -4,6 +4,7 @@ from subprocess import CalledProcessError
 
 tests = {
 	'program': 0,
+	'topdecls': 0,
 	}
 
 results = {}

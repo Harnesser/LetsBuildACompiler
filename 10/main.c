@@ -116,7 +116,26 @@ void Epilog(void)
 {
 }
 
-void Main()
+void Decl(void)
+{
+	Match('v');
+	GetChar();
+}
+
+void TopDecls(void)
+{
+	char msg[MAXMSG];
+	while (Look != 'b') {
+		switch(Look) {
+		case 'v': Decl(); break;
+		default:
+			snprintf(msg, MAXMSG, "Unrecognised keyword \'%c\'", Look);
+			break;
+		}
+	}
+}
+
+void Main(void)
 {
 	Match('b');
 	Prolog();
@@ -128,7 +147,9 @@ void Prog(void)
 {
 	Match('p');
 	Header();
+	TopDecls();
 	Main();
+	Match('.');
 }
 
 

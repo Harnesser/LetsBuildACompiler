@@ -3,10 +3,13 @@
 
 <main> ::= BEGIN <block> END
 
+<top-level decls> ::= ( <data declaration )*
+<data declaration> ::= VAR <var-list>
 
 == Mnemonics
 p PROGRAM
 b BEGIN
 e END
+v VAR
 
 
