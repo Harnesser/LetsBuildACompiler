@@ -12,17 +12,19 @@ void Assignment(void)
 {
 	char name;
 	name = GetName();
+	message("Assignment to %c", name);
 	Match('=');
-	Expression();
+	BoolExpression();
 	Store(name);
 }
 
 
 void Factor(void)
 {
+	message("Factor");
 	if (Look == '(') {
 		Match('(');
-		Expression();
+		BoolExpression();
 		Match(')');
 	} else if ( IsAlpha(Look) ) {
 		LoadVar(GetName());
@@ -108,6 +110,7 @@ void Sub(void)
 
 void Expression(void)
 {
+	message("Expression");
 	FirstTerm();
 	while (IsAddop(Look)) {
 		Push();

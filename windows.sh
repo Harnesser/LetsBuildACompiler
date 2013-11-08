@@ -1,7 +1,7 @@
 #! /usr/bin/env sh
 
 PRJDIR=/home/harnesser/Projects/LetsBuildACompiler
-TUTORIAL=07
+TUTORIAL=10
 FILENAME=main.c
 
 # can't use command as terminal exits once it's done :(
@@ -22,6 +22,8 @@ gedit \
 	--background \
 	--geometry=60x120+100+10 \
 	--new-window \
-	${PRJDIR}/tutorials/tutor${tut}.txt &
+	${PRJDIR}/tutorials/tutor${tut}.txt \
+	${PRJDIR}/test_data/kiss/assignments.txt \
+	${PRJDIR}/${tut}/test.py &
 
 

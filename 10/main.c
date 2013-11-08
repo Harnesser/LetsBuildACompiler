@@ -4,6 +4,14 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifdef NMESSAGE
+#define message(M, ...)
+#else
+#define message(M, ...) \
+	printf("### " M , ##__VA_ARGS__); \
+	printf(" Line %d col %d : Look '%c' \n", lineno, colno, Look);
+#endif
+
 const int MAXMSG = 100;
 const int MAXLBL = 8+1;
 const int MAXNAME = 25+1;
@@ -102,6 +110,7 @@ void Init(void)
 /* -------------------------------------------------------------------- */
 
 // forward declarations
+void Expression(void);
 
 int InTable(char c)
 {
@@ -113,7 +122,7 @@ int InTable(char c)
 // stuff
 #include "assembly.c"
 #include "scanning.c"
-//#include "boolean.c"
+#include "boolean.c"
 #include "arithmetic.c"
 //#include "conditional.c"
 
@@ -144,27 +153,33 @@ void TopDecls(void)
 
 void Block(void)
 {
+	message("Block");
 	while (Look!='e') {
 		Assignment();
 	}
+	message("Endblock");
 }
 
 void Main(void)
 {
+	message("main");
 	Match('b');
 	Prolog();
 	Block();
 	Match('e');
 	Epilog();
+	message("endmain");
 }
 
 void Prog(void)
 {
+	message("Program");
 	Match('p');
 	Header();
 	TopDecls();
 	Main();
 	Match('.');
+	message("Endprogram");
 }
 
 

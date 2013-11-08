@@ -19,6 +19,12 @@
 <first factor> ::= [ <addop> ] <factor>
 <factor> ::= <var> | <number> | '(' <expression> ')'
 
+<bool-expr> ::= <bool-term> ( <orop> <bool-term> )*
+<bool-term> ::= <not-factor> ( <andop> <not-factor> )*
+<not-factor> ::= [ '!' ] <relation>
+<relation> ::= <expression> [ <relop> <expression> ]
+
+
 == Mnemonics
 p PROGRAM
 b BEGIN

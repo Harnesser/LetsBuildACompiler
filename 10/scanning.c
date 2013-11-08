@@ -9,7 +9,9 @@ char GetName(void)
 		Expected("Name");
 	}
 	name = toupper(Look);
+	printf("# >>>> Name '%c' (%d)\n", name, name)	;
 	GetChar();
+	message("Name: %c", name);
 	return name;
 }
 

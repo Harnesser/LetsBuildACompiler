@@ -19,6 +19,9 @@ void Header(void) { printf("%s\n", asm_header); }
 void Prolog(void) { printf("%s\n", asm_prolog); }
 void Epilog(void) { printf("%s\n", asm_epilog); }
 
+/* ------------------------------------------------------------------------ */
+// Arithmetic
+
 void Clear(void) { EmitLn("movl $0, %eax"); }
 void Negate(void) { EmitLn("neg %eax"); }
 void Push(void) { EmitLn("pushl %eax"); }
@@ -84,10 +87,68 @@ void Store(char name)
 	EmitLn("movl %eax,(%edx)\t\t# assignment");
 }
 
+/* ------------------------------------------------------------------------ */
+// Boolean
+
+void NotIt(void) { EmitLn("notl %eax"); }
+
+void PopOr(void) {
+	EmitLn("popl %ebx");
+	EmitLn("orl %edx, %eax");
+}
+
+void PopXor(void) {
+	EmitLn("popl %ebx");
+	EmitLn("xorl %ebx, %eax");
+}
+
+void PopAnd(void) {
+	EmitLn("popl %ebx");
+	EmitLn("andl %ebx, %eax");
+}
+
+void PopCompare(void) {
+	EmitLn("popl %ebx");
+	EmitLn("cmpl %eax, %ebx");
+}
+
+/* NOTE: do logical opposite then subtract 1 to get true == all ones*/
+void SetEqual(void) {
+	EmitLn("setne %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
+}
+
+/* NOTE: do logical opposite then subtract 1 to get true == all ones*/
+void SetNEqual(void) {
+	EmitLn("sete %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
+}
+
+/* NOTE: do logical opposite then subtract 1 to get true == all ones*/
+void SetGreater(void) {
+	EmitLn("setle %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
+}
+
+/* NOTE: do logical opposite then subtract 1 to get true == all ones*/
+void SetLess(void) {
+	EmitLn("setge %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
+}
+
+
+/* ------------------------------------------------------------------------ */
+
 void Alloc(char name)
 {
 	int x;	
 	char msg[MAXMSG];
+
+	message("Allocating");
 
 	// check for dupes
 	if (InTable(name)) {
