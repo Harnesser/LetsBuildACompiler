@@ -9,7 +9,8 @@ tests = {
 	'var_list': 0,
 	'var_negatives': 0,
 	'var_double_decl': 127,
-	'assignments': 0,
+	'assignments': 3,
+	'assignments_and_expressions': 2,
 	}
 
 results = {}

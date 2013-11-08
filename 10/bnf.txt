@@ -11,6 +11,14 @@
 
 <block> ::= (Assignment)*
 
+<assignment> ::= <ident> '=' <expression>
+<expression> ::= <first term> ( <addop> <term> )*
+<first term> ::= <first factor> <rest>
+<term> ::= <factor> <rest>
+<rest> ::= ( <mulop> <factor> )*
+<first factor> ::= [ <addop> ] <factor>
+<factor> ::= <var> | <number> | '(' <expression> ')'
+
 == Mnemonics
 p PROGRAM
 b BEGIN
