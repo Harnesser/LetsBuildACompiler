@@ -1,7 +1,9 @@
 test: main
+	@echo "\033[32m Testing \033[0m"
 	./test.py
 
-expression: main.c boolean.c arithmetic.c conditional.c
+main: main.c boolean.c arithmetic.c conditional.c scanning.c
+	@echo "\033[32m Compiling \033[0m"
 	gcc main.c -o main
 
 clean:

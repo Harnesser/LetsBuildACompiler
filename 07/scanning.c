@@ -29,61 +29,61 @@ int IsOp(char c)
 	return 0;
 }
 
-	
-char *GetName(void)
+// writes a name to the string at `name`	
+void GetName(char *name)
 {
-	int iskw=0;
 	int i=0;
 	if (!IsAlpha(Look)) {
 		Expected("Name");
 	}
 	while ( IsAlNum(Look) && i<MAXNAME-1 ) {
-		Name[i++] = toupper(Look);
+		name[i++] = toupper(Look);
 		GetChar();
 	}
-	Name[i] = '\0';
-	iskw = Lookup(Name);
-	if (iskw==0 ) {
-		TokenId = T_IDENT;
-	} else {
-		TokenId = iskw;
-	}
+	name[i] = '\0';
 	SkipWhite();
-	return Name;
 }
 
-char *GetNum(void)
+// writes a number string to `numstr`
+void GetNum(char *numstr)
 {
 	int i=0;
 	if (!IsDigit(Look)) {
 		Expected("Integer");
 	}
 	while ( IsDigit(Look) && i<MAXNAME-1 ) {
-		Num[i++] = Look;
+		numstr[i++] = Look;
 		GetChar();
 	}
-	Num[i] = '\0';
+	numstr[i] = '\0';
 	TokenId = T_NUMBER;
 	SkipWhite();
-	return Num;
 }
 
-char *GetOp(void)
+// writes an operator to string `opstr`
+void *GetOp(char *opstr)
 {
 	int i=0;
 	if (!IsOp(Look)) {
 		Expected("Operator");
 	}
 	while ( IsOp(Look) && i<MAXOPER-1 ) {
-		Oper[i++] = Look;
+		opstr[i++] = Look;
 		GetChar();
 	}
-	Oper[i] = '\0';
+	opstr[i] = '\0';
 	TokenId = T_OPER;
 	SkipWhite();
-	return Oper;
 }
 
+// match a string to the current read token
+void MatchString(char *str)
+{
+	printf("# Checking \"%s\" vs \"%s\"\n", str, Token);
+	if ( strncmp(str, Token, MAXNAME) != 0 ) {
+		Expected(str);
+	}
+}
 
 void clear_ident(char *ident)
 {
@@ -93,28 +93,18 @@ void clear_ident(char *ident)
 	}
 }
 
-char *Scan(void) 
+// Scan sets Token and TokenID
+void Scan(void) 
 {
-	char *ident;
-	int iskw;
-
-	if ( IsAlpha(Look) ) {
-		ident = GetName();
-		iskw = Lookup(ident);
-	} else if ( IsDigit(Look) ) {
-		ident = GetNum();
-	} else if ( IsOp(Look) ) {
-		ident = GetOp();
-	} else {
-		clear_ident(Name);
-		Name[0] = Look;
-		ident = Name;
-		GetChar();
-		TokenId = T_OTHER;
+	GetName(Token);
+	TokenId = Lookup(Token);
+	if (TokenId == T_OTHER) {
+		TokenId = T_IDENT;
 	}
 	SkipWhite();
-	strncpy(Token, ident, MAXNAME);
-	return Token;
+	printf("# Scanned...\n");
+	printf("#  Token: \"%s\"\n", Token);
+	printf("#     Id: %d\n", TokenId);
 }	
 
 // If the input string matches an entry in the table, return

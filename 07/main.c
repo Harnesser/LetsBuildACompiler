@@ -7,22 +7,26 @@
 const int TAB = '\t';
 const int MAXMSG = 100;
 const int MAXLBL = 8+1;
+const int MAXNAME = 25+1;
+const int MAXOPER = 5;
 
 int lineno;
 int colno;
 int labelno;
 
+typedef enum { T_OTHER=0, T_IF, T_ELSE, T_ENDIF, T_END,
+               T_IDENT, T_NUMBER, T_OPER } e_token;
+
+e_token TokenId;
+
 char Look;  /* lookahead character */
+char Token[26]; /* scanned token */
 char label[9]; /* label for machine code  conditionals */
 
 
 void GetChar(void)
 {
 	Look = getchar();
-	if (Look==EOF) {
-		printf("# Done\n");
-		exit(0);
-	}
 	colno++;
 }
 
@@ -38,7 +42,7 @@ void Fin(void)
 void Error(const char *msg)
 {
 	printf("\n");
-	printf("Error: \"%s\" at line %d column %d\n", msg, lineno, colno);
+	printf("Error: %s at line %d column %d\n", msg, lineno, colno);
 }
 
 void Abort(const char *msg)
@@ -61,30 +65,22 @@ void Match(const char tok)
 	if (Look == tok) {
 		GetChar();
 	} else {
-		snprintf(msg, MAXMSG, "\"%c\"", tok);
+		snprintf(msg, MAXMSG, "\"%c\" Look=\"%c\"", tok, Look);
 		Expected(msg);
 	}
+	SkipWhite();
 }
 
-int IsAlpha(const char tok)
-{
-	return isalpha(tok);
-}
+int IsAlpha(const char tok) { return isalpha(tok); }
+int IsDigit(const char tok) { return isdigit(tok); }
+int IsAlNum(const char tok) { return isalnum(tok); }
+int IsWhite(const char tok) { return isspace(tok); }
 
-int IsDigit(const char tok)
+void SkipWhite(void)
 {
-	return isdigit(tok);
-}
-
-char GetName(void)
-{
-	char name;
-	if (!IsAlpha(Look)) {
-		Expected("Name");
+	while (IsWhite(Look)) {
+		GetChar();
 	}
-	name = toupper(Look);
-	GetChar();
-	return name;
 }
 
 void Emit(const char *msg)
@@ -104,6 +100,8 @@ void Init(void)
 	labelno = 0;
 	colno = 0;
 	GetChar();
+	Token[0] = '\0';
+	TokenId = T_OTHER;
 }
 
 /* -------------------------------------------------------------------- */
@@ -114,6 +112,7 @@ void Relation(void);
 void Expression(void);
 
 // stuff
+#include "scanning.c"
 #include "boolean.c"
 #include "arithmetic.c"
 #include "conditional.c"
@@ -122,18 +121,18 @@ void Expression(void);
 
 void Ident(void)
 {
-       char name;
+       char name[MAXNAME];
        char str[MAXMSG];
 
-       name = GetName();
+       GetName(name);
        if (Look=='(') {
                /* function call */
                Match('(');
                Match(')'); // empty arg list for now
-               snprintf(str, MAXMSG, "bsr %c", name);
+               snprintf(str, MAXMSG, "bsr %s", name);
        } else {
                /* variable */
-               snprintf(str, MAXMSG, "movl $%c, %%edx", name);
+               snprintf(str, MAXMSG, "movl $%s, %%edx", name);
                EmitLn(str);
                EmitLn("movl (%edx), %eax");
        }       
@@ -141,11 +140,10 @@ void Ident(void)
 
 void DoProgram(void)
 {
+	printf("# PROGRAM..\n");
 	Block("");
-	if (Look != 'e') {
-		Expected("End");
-	}
-	Match('e');
+	printf("# END OF BLOCK\n");
+	MatchString("END");
 	printf("#ENDPROGRAM\n");
 }
 
@@ -154,8 +152,8 @@ void DoProgram(void)
 int main(int argc, char *argv[])
 {
 	Init();
-	while (Look != EOF) {
-		DoProgram();
-	}
+	//while (Look != EOF) {
+	DoProgram();
+	//}
 }
 

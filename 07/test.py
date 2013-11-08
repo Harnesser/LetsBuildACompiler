@@ -3,10 +3,9 @@ from subprocess import check_call
 from subprocess import CalledProcessError
 
 tests = {
-	'do_loop': 5,
-	'do_loop_2': -10,
-	'small_accumulator': 15,
-	'for_loop': 45,
+	'assign': 36,
+	'if_else': -5,
+	'if_else_newlines': -5,
 	}
 
 results = {}

@@ -22,36 +22,43 @@ void DoBreak(char *exit_label);
 
 void Block(char *exit_label)
 {
-	while ( (Look != 'e') && (Look !='l') && (Look !='u') ) {
+	Scan();
+	printf("# BREAKING on : %d, %d, %d\n", T_ELSE, T_ENDIF, T_END);
+	while ( (TokenId != T_ELSE) && (TokenId != T_ENDIF) && (TokenId != T_END) ) {
 		Fin();
 		printf("# BLOCK start\n");
-		switch (Look) {
-		case 'i':
+		printf("#  Token: \"%s\"\n", Token);
+		printf("#     Id: %d\n", TokenId);
+		switch (TokenId) {
+		case T_IF:
 			DoIf(exit_label);
 			break;
-		case 'w':
+/*
+		case T_WHILE:
 			DoWhile();
 			break;
-		case 'p':
+		case T_LOOP:
 			DoLoop();
 			break;
-		case 'r':
+		case T_REPEAT:
 			DoRepeat();
 			break;
-		case 'f':
+		case T_FOR:
 			DoFor();
 			break;
-		case 'd':
+		case T_DO:
 			DoDo();
 			break;
-		case 'b':
+		case T_BREAK:
 			DoBreak(exit_label);
 			break;
+*/
 		default:
 			Assignment();
 			break;
 		}
 		Fin();
+		Scan();
 		printf("# BLOCK end\n");
 	}
 }
@@ -63,7 +70,7 @@ void DoIf(char *exit_label)
 	char l1[MAXLBL];
 	char l2[MAXLBL];
 
-	Match('i');
+	// Match('i');
 	printf("# IF\n");
 	NewLabel();
 	strncpy(l1, label, MAXLBL);
@@ -78,8 +85,8 @@ void DoIf(char *exit_label)
 	// Blocks().
 
 	Block(exit_label);
-	if (Look=='l') {
-		Match('l');
+	if ( strncmp(Token, "ELSE", MAXNAME) == 0) {
+		//Match('l');
 		printf("#ELSE\n");
 		NewLabel();
 		strncpy(l2, label, MAXLBL);
@@ -88,7 +95,7 @@ void DoIf(char *exit_label)
 		PostLabel(l1);
 		Block(exit_label);
 	}
-	Match('e'); // ENDIF
+	MatchString("ENDIF"); // ENDIF
 	printf("#ENDIF\n");
 	PostLabel(l2);
 }
@@ -167,7 +174,7 @@ void DoRepeat(void)
 
 void DoFor(void)
 {
-	char name;
+	char name[MAXNAME];
         char code[MAXMSG];
         char l1[MAXLBL];
         char l2[MAXLBL];
@@ -180,10 +187,10 @@ void DoFor(void)
         strncpy(l2, label, MAXLBL);
 
 	// could call Assignment here, but I need to keep the loop counter handle
-	name = GetName();
+	GetName(name);
 	Match('=');
 	Expression(); // expr1 = initial value
-	snprintf(code, MAXMSG, "movl $%c,%%edx", name);
+	snprintf(code, MAXMSG, "movl $%s,%%edx", name);
 	EmitLn(code);
 	EmitLn("movl %eax,(%edx)\t\t# assignment");
 
@@ -194,7 +201,7 @@ void DoFor(void)
 	PostLabel(l1);
 	EmitLn("popl %eax  \t\t# recover tgt");
 	EmitLn("pushl %eax");
-        snprintf(code, MAXMSG, "movl $%c,%%edx", name);
+        snprintf(code, MAXMSG, "movl $%s,%%edx", name);
         EmitLn(code);
 	EmitLn("movl (%edx), %ecx  \t\t # Grab loop counter");
 
@@ -207,7 +214,7 @@ void DoFor(void)
 	//EmitLn("popl %ecx  \t\t# don't need return val");
 
 	// loopback
-        snprintf(code, MAXMSG, "movl $%c,%%edx", name); 
+        snprintf(code, MAXMSG, "movl $%s,%%edx", name); 
 	EmitLn(code);
 	EmitLn("movl (%edx), %ecx    \t\t # grab loop counter");
 	EmitLn("inc %ecx  \t\t # i++");

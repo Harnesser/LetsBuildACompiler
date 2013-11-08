@@ -3,7 +3,12 @@
 PROGRAM=../test_data/programs_07/$1.txt
 EXPECT=$2
 
-make clean main
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+echo "Test: $PROGRAM"
+echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+rm -f machinecode main
+
+make main
 ./main <${PROGRAM} >assembly.s
 cat assembly.s
 make -f Assembly.mk

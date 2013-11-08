@@ -2,22 +2,13 @@
 // Arithmetic Stuff
 //
 
-int GetNum(void)
-{
-	char num;
-	if (!IsDigit(Look)) {
-		Expected("Integer");
-	}
-	num = Look;
-	GetChar();
-	return (int)(num - '0');
-}
-
 /* -------------------------------------------------------------------- */
 
 void Factor(void)
 {
 	char str[MAXMSG];
+	char numstr[MAXNAME];
+
 	if (Look=='(') {
 		Match('(');
 		Expression();
@@ -25,7 +16,8 @@ void Factor(void)
 	} else if (IsAlpha(Look)) {
 		Ident();
 	} else {
-		snprintf(str, MAXMSG, "movl $%d,%%eax", GetNum() );
+		GetNum(numstr);
+		snprintf(str, MAXMSG, "movl $%s,%%eax", numstr);
 		EmitLn(str);
 	}
 }
@@ -118,12 +110,12 @@ void Expression(void)
 
 void Assignment(void)
 {
-	char name;
+	char name[MAXNAME];
 	char str[MAXMSG];
-	name = GetName();
+	strncpy(name, Token, MAXNAME);
 	Match('=');
 	BoolExpression();
-	snprintf(str, MAXMSG, "movl $%c,%%edx", name);
+	snprintf(str, MAXMSG, "movl $%s,%%edx", name);
 	EmitLn(str);
 	EmitLn("movl %eax,(%edx)\t\t# assignment");
 }

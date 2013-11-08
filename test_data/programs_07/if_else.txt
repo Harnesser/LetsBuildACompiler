@@ -1,0 +1,6 @@
+a=4
+if a>3 c=-5
+else c=5
+endif
+c=c
+end
