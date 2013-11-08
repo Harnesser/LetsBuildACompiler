@@ -1,0 +1,8 @@
+== BNF
+<program> :== PROGRAM <top-level decl> <main> '.'
+
+
+
+== Mnemonics
+p PROGRAM
+
