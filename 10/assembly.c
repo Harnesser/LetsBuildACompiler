@@ -20,5 +20,11 @@ void Prolog(void) { printf("%s\n", asm_prolog); }
 void Epilog(void) { printf("%s\n", asm_epilog); }
 
 void Alloc(char name) {
-	printf("%c:\t.space 4\n", name);
+	printf("%c:\t .long ", name );
+	if (Look=='=') {
+		Match('=');
+		printf("%d\n", GetNum());
+	} else {
+		printf("0\n");
+	}
 }

@@ -6,6 +6,9 @@
 <top-level decls> ::= ( <data declaration )*
 <data declaration> ::= VAR <var-list>
 
+<var-list> ::= <var> ( <var> )*
+<var> ::= <ident> [ = <integer> ]
+
 == Mnemonics
 p PROGRAM
 b BEGIN

@@ -13,3 +13,15 @@ char GetName(void)
 	return name;
 }
 
+
+int GetNum(void)
+{
+	char num;
+	if (!IsDigit(Look)) {
+		Expected("Integer");
+	}
+	num = Look;
+	GetChar();
+	return (int)(num - '0');
+}
+

@@ -5,6 +5,7 @@ from subprocess import CalledProcessError
 tests = {
 	'program': 0,
 	'topdecls': 0,
+	'vars_initialised': 0,
 	}
 
 results = {}
