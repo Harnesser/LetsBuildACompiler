@@ -1,0 +1,4 @@
+void Assignment(void)
+{
+	GetChar();
+}

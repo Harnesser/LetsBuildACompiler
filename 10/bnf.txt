@@ -9,6 +9,8 @@
 <var-list> ::= <var> ( <var> )*
 <var> ::= <ident> [ = <integer> ]
 
+<block> ::= (Assignment)*
+
 == Mnemonics
 p PROGRAM
 b BEGIN

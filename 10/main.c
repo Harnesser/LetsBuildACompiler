@@ -114,7 +114,7 @@ int InTable(char c)
 #include "assembly.c"
 #include "scanning.c"
 //#include "boolean.c"
-//#include "arithmetic.c"
+#include "arithmetic.c"
 //#include "conditional.c"
 
 
@@ -142,10 +142,18 @@ void TopDecls(void)
 	}
 }
 
+void Block(void)
+{
+	while (Look!='e') {
+		Assignment();
+	}
+}
+
 void Main(void)
 {
 	Match('b');
 	Prolog();
+	Block();
 	Match('e');
 	Epilog();
 }
