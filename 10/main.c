@@ -116,13 +116,19 @@ void Epilog(void)
 {
 }
 
+void Main()
+{
+	Match('b');
+	Prolog();
+	Match('e');
+	Epilog();
+}
+
 void Prog(void)
 {
 	Match('p');
 	Header();
-	Prolog();
-	Match('.');
-	Epilog();
+	Main();
 }
 
 

@@ -1,8 +1,12 @@
 == BNF
-<program> :== PROGRAM <top-level decl> <main> '.'
+<program> ::= PROGRAM <top-level decl> <main> '.'
 
+<main> ::= BEGIN <block> END
 
 
 == Mnemonics
 p PROGRAM
+b BEGIN
+e END
+
 
