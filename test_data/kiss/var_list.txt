@@ -1,1 +1,1 @@
-pvx,y,zva=1be.
+pvx,y,zva=10be.

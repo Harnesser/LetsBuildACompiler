@@ -17,11 +17,16 @@ char GetName(void)
 int GetNum(void)
 {
 	char num;
+	char x;
 	if (!IsDigit(Look)) {
 		Expected("Integer");
 	}
-	num = Look;
-	GetChar();
-	return (int)(num - '0');
+	num = 0;
+	while (IsDigit(Look)) {
+		x = (int)(Look - '0');
+		num = num*10 + x;
+		GetChar();
+	}
+	return num;
 }
 
