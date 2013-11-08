@@ -100,25 +100,16 @@ void Init(void)
 // forward declarations
 
 // stuff
+#include "assembly.c"
 #include "scanning.c"
 //#include "boolean.c"
 //#include "arithmetic.c"
 //#include "conditional.c"
-void Header(void)
-{
-}
-
-void Prolog(void)
-{
-}
-
-void Epilog(void)
-{
-}
 
 void Decl(void)
 {
 	Match('v');
+	//Alloc(GetName);
 	GetChar();
 }
 
