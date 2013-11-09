@@ -21,6 +21,9 @@ tests = {
     'assignments_boolean_02': KFALSE, # -100 == 2
     'assignments_boolean_03': KTRUE,  # -100 < 2
     'while_accum': 45,  # sum 0 to 9
+    'while_accum_whitespace': 45,
+    'whitespace_leading': 0,
+    'if_else_whitespace': 41
 	}
 
 results = {}
