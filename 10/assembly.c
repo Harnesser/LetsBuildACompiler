@@ -140,6 +140,24 @@ void SetLess(void) {
 	EmitLn("subl $1, %eax");
 }
 
+/* ------------------------------------------------------------------------ */
+// Conditional
+void Branch(char *label)
+{
+	char code[MAXMSG];
+	message("JUMP to %s", label);
+	snprintf(code, MAXMSG, "jmp .%s", label);
+	EmitLn(code);
+}
+
+void BranchFalse(char *label)
+{
+	char code[MAXMSG];
+	message("Branch if 0 to %s", label);
+	EmitLn("testl %eax, %eax");
+	snprintf(code, MAXMSG, "jz .%s", label);
+	EmitLn(code);
+}
 
 /* ------------------------------------------------------------------------ */
 

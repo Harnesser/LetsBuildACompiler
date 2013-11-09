@@ -9,7 +9,7 @@
 <var-list> ::= <var> ( <var> )*
 <var> ::= <ident> [ = <integer> ]
 
-<block> ::= (Assignment)*
+<block> ::= ( <statement> )*
 
 <assignment> ::= <ident> '=' <expression>
 <expression> ::= <first term> ( <addop> <term> )*
@@ -24,11 +24,17 @@
 <not-factor> ::= [ '!' ] <relation>
 <relation> ::= <expression> [ <relop> <expression> ]
 
+<if> ::= IF <bool-expression> <block> [ ELSE <block> ] ENDIF
+<while> ::= WHILE <bool-expression> <block> ENDWHILE
+<statement> ::= <if> | <while> | <assignment>
 
 == Mnemonics
 p PROGRAM
 b BEGIN
 e END
 v VAR
+i IF
+l ELSE
+w WHILE
 
 

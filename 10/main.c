@@ -111,6 +111,7 @@ void Init(void)
 
 // forward declarations
 void Expression(void);
+void Block(void);
 
 int InTable(char c)
 {
@@ -124,7 +125,7 @@ int InTable(char c)
 #include "scanning.c"
 #include "boolean.c"
 #include "arithmetic.c"
-//#include "conditional.c"
+#include "conditional.c"
 
 
 void Decl(void)
@@ -154,8 +155,12 @@ void TopDecls(void)
 void Block(void)
 {
 	message("Block");
-	while (Look!='e') {
-		Assignment();
+	while ( (Look!='e') && (Look!='l') )  {
+		switch (Look) {
+		case 'i': DoIf(); break;
+		case 'w': DoWhile(); break;
+		default : Assignment(); break;
+		}
 	}
 	message("Endblock");
 }
