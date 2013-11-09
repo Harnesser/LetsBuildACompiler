@@ -20,7 +20,7 @@ tests = {
     'assignments_boolean_01': KFALSE, # -100 > 2
     'assignments_boolean_02': KFALSE, # -100 == 2
     'assignments_boolean_03': KTRUE,  # -100 < 2
-    'while_accum': 5,  # sum 0 to 9
+    'while_accum': 45,  # sum 0 to 9
 	}
 
 results = {}
