@@ -6,7 +6,9 @@ char *Keywords[] = {
 	"IF",
 	"ELSE",
 	"ENDIF",
-	"END"
+	"END",
+	"BEGIN",
+	"VAR"
 	};
 
 #define NUMKEYWORDS sizeof(Keywords)/sizeof(Keywords[0])

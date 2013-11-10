@@ -28,7 +28,8 @@ char pLook[26]; /* printable version of Look */
 char label[9]; /* label for machine code  conditionals */
 int ST[26];
 
-typedef enum { T_OTHER=0, T_IF, T_ELSE, T_ENDIF, T_END,
+typedef enum { T_OTHER=0,
+               T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR,
                T_IDENT, T_NUMBER, T_OPER } e_token;
 e_token TokenId;
 char Token[26]; /* scanned token */
@@ -135,7 +136,7 @@ int InTable(char *c)
 void Decl(void)
 {
 	char name[MAXNAME];
-	Match('v');
+	MatchString("VAR");
 	GetName(name);
 	Alloc(name);
 	while (Look==',') {
@@ -148,18 +149,18 @@ void Decl(void)
 void TopDecls(void)
 {
 	char msg[MAXMSG];
-	NewLine();
+	Scan();
 	message("Top Declarations");
-	while (Look != 'b') {
-		switch(Look) {
-		case 'v': Decl(); break;
+	while (TokenId != T_BEGIN) {
+		switch(TokenId) {
+		case T_VAR: Decl(); break;
 		default:
 			snprintf(msg, MAXMSG, "Unrecognised keyword \'%c\'", Look);
 			
 			Abort(msg);
 			break;
 		}
-		NewLine();
+		Scan();
 	}
 	message("  ");
 	message("Top Declarations Done");
@@ -183,7 +184,6 @@ void Block(void)
 void Main(void)
 {
 	message("main");
-	Scan();
 	MatchString("BEGIN");
 	Prolog();
 	Block();

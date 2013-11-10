@@ -10,6 +10,7 @@ KFALSE = 0
 
 tests = {
 	'program_empty': 0,
+	'var_declarations': 0,
 	}
 
 results = {}
