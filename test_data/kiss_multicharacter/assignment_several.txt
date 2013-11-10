@@ -5,6 +5,6 @@ var you=0, are=4, sweet=6
 begin
   people = marty
   are = marty
-  you = sweet
+  you = are
 end .
 
