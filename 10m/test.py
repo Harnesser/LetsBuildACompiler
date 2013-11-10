@@ -14,6 +14,7 @@ tests = {
 	'assignment_simple': 100,
 	'assignment_several': 100,
 	'if': 100,
+	'if_else': 37,
 	}
 
 results = {}
