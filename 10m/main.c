@@ -28,6 +28,11 @@ char pLook[26]; /* printable version of Look */
 char label[9]; /* label for machine code  conditionals */
 int ST[26];
 
+typedef enum { T_OTHER=0, T_IF, T_ELSE, T_ENDIF, T_END,
+               T_IDENT, T_NUMBER, T_OPER } e_token;
+e_token TokenId;
+char Token[26]; /* scanned token */
+
 void GetChar(void)
 {
 	Look = getchar();
@@ -68,21 +73,6 @@ void SkipWhite(void)
 	//message("Done chomping whitespace");
 }
 
-void Match(const char tok)
-{
-	char msg[MAXMSG];
-	message("Looking to match \'%c\'", tok);
-	NewLine();
-	if (Look == tok) {
-		GetChar();
-		message("Matched");
-	} else {
-		snprintf(msg, MAXMSG, "\"%c\" Look=\"%c\"", tok, Look);
-		Expected(msg);
-	}
-	SkipWhite();
-}
-
 void Printable(char *pline, char tok)
 {
 	switch(tok) {
@@ -104,6 +94,8 @@ void EmitLn(const char *msg)
 	printf("\n");
 }
 
+void Scan(void);
+
 void Init(void)
 {
 	int i;
@@ -112,6 +104,7 @@ void Init(void)
 	colno = 0;
 	GetChar();
 	SkipWhite();
+	Scan();
 	for(i=0;i<26;i++) {
 		ST[i] = 0;
 	}
@@ -124,16 +117,16 @@ void Init(void)
 void Expression(void);
 void Block(void);
 
-int InTable(char c)
+int InTable(char *c)
 {
 	int i;
-	i = c - 'A';
+	i = c[0] - 'A'; // horrible temp hack
 	return ST[i];
 }
 
 // stuff
-#include "assembly.c"
 #include "scanning.c"
+#include "assembly.c"
 #include "boolean.c"
 #include "arithmetic.c"
 #include "conditional.c"
@@ -141,12 +134,14 @@ int InTable(char c)
 
 void Decl(void)
 {
-	char name;
+	char name[MAXNAME];
 	Match('v');
-	Alloc(GetName());
+	GetName(name);
+	Alloc(name);
 	while (Look==',') {
 		GetChar();
-		Alloc(GetName());
+		GetName(name);
+		Alloc(name);
 	}
 }
 
@@ -172,15 +167,15 @@ void TopDecls(void)
 
 void Block(void)
 {
-	NewLine();
+	Scan();
 	message("Block");
-	while ( (Look!='e') && (Look!='l') )  {
+	while ( (TokenId != T_ENDIF) && (TokenId != T_ELSE) && (TokenId != T_END) )  {
 		switch (Look) {
 		case 'i': DoIf(); break;
 		case 'w': DoWhile(); break;
 		default : Assignment(); break;
 		}
-		NewLine();
+		Scan();
 	}
 	message("Endblock");
 }
@@ -188,11 +183,11 @@ void Block(void)
 void Main(void)
 {
 	message("main");
-	NewLine();
-	Match('b');
+	Scan();
+	MatchString("BEGIN");
 	Prolog();
 	Block();
-	Match('e');
+	MatchString("END");
 	Epilog();
 	message("endmain");
 }
@@ -200,8 +195,8 @@ void Main(void)
 void Prog(void)
 {
 	message("Program");
-	NewLine();
-	Match('p');
+	fflush(NULL);
+	MatchString("PROGRAM");
 	message("Starting Program");
 	Header();
 	message("TopDecls");

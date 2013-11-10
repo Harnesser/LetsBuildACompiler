@@ -32,19 +32,19 @@ void LoadConst(int val) {
 	EmitLn(code);
 }
 
-void Undefined(char name)
+void Undefined(char *name)
 {
 	char msg[MAXMSG];
-	snprintf(msg, MAXMSG, "Undefined identifier \'%c\'", name);
+	snprintf(msg, MAXMSG, "Undefined identifier \'%s\'", name);
 	Abort(msg);
 }
 
-void LoadVar(char name) {
+void LoadVar(char *name) {
 	char code[MAXMSG];
 	if (!InTable(name) ) {
 		Undefined(name);
 	}
-	snprintf(code, MAXMSG, "movl $%c, %%edx", name);
+	snprintf(code, MAXMSG, "movl $%s, %%edx", name);
 	EmitLn(code);
 	EmitLn("movl (%edx), %eax");
 }
@@ -76,13 +76,13 @@ void PopDiv(void)
 	EmitLn("divl %ebx");
 }
 
-void Store(char name)
+void Store(char *name)
 {
 	char code[MAXMSG];
 	if (!InTable(name) ) {
 		Undefined(name);
 	}
-	snprintf(code, MAXMSG, "movl $%c,%%edx", name);
+	snprintf(code, MAXMSG, "movl $%s,%%edx", name);
 	EmitLn(code);
 	EmitLn("movl %eax,(%edx)\t\t# assignment");
 }
@@ -161,7 +161,7 @@ void BranchFalse(char *label)
 
 /* ------------------------------------------------------------------------ */
 
-void Alloc(char name)
+void Alloc(char *name)
 {
 	int x;	
 	char msg[MAXMSG];
@@ -170,14 +170,14 @@ void Alloc(char name)
 
 	// check for dupes
 	if (InTable(name)) {
-		snprintf(msg, MAXMSG, "Dupe variable: %c\n", name);
+		snprintf(msg, MAXMSG, "Dupe variable: %s\n", name);
 		Abort(msg);
 	} 
-	x = name - 'A';
+	x = name[0] - 'A'; // horrible hack
 	ST[x] = 1;
 
 	// write storage in .data sectoin
-	printf("%c:\t .long ", name );
+	printf("%s:\t .long ", name );
 	if (Look=='=') {
 		Match('=');
 		if (Look=='-') {

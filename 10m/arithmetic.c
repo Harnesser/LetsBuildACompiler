@@ -1,3 +1,6 @@
+//
+// Arithmetic stuff
+//
 
 void Expression(void);
 
@@ -10,9 +13,9 @@ int IsAddop(char tok) {
 
 void Assignment(void)
 {
-	char name;
-	name = GetName();
-	message("Assignment to %c", name);
+	char name[MAXNAME];
+	GetName(name);
+	message("Assignment to %s", name);
 	Match('=');
 	BoolExpression();
 	Store(name);
@@ -21,13 +24,15 @@ void Assignment(void)
 
 void Factor(void)
 {
+	char name[MAXNAME];
 	message("Factor");
 	if (Look == '(') {
 		Match('(');
 		BoolExpression();
 		Match(')');
 	} else if ( IsAlpha(Look) ) {
-		LoadVar(GetName());
+		GetName(name);
+		LoadVar(name);
 	} else {
 		LoadConst(GetNum());
 	}

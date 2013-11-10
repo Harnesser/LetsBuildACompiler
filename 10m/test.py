@@ -9,7 +9,7 @@ KTRUE = -1
 KFALSE = 0
 
 tests = {
-	'program': 0,
+	'program_empty': 0,
 	}
 
 results = {}
