@@ -13,6 +13,7 @@ tests = {
 	'var_declarations': 0,
 	'assignment_simple': 100,
 	'assignment_several': 100,
+	'if': 100,
 	}
 
 results = {}

@@ -19,7 +19,6 @@ void DoIf(void)
 	char l2[MAXLBL];
 	message("IF...");
 
-	Match('i');
 	BoolExpression();	
 	NewLabel();
 	strncpy(l1, label, MAXLBL);
@@ -30,9 +29,9 @@ void DoIf(void)
 	message("IF (true)");
 	Block();
 	
-	if (Look=='l') {
+	if (TokenId == T_ELSE) {
 		// false
-		Match('l');
+		MatchString("ELSE");
 		NewLabel();
 		strncpy(l2, label, MAXLBL);
 		Branch(l2);
@@ -43,7 +42,7 @@ void DoIf(void)
 	
 	message("IF exit");
 	PostLabel(l2);
-	Match('e');
+	MatchString("END");
 }
 
 void DoWhile(void)
