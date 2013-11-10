@@ -141,6 +141,7 @@ void Decl(void)
 	Alloc(name);
 	while (Look==',') {
 		GetChar();
+		SkipWhite();
 		GetName(name);
 		Alloc(name);
 	}

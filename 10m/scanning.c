@@ -88,6 +88,7 @@ int GetNum()
 	}
 	TokenId = T_NUMBER;
 	SkipWhite();
+	return val;
 }
 
 // writes an operator to string `opstr`

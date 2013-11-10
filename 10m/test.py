@@ -11,6 +11,8 @@ KFALSE = 0
 tests = {
 	'program_empty': 0,
 	'var_declarations': 0,
+	'assignment_simple': 100,
+	'assignment_several': 6,
 	}
 
 results = {}

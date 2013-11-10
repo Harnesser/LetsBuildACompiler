@@ -1,0 +1,12 @@
+program
+
+var marty = 100
+var people = -100
+
+begin
+
+  people = marty
+  
+end
+
+.

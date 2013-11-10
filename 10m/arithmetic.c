@@ -14,7 +14,7 @@ int IsAddop(char tok) {
 void Assignment(void)
 {
 	char name[MAXNAME];
-	GetName(name);
+	strncpy(name, Token, MAXNAME);
 	message("Assignment to %s", name);
 	Match('=');
 	BoolExpression();
