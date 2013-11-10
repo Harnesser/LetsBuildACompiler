@@ -15,6 +15,7 @@ tests = {
 	'assignment_several': 100,
 	'if': 100,
 	'if_else': 37,
+	'while_accum_whitespace': 45,
 	}
 
 results = {}

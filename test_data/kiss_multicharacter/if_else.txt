@@ -6,6 +6,6 @@ begin
         best = hendrix
     else
         best = marty
-    end        
+    endif   
 end .
 

@@ -9,7 +9,8 @@ char *Keywords[] = {
 	"END",
 	"BEGIN",
 	"VAR",
-	"WHILE"
+	"WHILE",
+	"ENDWHILE"
 	};
 
 #define NUMKEYWORDS sizeof(Keywords)/sizeof(Keywords[0])

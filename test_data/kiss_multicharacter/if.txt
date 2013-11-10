@@ -5,6 +5,6 @@ var best=0
 begin
     if hendrix > slash 
         best = hendrix
-    end        
+    endif        
 end .
 

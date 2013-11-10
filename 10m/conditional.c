@@ -42,7 +42,7 @@ void DoIf(void)
 	
 	message("IF exit");
 	PostLabel(l2);
-	MatchString("END");
+	MatchString("ENDIF");
 }
 
 void DoWhile(void)
@@ -51,7 +51,7 @@ void DoWhile(void)
 	char l2[MAXLBL];
 	message("WHILE...");
 	
-	Match('w');
+	MatchString("WHILE");
 	NewLabel();
 	strncpy(l1, label, MAXLBL);
 	NewLabel();
@@ -61,7 +61,7 @@ void DoWhile(void)
 	BoolExpression();
 	BranchFalse(l2);
 	Block();
-	Match('e');
+	MatchString("ENDWHILE");
 	Branch(l1);
 	PostLabel(l2);
 	message("WHILE exit");

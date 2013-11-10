@@ -29,7 +29,7 @@ char label[9]; /* label for machine code  conditionals */
 int ST[26];
 
 typedef enum { T_OTHER=0,
-               T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR, T_WHILE,
+               T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR, T_WHILE, T_ENDWHILE,
                T_IDENT, T_NUMBER, T_OPER } e_token;
 e_token TokenId;
 char Token[26]; /* scanned token */
@@ -171,7 +171,10 @@ void Block(void)
 {
 	Scan();
 	message("Block");
-	while ( (TokenId != T_ENDIF) && (TokenId != T_ELSE) && (TokenId != T_END) )  {
+	while ( (TokenId != T_ENDIF) &&
+	        (TokenId != T_ELSE) &&
+	        (TokenId != T_END) && 
+		(TokenId != T_ENDWHILE) )  {
 		switch (TokenId) {
 		case T_IF: DoIf(); break;
 		case T_WHILE: DoWhile(); break;
