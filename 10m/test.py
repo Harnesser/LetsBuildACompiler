@@ -16,6 +16,7 @@ tests = {
 	'if': 100,
 	'if_else': 37,
 	'while_accum_whitespace': 45,
+	'multichar_symbols': 21,
 	}
 
 results = {}

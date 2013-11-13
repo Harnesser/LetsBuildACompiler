@@ -1,0 +1,8 @@
+program
+var m = -2
+var marty = 23
+var mega = 0
+begin
+	mega = marty + m
+end
+.

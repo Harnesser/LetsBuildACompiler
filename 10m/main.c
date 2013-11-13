@@ -18,6 +18,7 @@ const int MAXMSG = 100;
 const int MAXLBL = 8+1;
 const int MAXNAME = 25+1;
 const int MAXOPER = 5;
+const int MAXENTRY = 100; /* max # of symbols in the table */
 
 int lineno;
 int colno;
@@ -26,7 +27,6 @@ int labelno;
 char Look;  /* lookahead character */
 char pLook[26]; /* printable version of Look */
 char label[9]; /* label for machine code  conditionals */
-int ST[26];
 
 typedef enum { T_OTHER=0,
                T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR, T_WHILE, T_ENDWHILE,
@@ -106,9 +106,6 @@ void Init(void)
 	GetChar();
 	SkipWhite();
 	Scan();
-	for(i=0;i<26;i++) {
-		ST[i] = 0;
-	}
 	message("Init Done");
 }
 
@@ -118,14 +115,8 @@ void Init(void)
 void Expression(void);
 void Block(void);
 
-int InTable(char *c)
-{
-	int i;
-	i = c[0] - 'A'; // horrible temp hack
-	return ST[i];
-}
-
 // stuff
+#include "symboltable.c"
 #include "scanning.c"
 #include "assembly.c"
 #include "boolean.c"
@@ -208,6 +199,7 @@ void Prog(void)
 	Main();
 	Match('.');
 	message("Endprogram");
+	ShowSymTable();
 }
 
 

@@ -173,8 +173,7 @@ void Alloc(char *name)
 		snprintf(msg, MAXMSG, "Dupe variable: %s\n", name);
 		Abort(msg);
 	} 
-	x = name[0] - 'A'; // horrible hack
-	ST[x] = 1;
+	AddEntry(name);
 
 	// write storage in .data sectoin
 	printf("%s:\t .long ", name );

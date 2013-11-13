@@ -13,7 +13,7 @@ mkdir -p asm
 make main
 ./main <${PROGRAM} >assembly.s
 cp assembly.s asm/$1.asm
-cat assembly.s
+#cat assembly.s
 make -f Assembly.mk
 
 # Test
