@@ -140,6 +140,21 @@ void SetLess(void) {
 	EmitLn("subl $1, %eax");
 }
 
+/* NOTE: do logical opposite then subtract 1 to get true == all ones*/
+void SetLessOrEqual(void) {
+	EmitLn("setg %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
+}
+
+/* NOTE: do logical opposite then subtract 1 to get true == all ones*/
+void SetGreaterOrEqual(void) {
+	EmitLn("setl %al");
+	EmitLn("movsx %al, %eax");
+	EmitLn("subl $1, %eax");
+}
+
+
 /* ------------------------------------------------------------------------ */
 // Conditional
 void Branch(char *label)

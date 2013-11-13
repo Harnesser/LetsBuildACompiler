@@ -37,26 +37,47 @@ void Equals(void)
 
 void NotEquals(void)
 {
-	Match('#');
+	Match('>');
 	Expression();
 	PopCompare();
 	SetNEqual();
 }
 
+void LessOrEqual(void)
+{
+	Match('=');
+	Expression();
+	PopCompare();
+	SetLessOrEqual();
+}
+
 void Less(void)
 {
 	Match('<');
-	Expression();
-	PopCompare();
-	SetLess();
+	switch (Look) {
+	case '=': LessOrEqual(); break;
+	case '>': NotEquals(); break;
+	default :	
+		Expression();
+		PopCompare();
+		SetLess();
+		break;
+	}
 }
 
 void Greater(void)
 {
 	Match('>');
-	Expression();
-	PopCompare();
-	SetGreater();
+	if ( Look=='=') {
+		Match('=');
+		Expression();
+		PopCompare();
+		SetGreaterOrEqual();
+	} else {
+		Expression();
+		PopCompare();
+		SetGreater();
+	}
 }
 
 void Relation(void)

@@ -28,13 +28,22 @@
 <while> ::= WHILE <bool-expression> <block> ENDWHILE
 <statement> ::= <if> | <while> | <assignment>
 
-== Mnemonics
-p PROGRAM
-b BEGIN
-e END
-v VAR
-i IF
-l ELSE
-w WHILE
+== Keywords
+ PROGRAM
+ BEGIN
+ END
+ VAR
+ IF
+ ELSE
+ WHILE
+
+== Arithmetic Operators
+ + - / *
+
+== Boolean Operators
+ | & !
+
+== Relational Operators
+ < > <> >= <= = 
 
 

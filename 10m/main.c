@@ -199,7 +199,7 @@ void Prog(void)
 	Main();
 	Match('.');
 	message("Endprogram");
-	ShowSymTable();
+	//ShowSymTable();
 }
 
 
