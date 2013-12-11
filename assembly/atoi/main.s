@@ -21,8 +21,12 @@
 .globl _start
 _start:
 
+# call to read a number from stdin - no args
+call read_int
+
 
 # EXIT
-movl $3, %ebx
+epilogue:
+movl %eax, %ebx
 movl $SYS_EXIT, %eax
 int $LINUX_SYSCALL

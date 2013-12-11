@@ -6,7 +6,14 @@ main: main.o
 	ld main.o -o main
 
 main.o: main.s read_integer.s
-	as main.s -o main.o
+	as -g main.s -o main.o
+
+# --------------------------
+list:
+	objdump -d main.o
+
+gdb: main
+	gdb main --command=gdb.setup
 
 # --------------------------
 clean:
