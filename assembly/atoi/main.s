@@ -2,6 +2,12 @@
 ## Test the read and atoi() functions
 ##
 
+# remember that the linux error codes only go from -128 to 127
+# so numbers out of that range will not be printed properly
+# until i write a itoa() subroutine
+#
+# and this doesn't handle negative numbers yet either...
+
 .equ LINUX_SYSCALL, 0x80
 
 .equ SYS_EXIT, 1
