@@ -1,0 +1,13 @@
+For the compiler I'm writing, I need to be able to
+read a number from the terminal.
+
+I'll be using the linux SYS_READ system call, which
+will get me as far as an ascii string. I'll do my own
+version of atoi() for a laugh to convert this string
+to an integer that I can then do calculations on.
+
+The functions were developed in this directory, but the
+meat of the functions are in an include file that I can
+easily port into the compiler's assembly listing.
+
+
