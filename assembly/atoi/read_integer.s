@@ -41,10 +41,9 @@ ret
 
 .equ CHAR_0, '0'
 .equ CHAR_9, '9'
-
+.equ CHAR_MINUS, '-'
 
 # ----------------------------------------------------
-# TODO: doesn't handle negative numbers
 # TODO: needs a companion itoa()
 #
 # Register usage:
@@ -53,21 +52,40 @@ ret
 #  %ecx - character countdown
 #  %edx - current ascii char addr on stack
 #
+# Local variables:
+#  -4(%ebp) - 1 if first char is '-'. Used to negate
+#             final accum variable.
+#
 .type atoi, @function
 atoi:
 # in bookeeping
 pushl %ebp		# save old base pointer
 movl %esp, %ebp		# make stack ptr = base ptr
+subl $4, %esp
 
 movl 8(%ebp), %ecx	# char count 
 movl 12(%ebp), %edx	# ascii start addr
 
+# check if we're negative
+movb (%edx,1), %bl
+movl $0, -4(%ebp)
+cmpb $CHAR_MINUS, %bl
+jne atoi_init
+movl $1, -4(%ebp)
+eat_neg_sign:
+incl %edx
+decl %ecx
+
+atoi_init:
 movl $0, %eax
-atoi_start_loop:
-jecxz atoi_done
+
+atoi_loop_start:
+jecxz atoi_loop_done
+
+movb (%edx,1), %bl	# load next char into b
 
 # bounds check - needs to be between '0' and '9'
-movb (%edx,1), %bl
+bounds_check:
 cmpb $CHAR_0, %bl
 jl next_char
 cmpb $CHAR_9, %bl
@@ -82,11 +100,16 @@ addl %ebx, %eax
 next_char:
 incl %edx		# increment char addr
 decl %ecx		# decrement char counter
-jmp atoi_start_loop
+jmp atoi_loop_start
 
-atoi_done:
+atoi_loop_done:
+# are we negative?
+cmpl $1, -4(%ebp)
+jne atoi_epilogue
+negl %eax
 
 # out bookkeeping
+atoi_epilogue:
 movl %ebp, %esp		# restore stack pointer
 popl %ebp		# restore base pointer
 ret
