@@ -46,8 +46,6 @@ ret
 .equ CHAR_MINUS, '-'
 
 # ----------------------------------------------------
-# TODO: needs a companion itoa()
-#
 # Register usage:
 #  %eax - integer built up in accum
 #  %ebx - int value of current ascii char
@@ -131,22 +129,31 @@ ret
 #  %edx - current ascii char addr on stack
 #
 # Local variables:
-#  -4(%ebp) - 1 if first char is '-'. Used to negate
+#  -4(%ebp) - actual char count of ascii version
+#  -8(%ebp) - 1 if first char is '-'. Used to negate
 #             final accum variable.
 #
 .type itoa, @function
 itoa:
 
 itoa_prologue:
-pushl %ebp
-movl %esp,%ebp
+	pushl %ebp
+	movl %esp,%ebp
 
-# space for local variables
-subl $4, %esp		# -4: char count of final string
-subl 12(%ebp), %esp	# buffer starts at %esp now
+	# space for local variables
+	subl $4, %esp		# -4: char count of final string
+	subl $4, %esp		# -8: if 1, add a - sign cos number is negative
+	subl 12(%ebp), %esp	# buffer starts at %esp now
 
-# Grab arguments
-movl 8(%ebp), %eax		# number to convert
+	# Grab arguments
+	movl 8(%ebp), %eax	# number to convert
+
+check_if_negative:
+	movl $0, -8(%ebp)	# default - positive
+	cmpl $0, %eax
+	jge itoa_loop_init
+	negl %eax
+	movl $1, -8(%ebp)
 
 itoa_loop_init:
 	movl $0, %ecx
@@ -182,10 +189,24 @@ itoa_last_digit:
 
 itoa_loop_done:
 	movl %ecx, -4(%ebp)		# store total char count
-	addl $1, -4(%ebp)
+	incl -4(%ebp)
 
 # reverse-copy the local buffer to the results buffer
 movl 16(%ebp), %ebx
+
+itoa_maybe_negate:
+	# was the number negative?
+	cmpl $1, -8(%ebp)
+	jne itoa_reverse_copy
+
+	# do we have space for the '-'?
+	# if not, return a length of 0
+	cmpl 12(%ebp), %eax
+	jl itoa_no_space_for_neg
+	movl $CHAR_MINUS, (%ebx)
+	incl -4(%ebp)		# incr string length
+	incl %ebx		# next char ptr update
+	jmp itoa_reverse_copy
 
 itoa_reverse_copy:
 	cmpl $-1, %ecx
@@ -197,6 +218,9 @@ itoa_reverse_copy:
 	jmp itoa_reverse_copy
 
 itoa_reverse_copy_done:
+
+itoa_no_space_for_neg:
+	mov $0, %eax 		# flag error with 0 length string
 
 itoa_epilogue:
 	movl -4(%ebp), %eax	# return char count in accum

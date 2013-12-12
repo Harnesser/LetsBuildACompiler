@@ -45,6 +45,7 @@ buf_clear_done:
 
 # call to read a number from stdin - no args
 call read_int
+#movl $-4, %eax
 
 # let's try to print it out again
 pushl %esp
