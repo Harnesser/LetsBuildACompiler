@@ -13,7 +13,7 @@ list:
 	objdump -d main.o
 
 gdb: main
-	gdb main --command=gdb.setup
+	gdb -tui main --command=gdb.setup
 
 # --------------------------
 clean:

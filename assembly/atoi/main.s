@@ -24,12 +24,42 @@
 .section .text
 .include "read_integer.s"
 
+
+.equ MBUFSIZE, 16
+.equ CHAR_EQ, '='
+
 .globl _start
 _start:
+
+subl $MBUFSIZE, %esp	# for ascii buffer
+
+movl $0, %ecx
+buf_clear_start:
+	cmpl $MBUFSIZE, %ecx
+	je buf_clear_done
+	movb $CHAR_EQ, (%esp, %ecx)
+	incl %ecx
+	jmp buf_clear_start
+buf_clear_done:
+	
 
 # call to read a number from stdin - no args
 call read_int
 
+# let's try to print it out again
+pushl %esp
+pushl $MBUFSIZE
+pushl %eax
+call itoa
+#movl $MBUFSIZE, %eax
+addl $12, %esp	# instead of popping...
+
+# write
+movl %eax, %edx
+movl %esp, %ecx
+movl $STDOUT, %ebx
+movl $SYS_WRITE, %eax
+int $LINUX_SYSCALL
 
 # EXIT
 epilogue:

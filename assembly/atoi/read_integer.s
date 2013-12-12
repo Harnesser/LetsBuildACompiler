@@ -2,6 +2,8 @@
 ## Functions:
 ##  * read_int  - read an integer from stdin 
 ##  * atoi      - convert ascii text to an integer
+##  * itoa      - convert a number into base10 string
+##
 
 .equ BUFSIZE, 16	# multiple of 4 for alignment?
 
@@ -113,4 +115,92 @@ atoi_epilogue:
 movl %ebp, %esp		# restore stack pointer
 popl %ebp		# restore base pointer
 ret
+
+
+# ----------------------------------------------------
+#
+# Arguments:
+#   8(%ebp) - number to convert
+#  12(%ebp) - buffer size
+#  16(%ebp) - buffer address
+#
+# Register usage:
+#  %eax - integer built up in accum
+#  %ebx - int value of current ascii char
+#  %ecx - character countdown
+#  %edx - current ascii char addr on stack
+#
+# Local variables:
+#  -4(%ebp) - 1 if first char is '-'. Used to negate
+#             final accum variable.
+#
+.type itoa, @function
+itoa:
+
+itoa_prologue:
+pushl %ebp
+movl %esp,%ebp
+
+# space for local variables
+subl $4, %esp		# -4: char count of final string
+subl 12(%ebp), %esp	# buffer starts at %esp now
+
+# Grab arguments
+movl 8(%ebp), %eax		# number to convert
+
+itoa_loop_init:
+	movl $0, %ecx
+
+itoa_loop_start:
+	movl $0, %edx
+
+itoa_check:
+	cmpl 12(%ebp), %ecx	# check that buffer has space
+	je itoa_loop_done
+
+itoa_check_last_digit:
+	cmpl $10, %eax		# if num < 10, just convert it
+	jl itoa_last_digit
+
+itoa_dir:
+	movl $10, %ebx
+	divl %ebx		# accum = quotient, edx = remainder
+
+# convert the remainder to ascii and add it to the buffer
+itoa_convert:
+	addl $CHAR_0, %edx
+	movb %dl, (%esp, %ecx, 1)
+
+	incl %ecx
+	jmp itoa_loop_start
+
+itoa_last_digit:
+	# should be left with a number 0 to 9, so convert it
+	# we have space
+	addl $CHAR_0, %eax
+	movb %al, (%esp, %ecx, 1)
+
+itoa_loop_done:
+	movl %ecx, -4(%ebp)		# store total char count
+	addl $1, -4(%ebp)
+
+# reverse-copy the local buffer to the results buffer
+movl 16(%ebp), %ebx
+
+itoa_reverse_copy:
+	cmpl $-1, %ecx
+	je itoa_reverse_copy_done
+	movb (%esp, %ecx, 1), %al
+	movb %al, (%ebx)
+	decl %ecx
+	incl %ebx
+	jmp itoa_reverse_copy
+
+itoa_reverse_copy_done:
+
+itoa_epilogue:
+	movl -4(%ebp), %eax	# return char count in accum
+	movl %ebp, %esp		# restore stack pointer
+	popl %ebp		# restore base pointer
+	ret
 
