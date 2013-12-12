@@ -5,7 +5,7 @@ runmain: main
 main: main.o 
 	ld main.o -o main
 
-main.o: main.s read_integer.s
+main.o: main.s read_integer.s conversions.s
 	as -g main.s -o main.o
 
 # --------------------------

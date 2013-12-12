@@ -23,7 +23,7 @@
 
 .section .text
 .include "read_integer.s"
-
+.include "conversions.s"
 
 .equ MBUFSIZE, 16
 .equ CHAR_EQ, '='
