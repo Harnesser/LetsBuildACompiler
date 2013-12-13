@@ -4,6 +4,8 @@ char asm_header[] = "#PURPOSE:  KISS Program \n\
 
 char asm_prolog[] = "\
 .section .text \n \
+.include \"io.s\" \n \
+.include \"conversions.s\" \n \
 .globl _start \n \
 \n \
 _start: \n \
