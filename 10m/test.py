@@ -18,9 +18,32 @@ tests = {
 	'while_accum_whitespace': 45,
 	'multichar_symbols': 21,
 	'multichar_relops': -45,
+	'write_numbers': -8, # not checked properly 
+	'write_m15_to_15': 0, # again, need to look at log
 	}
 
+# these tests:
+iotests = {
+	'read_incr5:23'  : 28,
+	'read_incr5:-4'  : 1,
+#	'read3sum:1 2 3' : 6,  # can't get 3 inputs going...
+}
 results = {}
+
+for test in iotests.keys():
+	testname,input_ = test.split(':')
+	expect = iotests[test]
+	results[test]='Pass'
+
+	arg = '%s' % (input_)
+	print "Running IO %s %s expecting %d" % (
+	    testname, input_, expect)
+	try:
+		check_call(["./run.sh", testname, str(expect), arg])
+	except(CalledProcessError):
+		results[test]='FAIL'
+	print('\n\n\n')
+
 
 for test in tests.keys():
 	expect = tests[test]
@@ -36,7 +59,9 @@ for test in tests.keys():
 
 print("========== RESULTS =================================")
 
-for test in tests.keys():
+all_tests = iotests.keys()
+all_tests.extend(tests.keys())
+for test in all_tests:
     if results[test] == 'FAIL':
         colour = C_RED
     else:

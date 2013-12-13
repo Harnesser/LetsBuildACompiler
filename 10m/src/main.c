@@ -30,6 +30,7 @@ char label[9]; /* label for machine code  conditionals */
 
 typedef enum { T_OTHER=0,
                T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR, T_WHILE, T_ENDWHILE,
+               T_READ, T_WRITE,	
                T_IDENT, T_NUMBER, T_OPER } e_token;
 e_token TokenId;
 char Token[26]; /* scanned token */
@@ -122,7 +123,7 @@ void Block(void);
 #include "boolean.c"
 #include "arithmetic.c"
 #include "conditional.c"
-
+#include "io.c"
 
 void Decl(void)
 {
@@ -140,16 +141,13 @@ void Decl(void)
 
 void TopDecls(void)
 {
-	char msg[MAXMSG];
 	Scan();
 	message("Top Declarations");
 	while (TokenId != T_BEGIN) {
 		switch(TokenId) {
 		case T_VAR: Decl(); break;
 		default:
-			snprintf(msg, MAXMSG, "Unrecognised keyword \'%c\'", Look);
-			
-			Abort(msg);
+			Abort("Unrecognised keyword - wanted VAR or BEGIN");
 			break;
 		}
 		Scan();
@@ -169,6 +167,8 @@ void Block(void)
 		switch (TokenId) {
 		case T_IF: DoIf(); break;
 		case T_WHILE: DoWhile(); break;
+		case T_READ: DoRead(); break;
+		case T_WRITE: DoWrite(); break;
 		default : Assignment(); break;
 		}
 		Scan();

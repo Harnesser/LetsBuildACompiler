@@ -7,7 +7,7 @@ test: main
 
 main: $(SOURCES)
 	@echo "\033[32m Compiling \033[0m"
-	gcc src/main.c -I./src -o main
+	gcc -g src/main.c -I./src -o main
 
 clean:
 	@rm -f main

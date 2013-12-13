@@ -6,7 +6,7 @@
 <top-level decls> ::= ( <data declaration )*
 <data declaration> ::= VAR <var-list>
 
-<var-list> ::= <var> ( <var> )*
+<var-list> ::= <var> ( <var> )*          // should be a comma here somewhere?
 <var> ::= <ident> [ = <integer> ]
 
 <block> ::= ( <statement> )*
@@ -28,6 +28,9 @@
 <while> ::= WHILE <bool-expression> <block> ENDWHILE
 <statement> ::= <if> | <while> | <assignment>
 
+<read> :: READ '(' <var> [ ',' <var> ] ')'
+<write> :: WRITE '(' <var> [ ',' <var> ] ')'
+ 
 == Keywords
  PROGRAM
  BEGIN
@@ -36,6 +39,7 @@
  IF
  ELSE
  WHILE
+ READ
 
 == Arithmetic Operators
  + - / *

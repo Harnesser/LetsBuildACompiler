@@ -5,6 +5,8 @@
 .include "linux.s"
 
 .equ BUFSIZE, 16	# multiple of 4 for alignment?
+.equ BBUFSIZE, 20
+.equ CHAR_NEWLINE, 0x0A
 
 # ----------------------------------------------------
 # read_int - uses the SYS_READ call to read in some
@@ -34,6 +36,44 @@ int $LINUX_SYSCALL
 pushl %esp
 pushl %eax
 call atoi
+
+# out bookkeeping
+movl %ebp, %esp		# restore stack pointer
+popl %ebp		# restore base pointer
+ret
+
+
+# ----------------------------------------------------
+# write_int - uses the SYS_WRITE call to print out the
+# value stored in the accum. Calls itoa() to build an
+# ascii repr of the number
+.type write_int, @function
+write_int:
+
+# in bookeeping
+pushl %ebp		# save old base pointer
+movl %esp, %ebp		# make stack ptr = base ptr
+subl $BBUFSIZE, %esp	# string buffer - 4 chars larger
+                        #  than what we're telling the other
+                    	#  functions
+
+# first, get ascii rep of %eax
+pushl %esp
+pushl $BUFSIZE
+pushl %eax
+call itoa
+addl $12, %esp		# instead of popping 3 times...
+
+# add newline
+movl $CHAR_NEWLINE, (%esp, %eax)
+incl %eax
+
+# write
+movl %eax, %edx
+movl %esp, %ecx
+movl $STDOUT, %ebx
+movl $SYS_WRITE, %eax
+int $LINUX_SYSCALL
 
 # out bookkeeping
 movl %ebp, %esp		# restore stack pointer

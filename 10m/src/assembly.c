@@ -180,15 +180,18 @@ void BranchFalse(char *label)
 // IO
 
 // Loads accumulator with integer read from the command line
-void ReadVar(void)
+void ReadVar(char *name)
 {
-
+	EmitLn("call read_int");
+	Store(name);
 }
 
-// Print value in terminal
-void WriteVar(int var)
+// Print %eax value in terminal
+void WriteVar()
 {
-	
+	//EmitLn("pushl %eax");
+	EmitLn("call write_int");
+	//EmitLn("popl %eax");
 }
 
 /* ------------------------------------------------------------------------ */

@@ -2,10 +2,13 @@
 
 PROGRAM=../test_data/kiss_multicharacter/$1.txt
 EXPECT=$2
+INPUT=$3
 
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - "
 echo "Test: $PROGRAM"
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+echo " Input '$INPUT'"
+
 rm -f machinecode main
 mkdir -p listings
 
@@ -18,10 +21,10 @@ mkdir -p build
 rm -r build/*
 mv assembly.s build
 cd build
-make -f ../Assembly.mk
+make -f ../Assembly.mk machinecode
 
 # Test
-./machinecode
+echo $INPUT | ./machinecode
 res=$?
 if [ $res -gt 128 ]; then
 	echo "Negative"
