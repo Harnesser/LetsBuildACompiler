@@ -1,10 +1,13 @@
+
+SOURCES=$(wildcard src/*.c)
+
 test: main
 	@echo "\033[32m Testing \033[0m"
 	./test.py
 
-main: main.c scanning.c assembly.c arithmetic.c boolean.c conditional.c symboltable.c
+main: $(SOURCES)
 	@echo "\033[32m Compiling \033[0m"
-	gcc main.c -o main
+	gcc src/main.c -I./src -o main
 
 clean:
 	@rm -f main

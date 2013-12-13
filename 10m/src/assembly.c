@@ -175,6 +175,22 @@ void BranchFalse(char *label)
 }
 
 /* ------------------------------------------------------------------------ */
+// IO
+
+// Loads accumulator with integer read from the command line
+void ReadVar(void)
+{
+
+}
+
+// Print value in terminal
+void WriteVar(int var)
+{
+	
+}
+
+/* ------------------------------------------------------------------------ */
+// Memory allocation
 
 void Alloc(char *name)
 {

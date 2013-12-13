@@ -7,14 +7,18 @@ echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - "
 echo "Test: $PROGRAM"
 echo "  - - - - - - - - - - - - - - - - - - - - - - - - - - - "
 rm -f machinecode main
-mkdir -p asm
+mkdir -p listings
 
 # Build
 make main
 ./main <${PROGRAM} >assembly.s
-cp assembly.s asm/$1.asm
-#cat assembly.s
-make -f Assembly.mk
+cp assembly.s listings/$1.asm
+
+mkdir -p build
+rm -r build/*
+mv assembly.s build
+cd build
+make -f ../Assembly.mk
 
 # Test
 ./machinecode
@@ -32,5 +36,3 @@ fi
 
 echo "FAILED"
 exit 1
-
-
