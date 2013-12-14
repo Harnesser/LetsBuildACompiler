@@ -1,7 +1,7 @@
 #! /usr/bin/env sh
 
 PRJDIR=/home/harnesser/Projects/LetsBuildACompiler
-TUTORIAL=10
+TUTORIAL=11
 FILENAME=main.c
 
 # can't use command as terminal exits once it's done :(
