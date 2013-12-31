@@ -2,6 +2,12 @@
 // Scanning functions
 //
 
+// scanning the input affects the following global variables:
+//  Token   - a string holding the scanned token
+//  TokenId - the integer id of the token
+//  Look    - the next non-whitespace char in the stream
+//
+
 char *Keywords[] = {
 	"IF",
 	"ELSE",
@@ -17,34 +23,17 @@ char *Keywords[] = {
 
 #define NUMKEYWORDS sizeof(Keywords)/sizeof(Keywords[0])
 
-void NewLine(void)
-{
-	//message("NewLine?");
-	while (Look=='\n') {
-		GetChar();
-		colno = 0;
-		lineno++;
-		SkipWhite();
-	}
-	//message("Eaten newlines.");
-}
-
-
 void Match(const char tok)
 {
 	char msg[MAXMSG];
-	message("Looking to match \'%c\'", tok);
-	NewLine();
-	if (Look == tok) {
+	if (Token[0] == tok) {
 		GetChar();
 		message("Matched");
 	} else {
-		snprintf(msg, MAXMSG, "\"%c\" Look=\"%c\"", tok, Look);
+		snprintf(msg, MAXMSG, "\"%c\" Token[0]=\"%c\"", tok, Token[0]);
 		Expected(msg);
 	}
-	SkipWhite();
 }
-
 
 int IsOp(char c)
 {
@@ -64,22 +53,21 @@ int IsOp(char c)
 	return 0;
 }
 
-// writes a name to the string at `name`	
+// writes an identifier (or keyword)  to the string at `name`
 void GetName(char *name)
 {
 	int i=0;
 	if (!IsAlpha(Look)) {
-		Expected("Name");
+		Expected("Identifier");
 	}
 	while ( IsAlNum(Look) && i<MAXNAME-1 ) {
 		name[i++] = toupper(Look);
 		GetChar();
 	}
 	name[i] = '\0';
-	SkipWhite();
 }
 
-// writes a number string to `numstr`
+// Look for a number and return it as an int
 int GetNum()
 {
 	int val = 0;
@@ -91,12 +79,11 @@ int GetNum()
 		GetChar();
 	}
 	TokenId = T_NUMBER;
-	SkipWhite();
 	return val;
 }
 
 // writes an operator to string `opstr`
-void *GetOp(char *opstr)
+void GetOp(char *opstr)
 {
 	int i=0;
 	if (!IsOp(Look)) {
@@ -108,7 +95,23 @@ void *GetOp(char *opstr)
 	}
 	opstr[i] = '\0';
 	TokenId = T_OPER;
+}
+
+// Next() - get the next identifier, number, keyword or operator
+// in the input stream. Jumps any leading whitespace, including
+// newlines.
+void Next(void)
+{
+	int val=0;
 	SkipWhite();
+	printf("# Look: %c\n", Look);
+	if (IsAlpha(Look) ) {
+		GetName(Token);
+	} else if (IsDigit(Look) ) {
+		val = GetNum();
+	} else {
+		GetOp(Token);
+	}
 }
 
 // match a string to the current read token
@@ -118,6 +121,7 @@ void MatchString(char *str)
 	if ( strncmp(str, Token, MAXNAME) != 0 ) {
 		Expected(str);
 	}
+	Next();
 }
 
 void clear_ident(char *ident)
@@ -131,14 +135,10 @@ void clear_ident(char *ident)
 // Scan sets Token and TokenID
 void Scan(void) 
 {
-	NewLine();
-	GetName(Token);
 	TokenId = Lookup(Token);
 	if (TokenId == T_OTHER) {
 		TokenId = T_IDENT;
 	}
-	SkipWhite();
-	NewLine();
 	printf("# Scanned...\n");
 	printf("#  Token: \"%s\"\n", Token);
 	printf("#     Id: %d\n", TokenId);

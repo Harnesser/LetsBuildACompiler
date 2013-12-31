@@ -31,7 +31,9 @@ char label[9]; /* label for machine code  conditionals */
 typedef enum { T_OTHER=0,
                T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR, T_WHILE, T_ENDWHILE,
                T_READ, T_WRITE,	
+               T_PROGRAM_END,
                T_IDENT, T_NUMBER, T_OPER } e_token;
+
 e_token TokenId;
 char Token[26]; /* scanned token */
 
@@ -64,12 +66,16 @@ void Expected(const char *msg)
 int IsAlpha(const char tok) { return isalpha(tok); }
 int IsDigit(const char tok) { return isdigit(tok); }
 int IsAlNum(const char tok) { return isalnum(tok); }
-int IsWhite(const char tok) { return isblank(tok); }
+int IsWhite(const char tok) { return isspace(tok); }
 
 void SkipWhite(void)
 {
 	//message("Chomping whitespace...");
 	while (IsWhite(Look)) {
+		if (Look == '\n') {
+			lineno++;
+			colno = 0;
+		}
 		GetChar();
 	}
 	//message("Done chomping whitespace");
@@ -84,18 +90,6 @@ void Printable(char *pline, char tok)
 	default  : pLook[0] = tok; pLook[1] = '\0'; break;
 	}
 }
-
-void Emit(const char *msg)
-{
-	printf("\t%s", msg);
-}
-
-void EmitLn(const char *msg)
-{
-	Emit(msg);
-	printf("\n");
-}
-
 void Scan(void);
 
 void Init(void)
@@ -131,7 +125,7 @@ void Decl(void)
 	MatchString("VAR");
 	GetName(name);
 	Alloc(name);
-	while (Look==',') {
+	while (Token[0]==',') {
 		GetChar();
 		SkipWhite();
 		GetName(name);
@@ -208,6 +202,12 @@ void Prog(void)
 int main(int argc, char *argv[])
 {
 	Init();
-	Prog();
+	while (Look != '.') {
+		printf(".....\n");
+		Next();
+		printf("# Token: \"%s\" (%d)\n", Token, TokenId);
+	}
+	printf("# end main()\n")
+	//Prog();
 }
 
