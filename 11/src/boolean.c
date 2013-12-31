@@ -5,7 +5,7 @@
 // basic recognisers
 int IsOrop(char c)
 {
-	if ( (Look=='|') || (Look=='^') ) {
+	if ( (Token[0]=='|') || (Token[0]=='^') ) {
 		return 1;
 	}
 	return 0;
@@ -54,7 +54,7 @@ void LessOrEqual(void)
 void Less(void)
 {
 	Match('<');
-	switch (Look) {
+	switch (Token[0]) {
 	case '=': LessOrEqual(); break;
 	case '>': NotEquals(); break;
 	default :	
@@ -68,7 +68,7 @@ void Less(void)
 void Greater(void)
 {
 	Match('>');
-	if ( Look=='=') {
+	if ( Token[0]=='=') {
 		Match('=');
 		Expression();
 		PopCompare();
@@ -84,10 +84,10 @@ void Relation(void)
 {
 	message("Relation...");
 	Expression();
-	if (IsRelop(Look) ) {
-		message("  (Relation \'%c\')", Look);
+	if (IsRelop(Token[0]) ) {
+		message("  (Relation \'%c\')", Token[0]);
 		Push();
-		switch (Look) {
+		switch (Token[0]) {
 		case '=': Equals(); break;
 		case '#': NotEquals(); break;
 		case '<': Less(); break;
@@ -99,7 +99,7 @@ void Relation(void)
 void NotFactor(void)
 {
 	message("NotFactor");
-	if (Look=='!') {
+	if (Token[0]=='!') {
 		Match('!');
 		Relation();
 		NotIt();
@@ -111,7 +111,7 @@ void NotFactor(void)
 void BoolTerm(void)
 {
 	NotFactor();
-	while (Look=='&') {
+	while (Token[0]=='&') {
 		Push();
 		Match('&');
 		NotFactor();
@@ -137,8 +137,8 @@ void BoolExpression(void)
 {
 	message("BoolExpression");
 	BoolTerm();
-	while (IsOrop(Look)) {
-		switch (Look) {
+	while (IsOrop(Token[0])) {
+		switch (Token[0]) {
 		case '|': BoolOr(); break;
 		case '^': BoolXor(); break;
 		}

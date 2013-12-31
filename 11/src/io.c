@@ -10,7 +10,7 @@ void DoRead()
 	Match('(');
 	GetName(name);
 	ReadVar(name);
-	while (Look==',') {
+	while (Token[0]==',') {
 		Match(',');
 		GetName(name);
 		ReadVar(name);
@@ -24,7 +24,7 @@ void DoWrite()
 	Match('(');
 	Expression();
 	WriteVar();
-	while (Look==',') {
+	while (Token[0]==',') {
 		Match(',');
 		Expression();
 		WriteVar();

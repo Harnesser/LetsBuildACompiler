@@ -36,6 +36,7 @@ typedef enum { T_OTHER=0,
 
 e_token TokenId;
 char Token[26]; /* scanned token */
+int Value; 
 
 void GetChar(void)
 {
@@ -90,19 +91,6 @@ void Printable(char *pline, char tok)
 	default  : pLook[0] = tok; pLook[1] = '\0'; break;
 	}
 }
-void Scan(void);
-
-void Init(void)
-{
-	int i;
-	lineno = 1;
-	labelno = 0;
-	colno = 0;
-	GetChar();
-	SkipWhite();
-	Scan();
-	message("Init Done");
-}
 
 /* -------------------------------------------------------------------- */
 
@@ -123,12 +111,11 @@ void Decl(void)
 {
 	char name[MAXNAME];
 	MatchString("VAR");
-	GetName(name);
+	strncpy(name, Token, MAXNAME);
 	Alloc(name);
 	while (Token[0]==',') {
-		GetChar();
-		SkipWhite();
-		GetName(name);
+		Next();
+		strncpy(name, Token, MAXNAME);
 		Alloc(name);
 	}
 }
@@ -144,6 +131,7 @@ void TopDecls(void)
 			Abort("Unrecognised keyword - wanted VAR or BEGIN");
 			break;
 		}
+		Next();
 		Scan();
 	}
 	message("  ");
@@ -170,28 +158,35 @@ void Block(void)
 	message("Endblock");
 }
 
-void Main(void)
+void Init(void)
 {
-	message("main");
-	MatchString("BEGIN");
-	Prolog();
-	Block();
-	MatchString("END");
-	Epilog();
-	message("endmain");
+	int i;
+	lineno = 1;
+	labelno = 0;
+	colno = 0;
+	GetChar();
+	Next();
+	message("Init Done");
 }
 
 void Prog(void)
 {
 	message("Program");
-	fflush(NULL);
 	MatchString("PROGRAM");
 	message("Starting Program");
-	Header();
+	AsmHeader();
 	message("TopDecls");
 	TopDecls();
-	Main();
-	Match('.');
+
+	message("main");
+	MatchString("BEGIN");
+	AsmProlog();
+	Block();
+	MatchString("END");
+	AsmEpilog();
+	message("endmain");
+
+	//MatchString("."); // FIXME: do something proper with this
 	message("Endprogram");
 	//ShowSymTable();
 }
@@ -202,12 +197,15 @@ void Prog(void)
 int main(int argc, char *argv[])
 {
 	Init();
+#ifdef SCAN_TEST
 	while (Look != '.') {
 		printf(".....\n");
 		Next();
 		printf("# Token: \"%s\" (%d)\n", Token, TokenId);
 	}
 	printf("# end main()\n")
-	//Prog();
+#else
+	Prog();
+#endif
 }
 

@@ -17,9 +17,20 @@ movl $1, %eax      # sys_exit \n \
 int $0x80           # call \n \
 ";
 
-void Header(void) { printf("%s\n", asm_header); }
-void Prolog(void) { printf("%s\n", asm_prolog); }
-void Epilog(void) { printf("%s\n", asm_epilog); }
+void AsmHeader(void) { printf("%s\n", asm_header); }
+void AsmProlog(void) { printf("%s\n", asm_prolog); }
+void AsmEpilog(void) { printf("%s\n", asm_epilog); }
+
+void Emit(const char *msg)
+{
+	printf("\t%s", msg);
+}
+
+void EmitLn(const char *msg)
+{
+	Emit(msg);
+	printf("\n");
+}
 
 /* ------------------------------------------------------------------------ */
 // Arithmetic
@@ -199,7 +210,8 @@ void WriteVar()
 
 void Alloc(char *name)
 {
-	int x;	
+	int val = 0;
+	char sign = ' ';
 	char msg[MAXMSG];
 
 	message("Allocating");
@@ -212,15 +224,14 @@ void Alloc(char *name)
 	AddEntry(name);
 
 	// write storage in .data sectoin
-	printf("%s:\t .long ", name );
-	if (Look=='=') {
-		Match('=');
-		if (Look=='-') {
-			printf("-");
-			Match('-');
+	Next(); // sucks up the identifier
+	if (Token[0]=='=') {
+		Next();
+		if (Token[0]=='-') {
+			sign = '-';
+			Next();
 		}
-		printf("%d\n", GetNum());
-	} else {
-		printf("0\n");
+		val = Value;
 	}
+	printf("%s:\t .long %c%d\n", name, sign, val );
 }

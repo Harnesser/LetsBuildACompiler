@@ -68,18 +68,17 @@ void GetName(char *name)
 }
 
 // Look for a number and return it as an int
-int GetNum()
+void GetNum(void)
 {
-	int val = 0;
+	Value = 0;
 	if (!IsDigit(Look)) {
 		Expected("Integer");
 	}
 	while ( IsDigit(Look) ) {
-		val = (10*val) + (int)(Look - '0');
+		Value = (10*Value) + (int)(Look - '0');
 		GetChar();
 	}
 	TokenId = T_NUMBER;
-	return val;
 }
 
 // writes an operator to string `opstr`
@@ -102,14 +101,13 @@ void GetOp(char *opstr)
 // newlines.
 void Next(void)
 {
-	int val=0;
 	SkipWhite();
-	printf("# Look: %c\n", Look);
+	message("Next() ->");
 	if (IsAlpha(Look) ) {
 		GetName(Token);
 	} else if (IsDigit(Look) ) {
-		val = GetNum();
-	} else {
+		GetNum();
+	} else if ( Look != '.' ){
 		GetOp(Token);
 	}
 }

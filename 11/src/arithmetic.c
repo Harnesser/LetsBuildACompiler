@@ -15,8 +15,9 @@ void Assignment(void)
 {
 	char name[MAXNAME];
 	strncpy(name, Token, MAXNAME);
-	message("Assignment to %s", name);
-	Match('=');
+	message("\n### Assignment to %s", name);
+	Next(); // identifier
+	MatchString("=");
 	BoolExpression();
 	Store(name);
 }
@@ -26,23 +27,24 @@ void Factor(void)
 {
 	char name[MAXNAME];
 	message("Factor");
-	if (Look == '(') {
-		Match('(');
+	if (Token[0] == '(') {
+		MatchString("(");
 		BoolExpression();
-		Match(')');
-	} else if ( IsAlpha(Look) ) {
-		GetName(name);
+		MatchString(")");
+	} else if ( IsAlpha(Token[0]) ) {
+		strncpy(name, Token, MAXNAME);
 		LoadVar(name);
 	} else {
-		LoadConst(GetNum());
+		LoadConst(Value);
 	}
+	Next();
 }
 
 void NegFactor(void)
 {
-	Match('-');
-	if (IsDigit(Look)) {
-		LoadConst(-GetNum());
+	MatchString("-");
+	if (IsDigit(Token[0])) {
+		LoadConst(-Value);
 	} else {
 		Factor();
 		Negate();
@@ -51,10 +53,10 @@ void NegFactor(void)
 
 void FirstFactor(void)
 {
-	if (Look=='+') {
-		Match('+');
+	if (Token[0]=='+') {
+		MatchString("+");
 		Factor();
-	} else if (Look=='-') {
+	} else if (Token[0]=='-') {
 		NegFactor();
 	} else {
 		Factor();
@@ -63,25 +65,25 @@ void FirstFactor(void)
 
 void Multiply(void)
 {
-	Match('*');
+	MatchString("*");
 	Factor();
 	PopMul();
 }
 
 void Divide(void)
 {
-	Match('/');
+	MatchString("/");
 	Factor();
 	PopDiv();
 }
 
 void Term1(void)
 {
-	while ( (Look=='*') || (Look=='/') ) {
+	while ( (Token[0]=='*') || (Token[0]=='/') ) {
 		Push();
-		if (Look='*') {
+		if (Token[0]='*') {
 			Multiply();
-		} else if (Look='/') {
+		} else if (Token[0]='/') {
 			Divide();
 		}
 	}
@@ -101,14 +103,14 @@ void FirstTerm(void)
 
 void Add(void)
 {
-	Match('+');
+	MatchString("+");
 	Term();
 	PopAdd();
 }
 
 void Sub(void)
 {
-	Match('-');
+	MatchString("-");
 	Term();
 	PopSub();
 }
@@ -117,11 +119,11 @@ void Expression(void)
 {
 	message("Expression");
 	FirstTerm();
-	while (IsAddop(Look)) {
+	while (IsAddop(Token[0])) {
 		Push();
-		if (Look=='+') {
+		if (Token[0]=='+') {
 			Add();
-		} else if (Look=='-') {
+		} else if (Token[0]=='-') {
 			Sub();
 		}
 	}

@@ -19,6 +19,7 @@ void DoIf(void)
 	char l2[MAXLBL];
 	message("IF...");
 
+	Next();
 	BoolExpression();	
 	NewLabel();
 	strncpy(l1, label, MAXLBL);
@@ -30,6 +31,7 @@ void DoIf(void)
 	Block();
 	
 	if (TokenId == T_ELSE) {
+		Next();
 		// false
 		MatchString("ELSE");
 		NewLabel();
@@ -50,7 +52,8 @@ void DoWhile(void)
 	char l1[MAXLBL];
 	char l2[MAXLBL];
 	message("WHILE...");
-	
+
+	Next();	
 	MatchString("WHILE");
 	NewLabel();
 	strncpy(l1, label, MAXLBL);
@@ -61,11 +64,9 @@ void DoWhile(void)
 	BoolExpression();
 	BranchFalse(l2);
 	Block();
+	Next();
 	MatchString("ENDWHILE");
 	Branch(l1);
 	PostLabel(l2);
 	message("WHILE exit");
 }
-
-	
-
