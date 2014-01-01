@@ -7,28 +7,32 @@ void DoRead()
 	char name[MAXNAME];
 	message("DoRead()");
 	fflush(NULL);
-	Match('(');
-	GetName(name);
+	MatchString("READ");
+	MatchString("(");
+	strncpy(name, Token, MAXNAME);
 	ReadVar(name);
+	Next(); // chomp name
 	while (Token[0]==',') {
-		Match(',');
-		GetName(name);
+		MatchString(",");
+		strncpy(name, Token, MAXNAME);
 		ReadVar(name);
+		Next(); // chomp name
 	}
-	Match(')');
+	MatchString(")");
 }
 
 
 void DoWrite()
 {
-	Match('(');
+	MatchString("WRITE");
+	MatchString("(");
 	Expression();
 	WriteVar();
 	while (Token[0]==',') {
-		Match(',');
+		MatchString(",");
 		Expression();
 		WriteVar();
 	}
-	Match(')');
+	MatchString(")");
 }
 

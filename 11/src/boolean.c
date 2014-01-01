@@ -29,7 +29,7 @@ int IsRelop(char c)
 // operations
 void Equals(void)
 {
-	Match('=');
+	MatchString("=");
 	Expression();
 	PopCompare();
 	SetEqual();
@@ -37,7 +37,7 @@ void Equals(void)
 
 void NotEquals(void)
 {
-	Match('>');
+	MatchString(">");
 	Expression();
 	PopCompare();
 	SetNEqual();
@@ -45,7 +45,7 @@ void NotEquals(void)
 
 void LessOrEqual(void)
 {
-	Match('=');
+	MatchString("=");
 	Expression();
 	PopCompare();
 	SetLessOrEqual();
@@ -53,7 +53,7 @@ void LessOrEqual(void)
 
 void Less(void)
 {
-	Match('<');
+	MatchString("<");
 	switch (Token[0]) {
 	case '=': LessOrEqual(); break;
 	case '>': NotEquals(); break;
@@ -67,9 +67,9 @@ void Less(void)
 
 void Greater(void)
 {
-	Match('>');
+	MatchString(">");
 	if ( Token[0]=='=') {
-		Match('=');
+		MatchString("=");
 		Expression();
 		PopCompare();
 		SetGreaterOrEqual();
@@ -100,7 +100,7 @@ void NotFactor(void)
 {
 	message("NotFactor");
 	if (Token[0]=='!') {
-		Match('!');
+		MatchString("!");
 		Relation();
 		NotIt();
 	} else {
@@ -113,7 +113,7 @@ void BoolTerm(void)
 	NotFactor();
 	while (Token[0]=='&') {
 		Push();
-		Match('&');
+		MatchString("&");
 		NotFactor();
 		PopAnd();
 	}
@@ -121,14 +121,14 @@ void BoolTerm(void)
 
 void BoolOr(void)
 {
-	Match('|');
+	MatchString("|");
 	BoolTerm();
 	PopOr();
 }
 
 void BoolXor(void)
 {
-	Match('^');
+	MatchString("^");
 	BoolTerm();
 	PopXor();
 }

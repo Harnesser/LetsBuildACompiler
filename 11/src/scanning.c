@@ -88,12 +88,21 @@ void GetOp(char *opstr)
 	if (!IsOp(Look)) {
 		Expected("Operator");
 	}
-	while ( IsOp(Look) && i<MAXOPER-1 ) {
+	while ( IsOp(Look) && i<1 ) {
 		opstr[i++] = Look;
 		GetChar();
 	}
 	opstr[i] = '\0';
 	TokenId = T_OPER;
+}
+
+void GetPunctuation(char *puncstr)
+{
+	message("Grabbing punctuation");
+	puncstr[0] = Look;
+	puncstr[1] = '\0';
+	TokenId = T_OTHER;
+	GetChar();
 }
 
 // Next() - get the next identifier, number, keyword or operator
@@ -107,15 +116,17 @@ void Next(void)
 		GetName(Token);
 	} else if (IsDigit(Look) ) {
 		GetNum();
-	} else if ( Look != '.' ){
+	} else if (IsOp(Look) ) {
 		GetOp(Token);
+	} else {
+		GetPunctuation(Token);
 	}
 }
 
 // match a string to the current read token
 void MatchString(char *str)
 {
-	message("# Checking \"%s\" vs \"%s\"\n", str, Token);
+	message("Checking \"%s\" vs \"%s\"", str, Token);
 	if ( strncmp(str, Token, MAXNAME) != 0 ) {
 		Expected(str);
 	}
@@ -137,9 +148,9 @@ void Scan(void)
 	if (TokenId == T_OTHER) {
 		TokenId = T_IDENT;
 	}
-	printf("# Scanned...\n");
-	printf("#  Token: \"%s\"\n", Token);
-	printf("#     Id: %d\n", TokenId);
+	//printf("# Scanned...\n");
+	//printf("#  Token: \"%s\"\n", Token);
+	//printf("#     Id: %d\n", TokenId);
 }	
 
 // If the input string matches an entry in the table, return

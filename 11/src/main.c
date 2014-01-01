@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
-#ifndef NMESSAGE
+#ifdef NMESSAGE
 #define message(M, ...)
 #else
 #define message(M, ...) \
@@ -110,14 +110,18 @@ void Block(void);
 void Decl(void)
 {
 	char name[MAXNAME];
+	message("Declaration");
 	MatchString("VAR");
 	strncpy(name, Token, MAXNAME);
 	Alloc(name);
+	//message("## [][][][][][][][][][] Token: \"%s\"", Token);
 	while (Token[0]==',') {
-		Next();
+		message("follow-on declaration");
+		MatchString(",");
 		strncpy(name, Token, MAXNAME);
 		Alloc(name);
 	}
+	message("End of declaration");
 }
 
 void TopDecls(void)
@@ -131,7 +135,7 @@ void TopDecls(void)
 			Abort("Unrecognised keyword - wanted VAR or BEGIN");
 			break;
 		}
-		Next();
+		//Next();
 		Scan();
 	}
 	message("  ");
@@ -163,7 +167,7 @@ void Init(void)
 	int i;
 	lineno = 1;
 	labelno = 0;
-	colno = 0;
+	colno = 1;
 	GetChar();
 	Next();
 	message("Init Done");

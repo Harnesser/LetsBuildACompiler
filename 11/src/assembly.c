@@ -3,18 +3,19 @@ char asm_header[] = "#PURPOSE:  KISS Program \n\
 \n";
 
 char asm_prolog[] = "\
-.section .text \n \
-.include \"io.s\" \n \
-.include \"conversions.s\" \n \
-.globl _start \n \
-\n \
-_start: \n \
+.section .text \n\
+.include \"io.s\" \n\
+.include \"conversions.s\" \n\
+.globl _start \n\
+\n\
+_start: \n\
 ";
 
 char asm_epilog[] = "\
-movl %eax,%ebx \n \
-movl $1, %eax      # sys_exit \n \
-int $0x80           # call \n \
+.epilog:\n\
+\tmovl %eax,%ebx \n\
+\tmovl $1, %eax	# sys_exit \n\
+\tint $0x80	# call \n\
 ";
 
 void AsmHeader(void) { printf("%s\n", asm_header); }
@@ -223,15 +224,17 @@ void Alloc(char *name)
 	} 
 	AddEntry(name);
 
-	// write storage in .data sectoin
+	// write storage in .data section
 	Next(); // sucks up the identifier
 	if (Token[0]=='=') {
-		Next();
+		MatchString("=");
 		if (Token[0]=='-') {
 			sign = '-';
-			Next();
+			MatchString("-");
 		}
 		val = Value;
+		Next(); // sucks up integer
 	}
 	printf("%s:\t .long %c%d\n", name, sign, val );
+	printf("### Token: \"%s\"\n", Token);
 }
