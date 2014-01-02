@@ -121,10 +121,13 @@ void MatchString(char *str)
 	Next();
 }
 
-// match a semi-colon
+// optionally match a semi-colon
 void Semi(void)
 {
-	MatchString(";");
+	message("Optional Semicolon...");
+	if (Token[0]==';') {
+		MatchString(";");
+	}
 }
 
 void clear_ident(char *ident)

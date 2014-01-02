@@ -136,7 +136,7 @@ void TopDecls(void)
 			break;
 		}
 		//Next();
-		MatchString(";");
+		Semi();
 		Scan();
 	}
 	message("  ");
@@ -179,7 +179,7 @@ void Prog(void)
 {
 	message("Program");
 	MatchString("PROGRAM");
-	MatchString(";");
+	Semi();
 	message("Starting Program");
 	AsmHeader();
 	message("TopDecls");
