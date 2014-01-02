@@ -1,0 +1,13 @@
+program
+var in = 0
+var sum = 0
+begin
+  read(in)
+  sum = in
+  read(in)
+  sum = sum + in
+  read(in)
+  sum = sum + in
+end
+.
+

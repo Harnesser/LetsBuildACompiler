@@ -1,0 +1,10 @@
+program
+var hendrix=100
+var slash=20
+var best=0
+begin
+    if hendrix > slash 
+        best = hendrix
+    endif        
+end .
+

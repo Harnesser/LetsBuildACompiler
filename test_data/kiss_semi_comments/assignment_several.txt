@@ -1,0 +1,10 @@
+program
+var marty = 100
+var people = -100
+var you=0, are=4, sweet=6
+begin
+  people = marty
+  are = marty
+  you = are
+end .
+
