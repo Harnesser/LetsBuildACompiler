@@ -1,8 +1,8 @@
-program
-var accum
+program;
+var accum;
 begin
-  read(accum)
-  accum = accum+5
+  read(accum);
+  accum = accum+5;
 end
 .
 

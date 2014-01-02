@@ -1,6 +1,6 @@
 #! /usr/bin/env sh
 
-PROGRAM=../test_data/kiss_multicharacter/$1.txt
+PROGRAM=../test_data/kiss_semi_comments/$1.txt
 EXPECT=$2
 INPUT=$3
 

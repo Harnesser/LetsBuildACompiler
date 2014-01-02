@@ -1,14 +1,14 @@
 
    
-program
+program;
 
-var x=0,y=0
+var x=0,y=0;
 begin 
- while x<10         
-  y=y+x
-  x=x+1
+ while x<10   
+  y=y+x;
+  x=x+1;
   endwhile
-y=y 
+y=y ;
 end
 
 

@@ -1,8 +1,8 @@
-program
-var m = -2
-var marty = 23
-var mega = 0
+program;
+var m = -2;
+var marty = 23;
+var mega = 0;
 begin
-	mega = marty + m
+	mega = marty + m;
 end
 .

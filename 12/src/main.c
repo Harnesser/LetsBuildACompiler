@@ -136,6 +136,7 @@ void TopDecls(void)
 			break;
 		}
 		//Next();
+		MatchString(";");
 		Scan();
 	}
 	message("  ");
@@ -151,12 +152,13 @@ void Block(void)
 	        (TokenId != T_END) && 
 		(TokenId != T_ENDWHILE) )  {
 		switch (TokenId) {
-		case T_IF: DoIf(); break;
+		case T_IF:    DoIf(); break;
 		case T_WHILE: DoWhile(); break;
-		case T_READ: DoRead(); break;
-		case T_WRITE: DoWrite(); break;
-		default : Assignment(); break;
+		case T_READ:  DoRead(); Semi(); break;
+		case T_WRITE: DoWrite(); Semi(); break;
+		case T_IDENT: Assignment(); Semi(); break;
 		}
+		message("Here");
 		Scan();
 	}
 	message("Endblock");
@@ -177,6 +179,7 @@ void Prog(void)
 {
 	message("Program");
 	MatchString("PROGRAM");
+	MatchString(";");
 	message("Starting Program");
 	AsmHeader();
 	message("TopDecls");

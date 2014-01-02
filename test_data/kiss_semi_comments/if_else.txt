@@ -1,11 +1,11 @@
-program
-var hendrix=100, slash=20, marty=37
-var best=0
+program;
+var hendrix=100, slash=20, marty=37;
+var best=0;
 begin
     if hendrix < slash 
-        best = hendrix
+        best = hendrix;
     else
-        best = marty
+        best = marty;
     endif   
 end .
 

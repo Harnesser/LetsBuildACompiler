@@ -1,9 +1,9 @@
-program
-var in = -15
+program;
+var in = -15;
 begin
   while in<=15
-    write(in)
-    in = in + 1
+    write(in);
+    in = in + 1 	;
   endwhile
 end
 .

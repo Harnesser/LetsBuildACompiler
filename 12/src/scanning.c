@@ -23,18 +23,6 @@ char *Keywords[] = {
 
 #define NUMKEYWORDS sizeof(Keywords)/sizeof(Keywords[0])
 
-void Match(const char tok)
-{
-	char msg[MAXMSG];
-	if (Token[0] == tok) {
-		GetChar();
-		message("Matched");
-	} else {
-		snprintf(msg, MAXMSG, "\"%c\" Token[0]=\"%c\"", tok, Token[0]);
-		Expected(msg);
-	}
-}
-
 int IsOp(char c)
 {
 	switch(c){
@@ -131,6 +119,12 @@ void MatchString(char *str)
 		Expected(str);
 	}
 	Next();
+}
+
+// match a semi-colon
+void Semi(void)
+{
+	MatchString(";");
 }
 
 void clear_ident(char *ident)

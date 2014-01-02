@@ -1,11 +1,11 @@
-program
-var in = 1000
-var sum = -1234
+program;
+var in = 1000;
+var sum = -1234;
 begin
-  write(in)
-  write(sum)
-  write(in, sum)
-  sum = -8
+  write(in);
+  write(sum);
+  write(in, sum);
+  sum = -8;
 end
 .
 

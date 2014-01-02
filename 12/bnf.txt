@@ -1,17 +1,17 @@
 == BNF
-<program> ::= PROGRAM <top-level decl> <main> '.'
+<program> ::= PROGRAM ';' <top-level decl> <main> '.'
 
 <main> ::= BEGIN <block> END
 
-<top-level decls> ::= ( <data declaration )*
-<data declaration> ::= VAR <var-list>
+<top-level decls> ::= ( <data declaration> )*
+<data declaration> ::= VAR <var-list> ';'
 
 <var-list> ::= <var> ( <var> )*          // should be a comma here somewhere?
 <var> ::= <ident> [ = <integer> ]
 
 <block> ::= ( <statement> )*
 
-<assignment> ::= <ident> '=' <expression>
+<assignment> ::= <ident> '=' <expression> ';'
 <expression> ::= <first term> ( <addop> <term> )*
 <first term> ::= <first factor> <rest>
 <term> ::= <factor> <rest>

@@ -1,25 +1,25 @@
-program
-var X=10
-var Y=0
-var Z=100
+program;
+var X=10;
+var Y=0;
+var Z=100;
 begin
 
-    X=10
+    X=10;
     while X>=0 
-        Y = Y+1
-        X = X-1
+        Y = Y+1;
+        X = X-1;
         endwhile
     
     if Y >= 11 
-        Z = 5
+        Z = 5;
     else 
-        Z = 45
+        Z = 45;
         endif
         
     if Z <> 45
-        Z = -45
+        Z = -45;
         endif
         
-    Z=Z
+    Z=Z;
 end .
 
