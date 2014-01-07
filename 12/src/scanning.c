@@ -138,18 +138,6 @@ void clear_ident(char *ident)
 	}
 }
 
-// Scan sets Token and TokenID
-void Scan(void) 
-{
-	TokenId = Lookup(Token);
-	if (TokenId == T_OTHER) {
-		TokenId = T_IDENT;
-	}
-	//printf("# Scanned...\n");
-	//printf("#  Token: \"%s\"\n", Token);
-	//printf("#     Id: %d\n", TokenId);
-}	
-
 // If the input string matches an entry in the table, return
 // the entry index+1. If not, return 0.
 // brute force. maybe in future explore gperf
@@ -172,4 +160,16 @@ int Lookup(char *token)
 	}
 	return i;
 }	
+
+// Scan sets Token and TokenID
+void Scan(void)
+{
+	TokenId = Lookup(Token);
+	if (TokenId == T_OTHER) {
+		TokenId = T_IDENT;
+	}
+	//printf("# Scanned...\n");
+	//printf("#  Token: \"%s\"\n", Token);
+	//printf("#     Id: %d\n", TokenId);
+}
 

@@ -5,7 +5,7 @@
 // basic recognisers
 int IsOrop(char c)
 {
-	if ( (Token[0]=='|') || (Token[0]=='^') ) {
+	if ( (c=='|') || (c=='^') ) {
 		return 1;
 	}
 	return 0;

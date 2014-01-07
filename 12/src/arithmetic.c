@@ -81,9 +81,9 @@ void Term1(void)
 {
 	while ( (Token[0]=='*') || (Token[0]=='/') ) {
 		Push();
-		if (Token[0]='*') {
+		if (Token[0]=='*') {
 			Multiply();
-		} else if (Token[0]='/') {
+		} else if (Token[0]=='/') {
 			Divide();
 		}
 	}

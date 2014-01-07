@@ -21,6 +21,8 @@ tests = {
 	'multichar_relops': -45,
 	'write_numbers': -8, # not checked properly 
 	'write_m15_to_15': 0, # again, need to look at log
+	'maths_multiply' : -40,
+	'maths_divide' : -5,
 	}
 
 # these tests:

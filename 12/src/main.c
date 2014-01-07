@@ -85,10 +85,10 @@ void SkipWhite(void)
 void Printable(char *pline, char tok)
 {
 	switch(tok) {
-	case '\n': strncpy(pLook, "NEWLINE", MAXNAME); break;
-	case '\t': strncpy(pLook, "TAB", MAXNAME); break;
-	case '\0': strncpy(pLook, "EOF", MAXNAME); break;
-	default  : pLook[0] = tok; pLook[1] = '\0'; break;
+	case '\n': strncpy(pline, "NEWLINE", MAXNAME); break;
+	case '\t': strncpy(pline, "TAB", MAXNAME); break;
+	case '\0': strncpy(pline, "EOF", MAXNAME); break;
+	default  : pline[0] = tok; pline[1] = '\0'; break;
 	}
 }
 
@@ -157,6 +157,7 @@ void Block(void)
 		case T_READ:  DoRead(); Semi(); break;
 		case T_WRITE: DoWrite(); Semi(); break;
 		case T_IDENT: Assignment(); Semi(); break;
+		default: break;
 		}
 		message("Here");
 		Scan();
@@ -166,7 +167,6 @@ void Block(void)
 
 void Init(void)
 {
-	int i;
 	lineno = 1;
 	labelno = 0;
 	colno = 1;
@@ -203,6 +203,8 @@ void Prog(void)
 
 int main(int argc, char *argv[])
 {
+	(void)argc; (void)argv; // so I can -Werror
+
 	Init();
 #ifdef SCAN_TEST
 	while (Look != '.') {
@@ -214,5 +216,6 @@ int main(int argc, char *argv[])
 #else
 	Prog();
 #endif
+	return 0;
 }
 
