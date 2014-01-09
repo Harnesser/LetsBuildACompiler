@@ -1,6 +1,8 @@
+all: run
+
 trace:
 	python -m trace --trace -C . tdop.py > trace.log
 
-all:
+run:
 	python tdop.py
 

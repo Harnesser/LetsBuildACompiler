@@ -19,15 +19,24 @@ def tokenize(program):
 	yield end_token()
 
 def parse(program):
-	global token, next
+	global token, next, indent
+	print("Program: %s" % program)
 	next = tokenize(program).next
 	token = next()
+	indent = 0
 	return expression()
+
+def mesg(message):
+	global indent
+	print (' ' * indent ) + '<< ' + message + ' >>'
 
 
 """ Main parser bit """
 def expression(rbp=0):
-	global token
+	global token, indent
+	mesg("expression with rbp %d" % rbp)
+	indent += 2
+
 	t = token
 	token = next()
 	left = t.nud()
@@ -35,23 +44,28 @@ def expression(rbp=0):
 		t = token
 		token = next()
 		left = t.led(left)
+	indent -= 2
 	return left
+	
 
 class literal_token(object):
 	def __init__(self, value):
 		self.value = int(value)
 	def nud(self):
+		mesg("literal nud = %d" % self.value)
 		return self.value
 
 class operator_add_token(object):
 	lbp = 10
 	def led(self, left):
+		mesg("led of '+'")
 		right = expression(10)
 		return left + right
 
 class operator_mul_token(object):
 	lbp = 20
 	def led(self, left):
+		mesg("led of '*'")
 		return left * expression(20)
 
 class end_token(object):
