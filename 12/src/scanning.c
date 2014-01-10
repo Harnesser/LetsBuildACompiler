@@ -144,24 +144,26 @@ void clear_ident(char *ident)
 int Lookup(char *token) 
 {
 	int found;
-	int i;
+	int tok_id;
 
 	//printf("Is %s in the list of keywords?\n", token);	
-	i = NUMKEYWORDS;
+	tok_id = NUMKEYWORDS;
 	found = 0;
-	while ( (i>0) && (found==0) ) {
-		//printf(" \"%s\" vs \"%s\" -> ", Keywords[i-1], token);
-		//printf(" %d\n", strncmp(token, Keywords[i-1], MAXNAME) );
-		if ( strncmp(token, Keywords[i-1], MAXNAME) == 0 ) {
+	while ( (tok_id>0) && (found==0) ) {
+		//printf(" \"%s\" vs \"%s\" -> ", Keywords[tok_id-1], token);
+		//printf(" %d\n", strncmp(token, Keywords[tok_id-1], MAXNAME) );
+		if ( strncmp(token, Keywords[tok_id-1], MAXNAME) == 0 ) {
 			found = 1;
 		} else {
-			i--;
+			tok_id--;
 		}
 	}
-	return i;
-}	
+	return tok_id;
+}
 
 // Scan sets Token and TokenID
+// If the string isn't found in the list of keywords, then 
+// we'll say that it's an identifier.
 void Scan(void)
 {
 	TokenId = Lookup(Token);
