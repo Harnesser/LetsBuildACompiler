@@ -11,7 +11,14 @@
 
 <block> ::= ( <statement> )*
 
-<assignment> ::= <ident> '=' <expression> ';'
+<assignment> ::= <ident> '=' <bool-expr> ';'
+
+=== Expressions
+<bool-expr> ::= <bool-term> ( <orop> <bool-term> )*
+<bool-term> ::= <not-factor> ( <andop> <not-factor> )*
+<not-factor> ::= [ '!' ] <relation>
+<relation> ::= <expression> [ <relop> <expression> ]
+
 <expression> ::= <first term> ( <addop> <term> )*
 <first term> ::= <first factor> <rest>
 <term> ::= <factor> <rest>
@@ -19,15 +26,12 @@
 <first factor> ::= [ <addop> ] <factor>
 <factor> ::= <var> | <number> | '(' <expression> ')'
 
-<bool-expr> ::= <bool-term> ( <orop> <bool-term> )*
-<bool-term> ::= <not-factor> ( <andop> <not-factor> )*
-<not-factor> ::= [ '!' ] <relation>
-<relation> ::= <expression> [ <relop> <expression> ]
-
+=== Conditional Expressions
 <if> ::= IF <bool-expression> <block> [ ELSE <block> ] ENDIF
 <while> ::= WHILE <bool-expression> <block> ENDWHILE
 <statement> ::= <if> | <while> | <assignment>
 
+=== IO Operations
 <read> :: READ '(' <var> [ ',' <var> ] ')'
 <write> :: WRITE '(' <var> [ ',' <var> ] ')'
  
