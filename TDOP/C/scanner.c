@@ -9,87 +9,88 @@ struct Token {
 	int val;
 };
 
-struct Look {
-	char c;
+struct Scanner_Context {
+	char look;
+	struct Token t;
 };
 
-void skip_white(struct Look *look)
+void skip_white(struct Scanner_Context *scon)
 {
-	while ( isspace(look->c) ) {
-		look->c = getchar();
+	while ( isspace(scon->look) ) {
+		scon->look = getchar();
 	}
 }
 
-void get_number(struct Token *t, struct Look *look)
+void get_number(struct Scanner_Context *scon)
 {
 	int i;
 	i = 0;
-	t->tok[i++] = look->c;
-	t->val = (look->c - '0');
-	look->c = getchar();
-	while ( isdigit(look->c) ) {
-		t->tok[i++] = look->c; 
-		t->val = ( 10 * t->val ) + (look->c - '0');
-		look->c = getchar();
+	scon->t.tok[i++] = scon->look;
+	scon->t.val = (scon->look - '0');
+	scon->look = getchar();
+	while ( isdigit(scon->look) ) {
+		scon->t.tok[i++] = scon->look; 
+		scon->t.val = ( 10 * scon->t.val ) + (scon->look - '0');
+		scon->look = getchar();
 	}
-	t->tok[i] = '\0';
-	t->id = T_NUM;
+	scon->t.tok[i] = '\0';
+	scon->t.id = T_NUM;
 }
 
-void get_ident(struct Token *t, struct Look *look)
+void get_ident(struct Scanner_Context *scon)
 {
 	int i;
 	i = 0;
-	t->tok[i++] = look->c;
-	t->val = 0;
-	look->c = getchar();
-	while ( isalpha(look->c) ) {
-		t->tok[i++] = look->c;
-		look->c = getchar();
+	scon->t.tok[i++] = scon->look;
+	scon->t.val = 0;
+	scon->look = getchar();
+	while ( isalpha(scon->look) ) {
+		scon->t.tok[i++] = scon->look;
+		scon->look = getchar();
 	}
-	t->tok[i] = '\0';
-	t->id = T_IDENT;
+	scon->t.tok[i] = '\0';
+	scon->t.id = T_IDENT;
 }
 
-void get_oper(struct Token *t, struct Look *look)
+void get_oper(struct Scanner_Context *scon)
 {
-	t->tok[0] = look->c;
-	t->tok[1] = '\0';
-	t->val = 0;
-	printf("get_oper: c = \"%c\"\n", look->c);
-	switch (look->c) {
-	case '+' : t->id = T_ADD; break;
-	case '*' : t->id = T_MUL; break;
-	default  : t->id = T_NONE; break;
+	scon->t.tok[0] = scon->look;
+	scon->t.tok[1] = '\0';
+	scon->t.val = 0;
+	printf("get_oper: c = \"%c\"\n", scon->look);
+	switch (scon->look) {
+	case '+' : scon->t.id = T_ADD; break;
+	case '*' : scon->t.id = T_MUL; break;
+	default  : scon->t.id = T_NONE; break;
 	}
-	look->c = getchar();
+	scon->look = getchar();
 }
 
-int get_token(struct Token *token, struct Look *look)
+int get_token(struct Scanner_Context *scon)
 {
-	if ( look->c == EOF ) {
+	if ( scon->look == EOF ) {
 		return 1;
 	}
 
-	if ( isdigit(look->c) ) {
-		get_number(token, look);
-	} else if ( isalpha(look->c) ) {
-		get_ident(token, look);
+	if ( isdigit(scon->look) ) {
+		get_number(scon);
+	} else if ( isalpha(scon->look) ) {
+		get_ident(scon);
 	} else {
-		get_oper(token, look);
+		get_oper(scon);
 	}
-	skip_white(look);
+	skip_white(scon);
 	return 0;
 }
 
-void scanner_init(struct Token *t, struct Look *l)
+void scanner_init(struct Scanner_Context *scon)
 {
-	t->val = 0;
-	t->tok[0] = '\0';
-	t->id = T_NONE;
+	scon->t.val = 0;
+	scon->t.tok[0] = '\0';
+	scon->t.id = T_NONE;
 	
-	l->c = getchar();
-	skip_white(l);
+	scon->look = getchar();
+	skip_white(scon);
 	//assert( get_token(t,l) == 0 );	
 	
 }

@@ -10,23 +10,22 @@ struct TDOP_Token {
 };
 
 struct TDOP_Context {
-	struct TDOP_Token pt;
-	struct Token t;
-	struct Look l;
+	struct TDOP_Token pcon;
+	struct Scanner_Context scon;
 };
 
-void print_tdop_token(struct TDOP_Token *pt)
+void print_tdop_token(struct TDOP_Token *tok)
 {
 	printf("TDOP Token:\n");
-	printf(" lbp: %d\n val: %d\n", pt->lbp, pt->val);
+	printf(" lbp: %d\n val: %d\n", tok->lbp, tok->val);
 }
 
 int expression(struct TDOP_Context *context, int lbp);
 
 int tdop_num_nud(struct TDOP_Context *context)
 {
-	printf("Called tdop_num_nud, returning %d\n", context->pt.val);
-	return context->pt.val;
+	printf("Called tdop_num_nud, returning %d\n", context->pcon.val);
+	return context->pcon.val;
 }
 
 int tdop_add_led(struct TDOP_Context *context, int left)
@@ -41,26 +40,26 @@ int next_token(struct TDOP_Context *context)
 {
 	int status;
 
-	status = get_token(&context->t, &context->l);
+	status = get_token(&context->scon);
 	if (status != 0) {
 		printf("Hit end of stream...\n");
 		return 1;
 	}
 
-	switch(context->t.id) {
+	switch(context->scon.t.id) {
 	case T_NUM:
 		printf("Recognised number\n");
-		context->pt.lbp = 0;
-		context->pt.val = context->t.val;
-		context->pt.nud = &tdop_num_nud;
-		context->pt.led = NULL;
+		context->pcon.lbp = 0;
+		context->pcon.val = context->scon.t.val;
+		context->pcon.nud = &tdop_num_nud;
+		context->pcon.led = NULL;
 		break;
 	case T_ADD:
 		printf("Recognised addition\n");
-		context->pt.lbp = 10;
-		context->pt.val = 0;
-		context->pt.nud = NULL;
-		context->pt.led = &tdop_add_led;
+		context->pcon.lbp = 10;
+		context->pcon.val = 0;
+		context->pcon.nud = NULL;
+		context->pcon.led = &tdop_add_led;
 		break;
 	default:
 		printf("oops - unrecognized token type\n");
@@ -77,8 +76,8 @@ int expression(struct TDOP_Context *context, int rbp)
 	int left;
 	
 	printf("Entering expression function.\n");
-	assert(context->pt.nud != NULL);
-	left = (*context->pt.nud)(context);
+	assert(context->pcon.nud != NULL);
+	left = (*context->pcon.nud)(context);
 	printf(" left = %d\n", left);
 
 	status = next_token(context);
@@ -87,11 +86,11 @@ int expression(struct TDOP_Context *context, int rbp)
 		return 0;
 	}
 
-	printf("RBP (%d) vs LBP (%d)\n", rbp, context->pt.lbp );
-	while (rbp < context->pt.lbp ) {
+	printf("RBP (%d) vs LBP (%d)\n", rbp, context->pcon.lbp );
+	while (rbp < context->pcon.lbp ) {
 		printf("----------------------------------------\n");
-		assert(context->pt.led != NULL);
-		left = (*context->pt.led)(context, left);
+		assert(context->pcon.led != NULL);
+		left = (*context->pcon.led)(context, left);
 
 		status = next_token(context);
 		if (status != 0 ) {
@@ -106,13 +105,13 @@ int expression(struct TDOP_Context *context, int rbp)
 void parse(void)
 {
 	struct TDOP_Context context;
-	scanner_init(&context.t, &context.l);
-	print_token(&context.t);
+	scanner_init(&context.scon);
+	print_token(&context.scon.t);
 	assert( next_token(&context) == 0);
 	printf("Expression %d\n", expression(&context, 0) );
 /*	while ( next_token(&context) == 0) {
 		print_token(&context.t);
-		print_tdop_token(&context.pt);
+		print_tdop_token(&context.pcon);
 	}
 */
 }
