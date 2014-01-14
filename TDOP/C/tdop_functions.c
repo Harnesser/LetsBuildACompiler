@@ -22,6 +22,7 @@ void print_tdop_token(struct TDOP_Token *tok)
 
 int expression(struct TDOP_Context *context, int lbp);
 
+/* Functions called on tokens */
 int tdop_num_nud(struct TDOP_Context *context)
 {
 	printf("Called tdop_num_nud, returning %d\n", context->pcon.val);
@@ -70,11 +71,14 @@ int next_token(struct TDOP_Context *context)
 	return 0;
 }
 
+/* TDOP toplevel functions */
 int expression(struct TDOP_Context *context, int rbp)
 {
 	int status;
 	int left;
+	int (*led_fn)(struct TDOP_Context *context, int left);
 	
+	printf("-------------------------------------------------------------------\n");
 	printf("Entering expression function.\n");
 	assert(context->pcon.nud != NULL);
 	left = (*context->pcon.nud)(context);
@@ -82,23 +86,25 @@ int expression(struct TDOP_Context *context, int rbp)
 
 	status = next_token(context);
 	if (status != 0 ) {
-		printf("Ran out of expression.\n");
-		return 0;
+		printf("Ran out of expression (1).\n");
 	}
 
 	printf("RBP (%d) vs LBP (%d)\n", rbp, context->pcon.lbp );
 	while (rbp < context->pcon.lbp ) {
 		printf("----------------------------------------\n");
+		/* store fn pointer - need to advance the scanner before
+		 it's called */
 		assert(context->pcon.led != NULL);
-		left = (*context->pcon.led)(context, left);
+		led_fn = context->pcon.led;
 
 		status = next_token(context);
 		if (status != 0 ) {
 			printf("Ran out of expression (2).\n");
 			return 0;
 		}
+		left = (*led_fn)(context, left);
 	}
-	printf("Leaving expression\n");
+	printf("Leaving expression with %d\n", left);
 	return left;
 }
 
@@ -108,11 +114,6 @@ void parse(void)
 	scanner_init(&context.scon);
 	print_token(&context.scon.t);
 	assert( next_token(&context) == 0);
-	printf("Expression %d\n", expression(&context, 0) );
-/*	while ( next_token(&context) == 0) {
-		print_token(&context.t);
-		print_tdop_token(&context.pcon);
-	}
-*/
+	printf("Expression: %d\n", expression(&context, 0) );
 }
 
