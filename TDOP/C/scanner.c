@@ -90,7 +90,14 @@ void scanner_init(struct Token *t, struct Look *l)
 	
 	l->c = getchar();
 	skip_white(l);
-	assert( get_token(t,l) == 0 );	
+	//assert( get_token(t,l) == 0 );	
 	
 }
 
+void print_token(struct Token *t)
+{
+        printf("STRUCT:\n");
+	printf(" text = \"%s\"\n", t->tok);
+        printf("  val = %d\n", t->val);
+	printf("   id = %d\n", t->id);
+}

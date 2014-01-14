@@ -11,7 +11,7 @@ clang: CPP=clang
 clang: main
 
 run:
-	./main < stream.txt
+	./main < stream_simple_add.txt
 
 clean:
 	rm -rf main	
