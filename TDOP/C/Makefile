@@ -2,7 +2,10 @@ CPP=gcc
 CFLAGS=-Wall -Wextra 
 FILES=$(wildcard *.c)
 
-all: main run
+all: test
+
+test: main
+	./test.py
 
 main : $(FILES)
 	$(CPP) $(CFLAGS) main.c -I. -o main

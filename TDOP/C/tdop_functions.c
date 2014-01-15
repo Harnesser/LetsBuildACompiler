@@ -37,6 +37,15 @@ int tdop_add_led(struct TDOP_Context *context, int left)
 	return left + right;
 }
 
+int tdop_mul_led(struct TDOP_Context *context, int left)
+{
+	int right;
+	printf("Called tdop_mul_led\n");
+	right = expression(context, 20);
+	return left * right;
+}
+
+/* grab next token from stream */
 int next_token(struct TDOP_Context *context)
 {
 	int status;
@@ -62,6 +71,12 @@ int next_token(struct TDOP_Context *context)
 		context->pcon.nud = NULL;
 		context->pcon.led = &tdop_add_led;
 		break;
+	case T_MUL:
+		printf("Recognised multiplication\n");
+		context->pcon.lbp = 20;
+		context->pcon.val = 0;
+		context->pcon.nud = NULL;
+		context->pcon.led = &tdop_mul_led;
 	default:
 		printf("oops - unrecognized token type\n");
 		return 2;

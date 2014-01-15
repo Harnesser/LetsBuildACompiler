@@ -1,7 +1,14 @@
 #! /usr/bin/env python
 import subprocess
 
+C_RED = "\033[31m"
+C_GREEN = "\033[32m"
+C_YELLOW = "\033[33m"
+C_OFF = "\033[0m"
+
 tests = [
+	( "123 + 345", 468),
+	( "10 * 5", 50),
 	( "10 + 4*2", 18),
 	( "3 + 1 * 2 * 4 + 5", 16),
 	( "10 - 2 - 1", 7),
@@ -11,7 +18,6 @@ tests = [
 	( "2^3^2", 512),
 	( "( 10 + 4) *2", 28),
 	( "( (3 + 1) * 2 * (4 + 5) )", 72),
-	( "123 + 345", 468),
 ]	
 
 def check_expression(program, expected):
@@ -33,11 +39,14 @@ def check_expression(program, expected):
 	hRES.close()
 
 	print "PROGRAM:", program
-	print "  WANTED:" , expected, " GOT ", res
 	if res == expected:
 		has_error = 0
+		print C_GREEN, "  WANTED:" , expected, " GOT ", res, C_OFF
 	else:
+		print C_RED, "  WANTED:" , expected, " GOT ", res, C_OFF
+		print C_YELLOW
 		subprocess.call(['cat result.log'], shell=True)
+		print C_OFF
 	print "-" * 80
 
 	return has_error 
