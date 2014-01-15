@@ -11,6 +11,7 @@ struct TDOP_Token {
 
 struct TDOP_Context {
 	struct TDOP_Token pcon;
+	struct TDOP_Token prev;
 	struct Scanner_Context scon;
 };
 
@@ -25,8 +26,8 @@ int expression(struct TDOP_Context *context, int lbp);
 /* Functions called on tokens */
 int tdop_num_nud(struct TDOP_Context *context)
 {
-	printf("Called tdop_num_nud, returning %d\n", context->pcon.val);
-	return context->pcon.val;
+	printf("Called tdop_num_nud, returning %d\n", context->prev.val);
+	return context->prev.val;
 }
 
 int tdop_add_led(struct TDOP_Context *context, int left)
@@ -67,12 +68,21 @@ int next_token(struct TDOP_Context *context)
 {
 	int status;
 
+	/* keep the current context around, we'll need this for
+	calls to nud() to pick up the correct int value for the token
+	after the scanner is advanced */
+	context->prev = context->pcon;
+
 	status = get_token(&context->scon);
 	if (status != 0) {
 		printf("Hit end of stream...\n");
 		return 1;
 	}
 
+	/* Build a parsing token from the scanner token.
+	The parser token will contain pointers to the appropriate
+	nud() and led() functions, as well as the correct left and 
+	right binding powers */
 	switch(context->scon.t.id) {
 	case T_NUM:
 		printf("Recognised number\n");
@@ -122,26 +132,23 @@ int expression(struct TDOP_Context *context, int rbp)
 	printf("-------------------------------------------------------------------\n");
 	printf("Entering expression function.\n");
 
-	/* store the current context */
-	assert(context->pcon.nud != NULL);
-	nud_fn = context->pcon.nud;
-
 	/* advance the scanner before we (might) recurse */
 	status = next_token(context);
 	if (status != 0 ) {
 		printf("Ran out of expression (1).\n");
 	}
 
-	/* now, with the scanner advanced, we can call nud() */
+	/* now, with the scanner advanced, we can call prev.nud() safe
+	in the knowledge that any recursive expression() call has a new
+	token in the pipe */
+	nud_fn = context->prev.nud;
+	assert(nud_fn != NULL);
 	left = (*nud_fn)(context);
 	printf(" left = %d\n", left);
 
 	printf("RBP (%d) vs LBP (%d)\n", rbp, context->pcon.lbp );
 	while (rbp < context->pcon.lbp ) {
 		printf("----------------------------------------\n");
-		/* copy current context */
-		assert(context->pcon.led != NULL);
-		led_fn = context->pcon.led;
 
 		/* advance the scanner */
 		status = next_token(context);
@@ -151,6 +158,8 @@ int expression(struct TDOP_Context *context, int rbp)
 		}
 
 		/* with scanner advanced, call led() */
+		led_fn = context->prev.led;
+		assert(led_fn!= NULL);
 		left = (*led_fn)(context, left);
 	}
 	printf("Leaving expression with %d\n", left);

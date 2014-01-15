@@ -7,6 +7,8 @@ C_YELLOW = "\033[33m"
 C_OFF = "\033[0m"
 
 tests = [
+	( "123", 123),
+	( "-3", -3),
 	( "123 + 345", 468),
 	( "10 * 5", 50),
 	( "10 + 4*2", 18),
@@ -19,6 +21,8 @@ tests = [
 	( "( 10 + 4) *2", 28),
 	( "( (3 + 1) * 2 * (4 + 5) )", 72),
 ]	
+
+#tests = tests[0:4]
 
 def check_expression(program, expected):
 	""" Run and check the result. """
