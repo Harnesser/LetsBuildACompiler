@@ -45,7 +45,24 @@ int tdop_mul_led(struct TDOP_Context *context, int left)
 	return left * right;
 }
 
-/* grab next token from stream */
+int tdop_sub_nud(struct TDOP_Context *context)
+{
+	int val;
+	printf("Called tdop_sub_nud...\n");
+	val = -expression(context, 100); /* has huge rbp */
+	printf(" returning %d\n", val);
+	return val;
+}
+
+int tdop_sub_led(struct TDOP_Context *context, int left)
+{
+	int right;
+	printf("Called tdop_sub_led\n");
+	right = expression(context, 10);
+	return left - right;
+}
+
+/* grab next token from stream and make it into a parser token */
 int next_token(struct TDOP_Context *context)
 {
 	int status;
@@ -77,6 +94,14 @@ int next_token(struct TDOP_Context *context)
 		context->pcon.val = 0;
 		context->pcon.nud = NULL;
 		context->pcon.led = &tdop_mul_led;
+		break;
+	case T_SUB:
+		printf("Recognised subtraction\n");
+		context->pcon.lbp = 10;
+		context->pcon.val = 0;
+		context->pcon.nud = &tdop_sub_nud;
+		context->pcon.led = &tdop_sub_led;
+		break;
 	default:
 		printf("oops - unrecognized token type\n");
 		return 2;
@@ -91,32 +116,41 @@ int expression(struct TDOP_Context *context, int rbp)
 {
 	int status;
 	int left;
+	int (*nud_fn)(struct TDOP_Context *context);
 	int (*led_fn)(struct TDOP_Context *context, int left);
-	
+
 	printf("-------------------------------------------------------------------\n");
 	printf("Entering expression function.\n");
-	assert(context->pcon.nud != NULL);
-	left = (*context->pcon.nud)(context);
-	printf(" left = %d\n", left);
 
+	/* store the current context */
+	assert(context->pcon.nud != NULL);
+	nud_fn = context->pcon.nud;
+
+	/* advance the scanner before we (might) recurse */
 	status = next_token(context);
 	if (status != 0 ) {
 		printf("Ran out of expression (1).\n");
 	}
 
+	/* now, with the scanner advanced, we can call nud() */
+	left = (*nud_fn)(context);
+	printf(" left = %d\n", left);
+
 	printf("RBP (%d) vs LBP (%d)\n", rbp, context->pcon.lbp );
 	while (rbp < context->pcon.lbp ) {
 		printf("----------------------------------------\n");
-		/* store fn pointer - need to advance the scanner before
-		 it's called */
+		/* copy current context */
 		assert(context->pcon.led != NULL);
 		led_fn = context->pcon.led;
 
+		/* advance the scanner */
 		status = next_token(context);
 		if (status != 0 ) {
 			printf("Ran out of expression (2).\n");
 			return 0;
 		}
+
+		/* with scanner advanced, call led() */
 		left = (*led_fn)(context, left);
 	}
 	printf("Leaving expression with %d\n", left);
