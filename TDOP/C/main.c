@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <assert.h>
+#include <math.h>
 
 #include "scanner.c"
 #include "tdop_functions.c"

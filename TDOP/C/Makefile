@@ -1,5 +1,5 @@
 CPP=gcc
-CFLAGS=-Wall -Wextra 
+CFLAGS=-Wall -Wextra  
 FILES=$(wildcard *.c)
 
 all: test
@@ -8,7 +8,7 @@ test: main
 	./test.py
 
 main : $(FILES)
-	$(CPP) $(CFLAGS) main.c -I. -o main
+	$(CPP) $(CFLAGS) main.c -lm -I. -o main
 
 clang: CPP=clang
 clang: main

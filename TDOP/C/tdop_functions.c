@@ -63,6 +63,22 @@ int tdop_sub_led(struct TDOP_Context *context, int left)
 	return left - right;
 }
 
+/* power operator is right-associative.
+Want parser to treat subsequent exp ops as sub-expressions
+of the first one. So call expression() with a rbp lower
+than the lbp of the exponential.
+
+When expression() gets to the next '^', it finds that still
+rbp < token.lbp and won't return the result straight away,
+but collects the value of the sub-expression first.*/
+int tdop_pow_led(struct TDOP_Context *context, int left)
+{
+	int right;
+	printf("Called tdop_pow_led\n");
+	right = expression(context, 30-1);
+	return pow(left, right);
+}
+
 /* grab next token from stream and make it into a parser token */
 int next_token(struct TDOP_Context *context)
 {
@@ -111,6 +127,13 @@ int next_token(struct TDOP_Context *context)
 		context->pcon.val = 0;
 		context->pcon.nud = &tdop_sub_nud;
 		context->pcon.led = &tdop_sub_led;
+		break;
+	case T_POW:
+		printf("Recognised exponential\n");
+		context->pcon.lbp = 30;
+		context->pcon.val = 0;
+		context->pcon.nud = NULL;
+		context->pcon.led = &tdop_pow_led;
 		break;
 	default:
 		printf("oops - unrecognized token type\n");
