@@ -114,6 +114,6 @@ void parse(void)
 	scanner_init(&context.scon);
 	print_token(&context.scon.t);
 	assert( next_token(&context) == 0);
-	printf("Expression: %d\n", expression(&context, 0) );
+	printf("RESULT: %d\n", expression(&context, 0) );
 }
 
