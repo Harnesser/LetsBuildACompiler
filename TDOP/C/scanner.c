@@ -1,7 +1,8 @@
 /* scanner for TDOP example */
 
 #define MAXTOKEN 25
-typedef enum { T_NONE, T_IDENT, T_NUM, T_ADD, T_MUL, T_SUB, T_POW } TokenId;
+typedef enum { T_NONE, T_IDENT, T_NUM, T_ADD, T_MUL, T_SUB, T_POW,
+	       T_LBRA, T_RBRA } TokenId;
 
 struct Token {
 	char tok[MAXTOKEN];
@@ -63,6 +64,8 @@ void get_oper(struct Scanner_Context *scon)
 	case '*' : scon->t.id = T_MUL; break;
 	case '-' : scon->t.id = T_SUB; break;
 	case '^' : scon->t.id = T_POW; break;
+	case '(' : scon->t.id = T_LBRA; break;
+	case ')' : scon->t.id = T_RBRA; break;
 	default  : scon->t.id = T_NONE; break;
 	}
 	scon->look = getchar();

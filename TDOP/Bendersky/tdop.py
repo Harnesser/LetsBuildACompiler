@@ -82,7 +82,6 @@ class operator_add_token(object):
 class operator_mul_token(object):
 	lbp = 20
 	def led(self, left):
-		mesg("led of '*'")
 		return left * expression(20)
 
 class operator_sub_token(object):
@@ -143,6 +142,7 @@ tests = [
 	( "2^3^2", 512),
 	( "( 10 + 4) *2", 28),
 	( "( (3 + 1) * 2 * (4 + 5) )", 72),
+	( "123 + 345", 468),
 ]	
 
 if __name__ == '__main__':

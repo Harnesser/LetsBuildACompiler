@@ -20,9 +20,10 @@ tests = [
 	( "2^3^2", 512),
 	( "( 10 + 4) *2", 28),
 	( "( (3 + 1) * 2 * (4 + 5) )", 72),
+#	( "( (4+2) )))", 34),
 ]	
 
-#tests = tests[0:4]
+#tests = tests[0:-1]
 
 def check_expression(program, expected):
 	""" Run and check the result. """

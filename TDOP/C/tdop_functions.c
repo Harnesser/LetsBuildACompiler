@@ -22,6 +22,7 @@ void print_tdop_token(struct TDOP_Token *tok)
 }
 
 int expression(struct TDOP_Context *context, int lbp);
+int match(struct TDOP_Context *context, TokenId id);
 
 /* Functions called on tokens */
 int tdop_num_nud(struct TDOP_Context *context)
@@ -77,6 +78,15 @@ int tdop_pow_led(struct TDOP_Context *context, int left)
 	printf("Called tdop_pow_led\n");
 	right = expression(context, 30-1);
 	return pow(left, right);
+}
+
+int tdop_lbra_nud(struct TDOP_Context *context)
+{
+	int exprn;
+	printf("Called tdop_lbra_nud\n");
+	exprn = expression(context, 0);
+	match(context, T_RBRA);
+	return exprn;
 }
 
 /* grab next token from stream and make it into a parser token */
@@ -135,6 +145,20 @@ int next_token(struct TDOP_Context *context)
 		context->pcon.nud = NULL;
 		context->pcon.led = &tdop_pow_led;
 		break;
+	case T_LBRA:
+		printf("Recognised open braces\n");
+		context->pcon.lbp = 0;
+		context->pcon.val = 0;
+		context->pcon.nud = &tdop_lbra_nud;
+		context->pcon.led = NULL;
+		break;
+	case T_RBRA:
+		printf("Recognised close braces\n");
+		context->pcon.lbp = 0;
+		context->pcon.val = 0;
+		context->pcon.nud = NULL;
+		context->pcon.led = NULL;
+		break;
 	default:
 		printf("oops - unrecognized token type\n");
 		return 2;
@@ -142,6 +166,26 @@ int next_token(struct TDOP_Context *context)
 	}
 
 	return 0;
+}
+
+/* consume a token, but don't call anything on it */
+int match(struct TDOP_Context *context, TokenId id)
+{
+	int status;
+	printf("Matching %d\n", id);
+	if (context->scon.t.id != id ) {
+		printf("ERROR! expecting ')'\n");
+		return 0;
+	} else {
+		printf("I see you...\n");
+	}
+
+	status = next_token(context);
+	if (status != 0 ) {
+		printf("Reached end of stream on a ')'\n");
+	}
+	printf("Leaving match()\n");
+	return 1;
 }
 
 /* TDOP toplevel functions */
