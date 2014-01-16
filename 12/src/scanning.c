@@ -162,8 +162,7 @@ int Lookup(char *token)
 }
 
 // Scan sets Token and TokenID
-// If the string isn't found in the list of keywords, then 
-// we'll say that it's an identifier.
+// if it's not in the keyword list, say it's an identifier
 void Scan(void)
 {
 	TokenId = Lookup(Token);
@@ -173,5 +172,28 @@ void Scan(void)
 	//printf("# Scanned...\n");
 	//printf("#  Token: \"%s\"\n", Token);
 	//printf("#     Id: %d\n", TokenId);
+}
+
+/* skip comments.
+ First comment character in the stream is replaced by '@'
+*/
+void SkipComment(void) {
+	message("Skipping comments...");
+	while (1) {
+		GetCharX();
+		if (Look == '*') {
+			GetCharX();
+			if (Look == '/') {
+				break;
+			}
+		}
+		/* need to still update line/col counts in comments */
+		if (Look == '\n') {
+			lineno++;
+			colno = 0;
+		}
+	}
+	GetChar();
+	message("Comment done");
 }
 

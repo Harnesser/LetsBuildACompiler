@@ -27,6 +27,7 @@ int labelno;
 char Look;  /* lookahead character */
 char pLook[26]; /* printable version of Look */
 char label[9]; /* label for machine code  conditionals */
+char TmpChar; /* used in comment spotting */
 
 typedef enum { T_OTHER=0,
                T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR, T_WHILE, T_ENDWHILE,
@@ -38,10 +39,40 @@ e_token TokenId;
 char Token[26]; /* scanned token */
 int Value; 
 
-void GetChar(void)
+void GetCharX(void)
 {
 	Look = getchar();
 	colno++;
+}
+
+/* we're going to tokenise comment chars as soon as we see them.
+
+ The multi-line comment start char is the C one as at the beginning
+of this comment. Every time we see a '/' in the stream, we'll
+examine the next char to see if it is '*'. If is is not, the next
+char is stored in TmpChar, and returned on the next call of this
+function to avoid it going down the bitbucket. Otherwise we replace
+the char with '@' which is added to the IsWhitespace test and so will
+be skipped.
+
+ To come out of a comment...
+*/
+void GetChar(void)
+{
+	if (TmpChar != ' ') {
+		Look = TmpChar;
+		TmpChar = ' ';
+	} else {
+		GetCharX();
+		if (Look=='/') {
+			TmpChar = getchar();
+			colno++;
+			if (TmpChar == '*') {
+				Look = '@';
+				TmpChar = ' ';
+			}
+		}
+	}
 }
 
 void Error(const char *msg)
@@ -67,7 +98,10 @@ void Expected(const char *msg)
 int IsAlpha(const char tok) { return isalpha(tok); }
 int IsDigit(const char tok) { return isdigit(tok); }
 int IsAlNum(const char tok) { return isalnum(tok); }
-int IsWhite(const char tok) { return isspace(tok); }
+
+int IsWhite(const char tok) { return ( isspace(tok) || (tok=='@') ); }
+
+void SkipComment(void);
 
 void SkipWhite(void)
 {
@@ -77,7 +111,11 @@ void SkipWhite(void)
 			lineno++;
 			colno = 0;
 		}
-		GetChar();
+		if (Look == '@') {
+			SkipComment();
+		} else {
+			GetChar();
+		}
 	}
 	//message("Done chomping whitespace");
 }
@@ -170,6 +208,7 @@ void Init(void)
 	lineno = 1;
 	labelno = 0;
 	colno = 1;
+	TmpChar = ' ';
 	GetChar();
 	Next();
 	message("Init Done");
@@ -204,7 +243,6 @@ void Prog(void)
 int main(int argc, char *argv[])
 {
 	(void)argc; (void)argv; // so I can -Werror
-
 	Init();
 #ifdef SCAN_TEST
 	while (Look != '.') {

@@ -1,0 +1,31 @@
+/* A program */
+   
+program; /* let's begin... */
+
+var x=0,y=0;
+begin 
+ while x<10   
+  /* this is the main loop.
+
+  it contains a multiline comment.
+
+  let's see it it works....
+  */
+
+  y=y+x;
+  x=x+1;
+  endwhile
+y=y ;
+end
+
+/* 
+
+end 
+
+.
+
+*/
+
+
+
+.

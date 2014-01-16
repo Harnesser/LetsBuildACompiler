@@ -23,6 +23,8 @@ tests = {
 	'write_m15_to_15': 0, # again, need to look at log
 	'maths_multiply' : -40,
 	'maths_divide' : -5,
+	'while_accum_whitespace_comments': 45,
+	'assignment_several_comments': 100,
 	}
 
 # these tests:
@@ -69,6 +71,6 @@ for test in all_tests:
         colour = C_RED
     else:
         colour = ''
-    print "%s%-30s %s %s" % (colour, test, results[test], C_OFF)
+    print "%s%-35s %s %s" % (colour, test, results[test], C_OFF)
 
 
