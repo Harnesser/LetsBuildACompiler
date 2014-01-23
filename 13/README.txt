@@ -187,4 +187,48 @@ we return from the call. This means:
  Now we can call `ret` to, well, return from the function feeling good that
 we've been a good citizen.
 
+## Function Call Implementation in KISS
+ Given that I'm diverging from the text a little, I should explain how I've
+implemented the function calls. 
+
+Highlights:
+
+* no nested procedures
+* local variables
+* pass by ???
+
+### Declaring a Function
+
+BNF:
+
+    <declaration> ::= <data-decl> | <procedure> | <main-program>
+    <procedure> ::= PROCEDURE <ident> <begin-block>
+    <main-program> ::= PROGRAM <ident> <begin-block>
+
+Example program:
+
+    PROCEDURE func;
+    VAR a = 2;
+    BEGIN
+        a = a + 2;
+    END
+
+    PROGRAM main;
+    VAR a = 0;
+    VAR b = 0;
+    BEGIN
+        c = a + func(a);
+    END
+    
+### Calling a Function
+
+
+### Passing Parameters
+* pass by value/reference
+* function calls as arguments
+
+### Local Variables
+* symbol table
+
+### Assembly
 
