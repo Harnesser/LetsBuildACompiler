@@ -187,6 +187,11 @@ we return from the call. This means:
  Now we can call `ret` to, well, return from the function feeling good that
 we've been a good citizen.
 
+### Caller Cleanup
+ Once we return from the function, we still have a bit of cleanup to do on the
+stack. We must clean up the function arguments that we pushed on it. We can
+either pop them all off or just add `4*num_args`.
+
 ## Function Call Implementation in KISS
  Given that I'm diverging from the text a little, I should explain how I've
 implemented the function calls. 
