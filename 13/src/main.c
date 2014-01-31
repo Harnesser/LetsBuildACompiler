@@ -10,7 +10,8 @@
 #define message(M, ...) \
 	Printable(pLook, Look); \
 	printf("### " M , ##__VA_ARGS__); \
-	printf(" Line %d col %d : Look '%s' \n", lineno, colno, pLook); \
+	printf(" Line %d col %d : Look '%s' Token '%s' TokenId '%d' \n", \
+		lineno, colno, pLook, Token, TokenId); \
 	fflush(NULL);
 #endif
 
@@ -30,9 +31,11 @@ char label[9]; /* label for machine code  conditionals */
 char TmpChar; /* used in comment spotting */
 
 typedef enum { T_OTHER=0,
-               T_IF, T_ELSE, T_ENDIF, T_END, T_BEGIN, T_VAR, T_WHILE, T_ENDWHILE,
+               T_PROGRAM, T_PROCEDURE, T_VAR,
+	       T_BEGIN, T_END,
+               T_IF, T_ELSE, T_WHILE,
                T_READ, T_WRITE,	
-               T_PROGRAM_END,
+	       T_EOF,
                T_IDENT, T_NUMBER, T_OPER } e_token;
 
 e_token TokenId;
@@ -145,7 +148,8 @@ void Block(void);
 #include "conditional.c"
 #include "io.c"
 
-void Decl(void)
+
+void DoDecl(void)
 {
 	char name[MAXNAME];
 	message("Declaration");
@@ -162,33 +166,13 @@ void Decl(void)
 	message("End of declaration");
 }
 
-void TopDecls(void)
-{
-	Scan();
-	message("Top Declarations");
-	while (TokenId != T_BEGIN) {
-		switch(TokenId) {
-		case T_VAR: Decl(); break;
-		default:
-			Abort("Unrecognised keyword - wanted VAR or BEGIN");
-			break;
-		}
-		//Next();
-		Semi();
-		Scan();
-	}
-	message("  ");
-	message("Top Declarations Done");
-}
-
 void Block(void)
 {
 	Scan();
 	message("Block");
-	while ( (TokenId != T_ENDIF) &&
-	        (TokenId != T_ELSE) &&
-	        (TokenId != T_END) && 
-		(TokenId != T_ENDWHILE) )  {
+	while ( ( TokenId != T_EOF ) &&
+	        ( TokenId != T_END ) && 
+		( TokenId != T_ELSE ) ) {
 		switch (TokenId) {
 		case T_IF:    DoIf(); break;
 		case T_WHILE: DoWhile(); break;
@@ -197,10 +181,56 @@ void Block(void)
 		case T_IDENT: Assignment(); Semi(); break;
 		default: break;
 		}
-		message("Here");
+		message("Block Loop");
 		Scan();
 	}
 	message("Endblock");
+}
+
+void DoBeginBlock(void)
+{
+	MatchString("BEGIN");
+	Block();
+	MatchString("END");	
+}
+
+void DoMain(void)
+{
+	message("Program");
+	MatchString("PROGRAM");
+	Semi();
+	message("Starting Program");
+	AsmProlog();
+	DoBeginBlock();
+	message("Endprogram");
+	AsmEpilog();
+	//ShowSymTable();
+}
+
+void DoProc(void)
+{
+}
+
+void DoFile(void)
+{
+	Scan();
+	message("Parse File");
+	AsmHeader();
+	while (Look!=EOF){ 
+		message("GOT::::");
+		switch(TokenId) {
+		case T_VAR:        DoDecl(); break;
+		case T_PROCEDURE:  DoProc(); break;
+		case T_PROGRAM:    DoMain(); break;
+		default:
+			Abort("Unrecognised keyword - wanted VAR, PROGRAM or PROCEDURE");
+			break;
+		}
+		Semi();
+		Scan();
+	}
+	message("  ");
+	message("File Done");
 }
 
 void Init(void)
@@ -214,46 +244,13 @@ void Init(void)
 	message("Init Done");
 }
 
-void Prog(void)
-{
-	message("Program");
-	MatchString("PROGRAM");
-	Semi();
-	message("Starting Program");
-	AsmHeader();
-	message("TopDecls");
-	TopDecls();
-
-	message("main");
-	MatchString("BEGIN");
-	AsmProlog();
-	Block();
-	MatchString("END");
-	AsmEpilog();
-	message("endmain");
-
-	//MatchString("."); // FIXME: do something proper with this
-	message("Endprogram");
-	//ShowSymTable();
-}
-
-
 /* -------------------------------------------------------------------- */
 
 int main(int argc, char *argv[])
 {
 	(void)argc; (void)argv; // so I can -Werror
 	Init();
-#ifdef SCAN_TEST
-	while (Look != '.') {
-		printf(".....\n");
-		Next();
-		printf("# Token: \"%s\" (%d)\n", Token, TokenId);
-	}
-	printf("# end main()\n")
-#else
-	Prog();
-#endif
+	DoFile();
 	return 0;
 }
 

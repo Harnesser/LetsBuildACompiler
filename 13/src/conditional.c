@@ -30,6 +30,7 @@ void DoIf(void)
 	message("IF (true)");
 	Block();
 	
+	message("IF - checking for ELSE");
 	if (TokenId == T_ELSE) {
 		// false
 		MatchString("ELSE");
@@ -43,7 +44,7 @@ void DoIf(void)
 	
 	message("IF exit");
 	PostLabel(l2);
-	MatchString("ENDIF");
+	MatchString("END");
 }
 
 void DoWhile(void)

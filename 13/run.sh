@@ -1,6 +1,7 @@
 #! /usr/bin/env sh
 
-PROGRAM=../test_data/kiss_semi_comments/$1.txt
+TEST=$(basename --suffix=.txt $1 )
+PROGRAM=../test_data/kiss_procedures/${TEST}.txt
 EXPECT=$2
 INPUT=$3
 

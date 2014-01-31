@@ -1,0 +1,10 @@
+var hendrix=100, slash=20, marty=37;
+var best=0;
+program begin
+    if hendrix < slash
+        best = hendrix;
+    else 
+        best = marty;
+    end
+end 
+

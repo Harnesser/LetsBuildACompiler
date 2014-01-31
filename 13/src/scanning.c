@@ -9,14 +9,14 @@
 //
 
 char *Keywords[] = {
+	"PROGRAM",
+	"PROCEDURE",
+	"VAR",
+	"BEGIN",
+	"END",
 	"IF",
 	"ELSE",
-	"ENDIF",
-	"END",
-	"BEGIN",
-	"VAR",
 	"WHILE",
-	"ENDWHILE",
 	"READ",
 	"WRITE"
 	};
@@ -106,6 +106,9 @@ void Next(void)
 		GetNum();
 	} else if (IsOp(Look) ) {
 		GetOp(Token);
+	} else if (Look==EOF) {
+		message("END OF FILE");
+		TokenId = T_EOF;
 	} else {
 		GetPunctuation(Token);
 	}
