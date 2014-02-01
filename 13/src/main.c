@@ -149,7 +149,7 @@ void Block(void);
 #include "arithmetic.c"
 #include "conditional.c"
 #include "io.c"
-
+#include "procedure.c"
 
 void DoDecl(void)
 {
@@ -180,7 +180,15 @@ void Block(void)
 		case T_WHILE: DoWhile(); break;
 		case T_READ:  DoRead(); Semi(); break;
 		case T_WRITE: DoWrite(); Semi(); break;
-		case T_IDENT: Assignment(); Semi(); break;
+		case T_IDENT:
+			message("Deciding...");
+			if( Look == '(' ) {
+				DoProcCall();
+			} else {
+				Assignment();
+			}
+			Semi();
+			break;
 		default: break;
 		}
 		message("Block Loop");

@@ -10,14 +10,15 @@
 <main-program> ::= PROGRAM <ident> [';'] <begin-block>
 <begin-block> ::= BEGIN <block> END
 
-<data-declaration> ::= VAR <var-list> ';'
+<data-declaration> ::= VAR <var-list> [';']
 
-<var-list> ::= <var> ( <var> )*          // should be a comma here somewhere?
+<var-list> ::= <var> ( ',' <var> )*
 <var> ::= <ident> [ = <integer> ]
 
 <block> ::= ( <statement> )*
 
 <assignment> ::= <ident> '=' <bool-expr> ';'
+<proc-call> ::= <ident> '(' ')'
 
 === Expressions
 <bool-expr> ::= <bool-term> ( <orop> <bool-term> )*
@@ -35,7 +36,7 @@
 === Conditional Expressions
 <if> ::= IF <bool-expression> <block> [ ELSE <block> END]
 <while> ::= WHILE <bool-expression> <block> END
-<statement> ::= <if> | <while> | <assignment>
+<statement> ::= <if> | <while> | <assignment> | <proc-call>
 
 === IO Operations
 <read> :: READ '(' <var> [ ',' <var> ] ')'

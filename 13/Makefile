@@ -6,8 +6,10 @@ test: main
 	@echo "\033[32m Testing \033[0m"
 	./test.py
 
-strict: CFLAGS=-g -Wall -Wextra -Werror 
+strict: CFLAGS+= -Wall -Wextra -Werror
 strict: clean main
+pedantic: CFLAGS+= -Wpedantic
+pedantic: strict
 
 main: $(SOURCES)
 	@echo "\033[32m Compiling \033[0m"

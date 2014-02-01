@@ -16,4 +16,12 @@ void AsmProcedureEnd(char *name)
 	EmitLn("movl %ebp, %esp");
 	EmitLn("popl %ebp");
 	EmitLn("ret");
+	printf("# End of %s\n", name);
+}
+
+void AsmProcedureCall(char *name)
+{
+	char code[MAXMSG];
+	snprintf(code, MAXMSG, "call %s", name);
+	EmitLn(code);
 }

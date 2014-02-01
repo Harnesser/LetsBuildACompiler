@@ -203,6 +203,7 @@ Highlights:
 * pass by ???
 
 ### Declaring a Function
+Because of the 
 
 BNF:
 
@@ -226,7 +227,10 @@ Example program:
     END
     
 ### Calling a Function
-A function call is noted by an identifier followed by braces: `func()`.
+A function call is noted by an identifier followed by braces: `func()`. The difference between the start of `<assignment>` and `<proc-call>` is the opening
+'('. I do a further lookahead to tell the difference.
+
+Once a procedure has been declared, I call it by simply doing a `call <name>`.
 
 ### Passing Parameters
 * pass by value/reference
@@ -236,4 +240,26 @@ A function call is noted by an identifier followed by braces: `func()`.
 * symbol table
 
 ### Assembly
+
+#### Procedure Definition Header
+For the header, we'll declare the function to AS, and do the stack pointer 
+manipulation as mentioned above.
+
+    .section .text
+    .type <name>, @function
+    <name>:
+        pushl %ebp
+        movl %esp, %ebp
+
+#### Procedure Definition Footer
+The footer restores the base and stack pointers, then executes a return.
+
+    movl %ebp, %esp
+    popl %ebp
+    ret
+
+#### Procedure Call
+Calling a procedure is easy!
+
+    call <name>
 
