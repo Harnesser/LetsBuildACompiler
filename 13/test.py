@@ -27,6 +27,7 @@ tests = {
 	'assignment_several_comments': 100,
 
 	'program_empty_proc_empty.txt': 0,
+	'program_empty_small_proc.txt': 0,
 	}
 
 # these tests:

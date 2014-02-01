@@ -144,6 +144,7 @@ void Block(void);
 #include "symboltable.c"
 #include "scanning.c"
 #include "assembly.c"
+#include "assembly_functions.c"
 #include "boolean.c"
 #include "arithmetic.c"
 #include "conditional.c"
@@ -214,9 +215,11 @@ void DoProc(void)
 	message("Procedure");
 	MatchString("PROCEDURE");
 	strncpy(name, Token, MAXNAME);
+	AsmProcedureBegin(name);
 	Next();
 	Semi();
         DoBeginBlock();
+	AsmProcedureEnd(name);
         message("Endprocedure");
 }
 
