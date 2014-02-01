@@ -25,6 +25,8 @@ tests = {
 	'maths_divide' : -5,
 	'while_accum_whitespace_comments': 45,
 	'assignment_several_comments': 100,
+
+	'program_empty_proc_empty.txt': 0,
 	}
 
 # these tests:

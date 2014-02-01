@@ -1,0 +1,6 @@
+procedure func1;
+begin
+end
+
+program begin
+end

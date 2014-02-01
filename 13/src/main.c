@@ -129,6 +129,7 @@ void Printable(char *pline, char tok)
 	case '\n': strncpy(pline, "NEWLINE", MAXNAME); break;
 	case '\t': strncpy(pline, "TAB", MAXNAME); break;
 	case '\0': strncpy(pline, "EOF", MAXNAME); break;
+	case  EOF: strncpy(pline, "EOF", MAXNAME); break;
 	default  : pline[0] = tok; pline[1] = '\0'; break;
 	}
 }
@@ -209,6 +210,14 @@ void DoMain(void)
 
 void DoProc(void)
 {
+	char name[MAXNAME];
+	message("Procedure");
+	MatchString("PROCEDURE");
+	strncpy(name, Token, MAXNAME);
+	Next();
+	Semi();
+        DoBeginBlock();
+        message("Endprocedure");
 }
 
 void DoFile(void)

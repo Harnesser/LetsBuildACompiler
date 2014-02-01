@@ -207,7 +207,7 @@ Highlights:
 BNF:
 
     <declaration> ::= <data-decl> | <procedure> | <main-program>
-    <procedure> ::= PROCEDURE <ident> <begin-block>
+    <procedure> ::= PROCEDURE <ident> <semi>  <begin-block>
     <main-program> ::= PROGRAM <ident> <begin-block>
 
 Example program:
@@ -226,7 +226,7 @@ Example program:
     END
     
 ### Calling a Function
-
+A function call is noted by an identifier followed by braces: `func()`.
 
 ### Passing Parameters
 * pass by value/reference
