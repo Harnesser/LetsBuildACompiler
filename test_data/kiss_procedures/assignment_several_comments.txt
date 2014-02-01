@@ -1,0 +1,16 @@
+/* a bunch of assignments */
+var marty = 100;
+var people = -100;
+var you=0, are=4, sweet=6;
+program;
+begin
+  /*
+    even
+    more
+    assignments
+  */
+  people = marty;
+  are = marty;
+  you = are;
+end 
+

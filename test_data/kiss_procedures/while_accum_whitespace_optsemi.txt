@@ -1,0 +1,17 @@
+
+   
+var x=0,y=0
+program;
+
+begin 
+ while x<10   
+  y=y+x;
+  x=x+1
+  end
+y=y ;
+end
+
+
+
+
+

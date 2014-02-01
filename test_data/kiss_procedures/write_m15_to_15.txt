@@ -1,0 +1,9 @@
+var in = -15;
+program;
+begin
+  while in<=15
+    write(in);
+    in = in + 1 	;
+  end
+end
+

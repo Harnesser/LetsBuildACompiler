@@ -1,0 +1,11 @@
+var in = 1000;
+var sum = -1234;
+program;
+begin
+  write(in);
+  write(sum);
+  write(in, sum);
+  sum = -8;
+end
+
+

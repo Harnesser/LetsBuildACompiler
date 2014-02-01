@@ -63,7 +63,7 @@ void DoWhile(void)
 	BoolExpression();
 	BranchFalse(l2);
 	Block();
-	MatchString("ENDWHILE");
+	MatchString("END");
 	Branch(l1);
 	PostLabel(l2);
 	message("WHILE exit");

@@ -1,0 +1,25 @@
+var X=10;
+var Y=0;
+var Z=100;
+program;
+begin
+
+    X=10;
+    while X>=0 
+        Y = Y+1;
+        X = X-1;
+        end
+    
+    if Y >= 11 
+        Z = 5;
+    else 
+        Z = 45;
+        end
+        
+    if Z <> 45
+        Z = -45;
+        end
+        
+    Z=Z;
+end 
+

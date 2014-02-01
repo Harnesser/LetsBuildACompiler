@@ -1,0 +1,7 @@
+var accum;
+program;
+begin
+  read(accum);
+  accum = accum+5;
+end
+

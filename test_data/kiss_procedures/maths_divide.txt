@@ -1,0 +1,7 @@
+var a, b
+program
+	begin
+		a = 20 / 2
+		b = 20 / -10
+		a = a / b;
+	end

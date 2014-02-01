@@ -1,0 +1,6 @@
+	var a
+program
+	begin
+		a = 10 * 2 * -2;
+	end
+

@@ -1,0 +1,13 @@
+var in = 0;
+var sum = 0;
+program;
+begin
+  read(in);
+  sum = in;
+  read(in);
+  sum = sum + in;
+  read(in);
+  sum = sum + in;
+end
+
+

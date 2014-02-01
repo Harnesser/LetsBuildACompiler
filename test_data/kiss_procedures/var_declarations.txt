@@ -1,0 +1,13 @@
+
+var y = 0;
+var marty = -34;
+
+
+    var x=-1,z=4       ;
+
+    program 
+begin
+
+end
+
+

@@ -1,0 +1,11 @@
+
+var marty = 100;
+var people = -100;
+
+program;
+begin
+
+  people = marty			;
+  
+end
+ 
