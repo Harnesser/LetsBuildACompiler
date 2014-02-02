@@ -1,0 +1,19 @@
+/* this will check the hiding of the global var a
+ with the local versions too... */
+
+var ans;
+var a = 12;
+var result;
+
+procedure add(a,b,c);
+begin
+	ans = (a + b + c);
+end
+
+program begin
+	add(a,1,2)  /* 12 + 1 + 2 = 15 */
+	result = ans;
+	add(1,a-5,(a+8-3)) /* 1 + 8 + 16 = 25 */
+	result = result + ans; /* 40 */
+end
+
