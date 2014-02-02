@@ -117,11 +117,13 @@ void Next(void)
 // match a string to the current read token
 void MatchString(char *str)
 {
-	message("Checking \"%s\" vs \"%s\"", str, Token);
+	message("Matching \"%s\" vs \"%s\"", str, Token);
 	if ( strncmp(str, Token, MAXNAME) != 0 ) {
 		Expected(str);
 	}
 	Next();
+	message("Matching done");
+	message("");
 }
 
 // optionally match a semi-colon

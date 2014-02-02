@@ -3,6 +3,8 @@
 //  The hash table is modified to take integers as the values for each key
 //
 
+typedef enum { SYM_NONE, SYM_VAR, SYM_FUNC } sym_type_e;
+
 typedef struct SymbolTable {
 	DArray *identifiers;  // store the identifiers as bstrings
 	Hashmap *tbl;  // nodes will point to a string in identifiers, and store and int
@@ -123,6 +125,6 @@ int InTable(char *ident)
 
 void AddEntry(char *ident)
 {
-	Symtable_insert(SymTable, ident, 1);
+	Symtable_insert(SymTable, ident, SYM_VAR);
 }
 

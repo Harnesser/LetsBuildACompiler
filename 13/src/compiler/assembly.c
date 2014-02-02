@@ -53,21 +53,24 @@ void Undefined(char *name)
 	Abort(msg);
 }
 
+void LoadParam(int arg_position)
+{
+	char code[MAXMSG];
+	int offset = 8 + 4*arg_position;
+	snprintf(code, MAXMSG, "movl %d(%%ebp), %%eax\t# Arg %d", offset, arg_position);
+	EmitLn(code);
+}
+
 void LoadVar(char *name) {
 	char code[MAXMSG];
 	int arg_position = -1;
 
-	//log_info("Global Symbol Table");
-	//Symtable_show(SymTable);
-	//log_info("Local Symbol Table");
-	//Symtable_show(LocalSymTable);
-
 	// look to see if the identifer is in the local symbol table...
 	if (LocalSymTable != NULL ) {
-		arg_position = Symtable_get(LocalSymTable, name);
+		arg_position = Symtable_get(LocalSymTable, name) - SYM_FUNC;
 	}
 
-	if (arg_position == -1 ) {
+	if (arg_position < 0) {
 		// ... it's not, look in the global symbol table
 		if (!InTable(name) ) {
 			Undefined(name);
@@ -77,7 +80,7 @@ void LoadVar(char *name) {
 		EmitLn("movl (%edx), %eax");
 	} else {
 		message("Found \"%s\" in local symbol table", name);
-		EmitLn("## (Arg read placeholder");
+		LoadParam(arg_position);
 	}
 }
 
@@ -234,12 +237,6 @@ void Alloc(char *name)
 	char msg[MAXMSG];
 
 	message("Allocating");
-
-	// check for dupes
-	if (InTable(name)) {
-		snprintf(msg, MAXMSG, "Dupe variable: %s\n", name);
-		Abort(msg);
-	} 
 	AddEntry(name);
 
 	// write storage in .data section
@@ -255,4 +252,12 @@ void Alloc(char *name)
 	}
 	printf("%s:\t .long %c%d\n", name, sign, val );
 	printf("### Token: \"%s\"\n", Token);
+}
+
+void CleanupStack(int num_args)
+{
+	char code[MAXMSG];
+	int offset = num_args * 4;
+	snprintf(code, MAXMSG, "add $%d, %%esp\t# stack cleanup", offset);
+	EmitLn(code);
 }

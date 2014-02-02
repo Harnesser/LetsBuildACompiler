@@ -192,6 +192,8 @@ we've been a good citizen.
 stack. We must clean up the function arguments that we pushed on it. We can
 either pop them all off or just add `4*num_args`.
 
+    addl $12, %esp # account for 3 pushes...
+
 ## Function Call Implementation in KISS
  Given that I'm diverging from the text a little, I should explain how I've
 implemented the function calls. 
@@ -238,6 +240,8 @@ Once a procedure has been declared, I call it by simply doing a `call <name>`.
 
 ### Local Variables
 * symbol table
+Includes hashmap which returns, `SYM_VAR` or `SYM_FUNC`+argument position. The
+global symbol table will return `SYM_VAR` or `SYM_FUNC`+number of arguments.
 
 ### Assembly
 
@@ -262,4 +266,5 @@ The footer restores the base and stack pointers, then executes a return.
 Calling a procedure is easy!
 
     call <name>
+
 

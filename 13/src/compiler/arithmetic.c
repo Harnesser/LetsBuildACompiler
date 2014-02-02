@@ -27,7 +27,7 @@ void Factor(void)
 {
 	char name[MAXNAME];
 	message("Factor");
-	if (Token[0] == '(') {
+	if ( (TokenId == T_OTHER ) && (Token[0] == '(') ) {
 		MatchString("(");
 		BoolExpression();
 		MatchString(")");
@@ -127,5 +127,6 @@ void Expression(void)
 			Sub();
 		}
 	}
+	message("End of expression");
 }
 

@@ -8,42 +8,40 @@ void FormalParam(void)
 	Next(); // eat identifier
 	message("Formal parameter: %s", name);
 
-	Symtable_insert(LocalSymTable, name, LocalSymTable->num_symbols); // keep track of position
+	Symtable_insert(LocalSymTable, name, SYM_FUNC + LocalSymTable->num_symbols); // keep track of position
 }
 
-void FormalList(void)
+int FormalList(void)
 {
+	int num_args = 0;
 	message("Formal Parameter List");
 	MatchString("(");
 	if (Token[0] != ')') {
 		FormalParam();
+		num_args++;
 		while (Token[0] == ',') {
 			MatchString(",");
 			FormalParam();
+			num_args++;
 		}
 	}
 	MatchString(")");
-#ifdef ADSFASDF
-	log_info("Global Symbol Table");
-	Symtable_show(SymTable);
-	log_info("Local Symbol Table");
-	Symtable_show(LocalSymTable);
-#endif
 	message("Formal Parameter list done");
+	return num_args; 
 }
 
 void DoProc(void)
 {
+	int num_args=0;
 	char name[MAXNAME];
 	message("Procedure");
 	MatchString("PROCEDURE");
 	strncpy(name, Token, MAXNAME);
 	Next();
-
-	// set up a symbol table for this procedure
+	
 	LocalSymTable = Symtable_create();
-
-	FormalList();
+	num_args = FormalList();
+	Symtable_insert(SymTable, name, SYM_FUNC+num_args);
 	Semi();
 	AsmProcedureBegin(name);
         DoBeginBlock();
@@ -57,34 +55,42 @@ void DoProc(void)
 /* Procedure Calls */
 void Param(void)
 {
-	char name[MAXNAME];
-	strncpy(name, Token, MAXNAME);
-	Next(); // eat identifier
-	message("Formal parameter: %s", name);
+	message("Function call parameter");
+	Expression();
+	Push();
 }
 
-void ParamList(void)
+void ParamList(int expected_num_args)
 {
+	int num_args=0;
 	message("Parameter List");
 	MatchString("(");
 	if (Token[0] != ')') {
 		Param();
+		num_args++;
 		while (Token[0] == ',') {
 			MatchString(",");
 			Param();
+			num_args++;
 		}
 	}
 	MatchString(")");
+	if (num_args != expected_num_args) {
+		Abort("Parameter Count Mismatch");
+	}
 	message("Parameter list done");
 }
 
 void DoProcCall(void)
 {
+	int expected_num_args=0;
 	char name[MAXNAME];
 	strncpy(name, Token, MAXNAME);
 	message("Calling %s", name);
 	Next(); // eat identifier
-	ParamList();
+	expected_num_args = Symtable_get(SymTable, name) - SYM_FUNC;
+	ParamList(expected_num_args);
 	Semi();
 	AsmProcedureCall(name);
+	CleanupStack(expected_num_args);
 }
