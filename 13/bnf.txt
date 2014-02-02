@@ -6,7 +6,6 @@
 ### declarations in the wrong places in the ASM if after a procedure
 ### or whatever
 
-<procedure> ::= PROCEDURE <ident> [';'] <begin-block>
 <main-program> ::= PROGRAM <ident> [';'] <begin-block>
 <begin-block> ::= BEGIN <block> END
 
@@ -18,7 +17,11 @@
 <block> ::= ( <statement> )*
 
 <assignment> ::= <ident> '=' <bool-expr> ';'
-<proc-call> ::= <ident> '(' ')'
+
+=== Procedures
+<procedure> ::= PROCEDURE <ident> '(' <param-list> ')' [';'] <begin-block>
+<proc-call> ::= <ident> '(' <param-list> ')'
+<param-list> ::= <parameter> ( ',' <parameter> )* | null
 
 === Expressions
 <bool-expr> ::= <bool-term> ( <orop> <bool-term> )*

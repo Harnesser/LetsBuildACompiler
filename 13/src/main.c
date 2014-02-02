@@ -4,6 +4,9 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "lcthw/bstrlib.h"
+#include "lcthw/hashmap.h"
+
 #ifdef NMESSAGE
 #define message(M, ...)
 #else
@@ -14,6 +17,7 @@
 		lineno, colno, pLook, Token, TokenId); \
 	fflush(NULL);
 #endif
+
 
 const int MAXMSG = 100;
 const int MAXLBL = 8+1;
@@ -139,17 +143,18 @@ void Printable(char *pline, char tok)
 // forward declarations
 void Expression(void);
 void Block(void);
+void DoBeginBlock(void);
 
 // stuff
-#include "symboltable.c"
-#include "scanning.c"
-#include "assembly.c"
-#include "assembly_functions.c"
-#include "boolean.c"
-#include "arithmetic.c"
-#include "conditional.c"
-#include "io.c"
-#include "procedure.c"
+#include "compiler/symboltable.c"
+#include "compiler/scanning.c"
+#include "compiler/assembly.c"
+#include "compiler/assembly_functions.c"
+#include "compiler/boolean.c"
+#include "compiler/arithmetic.c"
+#include "compiler/conditional.c"
+#include "compiler/io.c"
+#include "compiler/procedure.c"
 
 void DoDecl(void)
 {
@@ -217,20 +222,6 @@ void DoMain(void)
 	//ShowSymTable();
 }
 
-void DoProc(void)
-{
-	char name[MAXNAME];
-	message("Procedure");
-	MatchString("PROCEDURE");
-	strncpy(name, Token, MAXNAME);
-	AsmProcedureBegin(name);
-	Next();
-	Semi();
-        DoBeginBlock();
-	AsmProcedureEnd(name);
-        message("Endprocedure");
-}
-
 void DoFile(void)
 {
 	Scan();
@@ -259,6 +250,7 @@ void Init(void)
 	labelno = 0;
 	colno = 1;
 	TmpChar = ' ';
+	SymTable = Symtable_create();
 	GetChar();
 	Next();
 	message("Init Done");
@@ -271,6 +263,7 @@ int main(int argc, char *argv[])
 	(void)argc; (void)argv; // so I can -Werror
 	Init();
 	DoFile();
+	Symtable_destroy(SymTable);
 	return 0;
 }
 

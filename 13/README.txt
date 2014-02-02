@@ -208,12 +208,12 @@ Because of the
 BNF:
 
     <declaration> ::= <data-decl> | <procedure> | <main-program>
-    <procedure> ::= PROCEDURE <ident> <semi>  <begin-block>
+    <procedure> ::= PROCEDURE <ident> '(' <param-list> ')' [;] <begin-block>
     <main-program> ::= PROGRAM <ident> <begin-block>
 
 Example program:
 
-    PROCEDURE func;
+    PROCEDURE func();
     VAR a = 2;
     BEGIN
         a = a + 2;

@@ -29,6 +29,7 @@ tests = {
 	'program_empty_proc_empty.txt': 0,
 	'program_empty_small_proc.txt': 0,
 	'procedure_basic.txt': 3,
+	'procedure_param_list.txt': 9,
 	}
 
 # these tests:

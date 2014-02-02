@@ -1,5 +1,5 @@
 var a = 0;
-procedure inca;
+procedure inca();
 begin
 	a = a + 1;
 end
@@ -8,6 +8,5 @@ program begin
 	inca();
 	inca();
 	inca();
-	incb();
 	a = a;
 end

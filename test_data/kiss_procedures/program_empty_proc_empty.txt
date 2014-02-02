@@ -1,4 +1,4 @@
-procedure func1;
+procedure func1();
 begin
 end
 

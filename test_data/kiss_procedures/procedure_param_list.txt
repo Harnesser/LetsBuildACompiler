@@ -1,0 +1,11 @@
+var c;
+
+procedure add(a,b);
+begin
+	c = a+b;
+end
+
+program; begin
+  add(4,5)
+  c = c		/* just to get it as return value */
+end

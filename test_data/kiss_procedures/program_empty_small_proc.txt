@@ -1,5 +1,5 @@
 var a = 1;
-procedure func2;
+procedure func2();
 begin
 	a = a+2;
 end

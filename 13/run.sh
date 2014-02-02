@@ -16,12 +16,13 @@ mkdir -p listings
 # Build
 make main
 ./main <${PROGRAM} >assembly.s
-cp assembly.s listings/$1.asm
+cp assembly.s listings/${TEST}.asm
 
 mkdir -p build
-rm -r build/*
-mv assembly.s build
+
 cd build
+make -f ../Assembly.mk clean
+mv ../assembly.s .
 make -f ../Assembly.mk machinecode
 
 # Test
