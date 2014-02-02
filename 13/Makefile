@@ -1,5 +1,5 @@
 
-SOURCES=$(wildcard src/*.c)
+SOURCES=$(wildcard src/*.c src/compiler/*.c)
 CFLAGS=-g
 
 test: main
