@@ -1,5 +1,9 @@
-
+COMPILER=gcc
 SOURCES=$(wildcard src/*.c src/compiler/*.c)
+LIBLCTHW=$(wildcard src/lcthw/*.c)
+LIBLCTHW_H=$(wildcard src/lcthw/*.h)
+TGT=build/liblcthw.a
+
 CFLAGS=-g
 
 test: main
@@ -11,11 +15,21 @@ strict: clean main
 pedantic: CFLAGS+= -Wpedantic
 pedantic: strict
 
+main: $(TGT)
 main: $(SOURCES)
 	@echo "\033[32m Compiling \033[0m"
-	gcc $(CFLAGS) src/main.c -I./src -o main
+	$(COMPILER) $(CFLAGS) src/main.c -I./src -L./build -llcthw -o main
+
+clang: COMPILER=clang
+clang: main
+
+$(TGT): $(LIBLCTHW) $(LIBLCTHW_H)
+	$(COMPILER) $(CFLAGS) -c -I./src $(LIBLCTHW)
+	ar rcs $(TGT) *.o
+	rm *.o
 
 clean:
 	@rm -f main
+	@rm *.o
 	@make -f Assembly.mk clean
 

@@ -76,7 +76,7 @@ void Hashmap_destroy(Hashmap *map)
 	}
 }
 
-static inline HashmapNode *Hashmap_node_create(int hash, void *key, void *data)
+static inline HashmapNode *Hashmap_node_create(int hash, void *key, int data)
 {
 	HashmapNode *node = calloc(1, sizeof(HashmapNode) );
 	check_mem(node);
@@ -114,7 +114,7 @@ error:
 	return NULL;
 }
 
-int Hashmap_set(Hashmap *map, void *key, void *data)
+int Hashmap_set(Hashmap *map, void *key, int data)
 {
 	uint32_t hash = 0;
 	DArray *bucket = Hashmap_find_bucket(map, key, 1, &hash);
@@ -145,21 +145,21 @@ static inline int Hashmap_get_node(Hashmap *map, uint32_t hash, DArray *bucket, 
 	return -1;
 }
 
-void *Hashmap_get(Hashmap *map, void *key)
+int Hashmap_get(Hashmap *map, void *key)
 {
 	uint32_t hash = 0;
 	DArray *bucket = Hashmap_find_bucket(map, key, 0, &hash);
-	if(!bucket) return NULL;
+	if(!bucket) return -1;
 
 	int i = Hashmap_get_node(map, hash, bucket, key);
-	if(i == -1) return NULL;
+	if(i == -1) return -1;
 
 	HashmapNode *node = DArray_get(bucket, i);
 	check(node != NULL, "Failed to get node from bucket where it should exist");
 	return node->data;
 
 error:
-	return NULL;
+	return -1;
 }
 
 int Hashmap_traverse(Hashmap *map, Hashmap_traverse_cb traverse_cb)
@@ -182,17 +182,17 @@ int Hashmap_traverse(Hashmap *map, Hashmap_traverse_cb traverse_cb)
 	return 0;
 }
 
-void *Hashmap_delete(Hashmap *map, void *key)
+int Hashmap_delete(Hashmap *map, void *key)
 {
 	uint32_t hash = 0;
 	DArray *bucket = Hashmap_find_bucket(map, key, 0, &hash);
-	if(!bucket) return NULL;
+	if(!bucket) return -1;
 
 	int i = Hashmap_get_node(map, hash, bucket, key);
-	if(i == -1 ) return NULL;
+	if(i == -1 ) return -1;
 
 	HashmapNode *node = DArray_get(bucket, i);
-	void *data = node->data;
+	int data = node->data;
 	free(node);
 
 	HashmapNode *ending = DArray_pop(bucket);
