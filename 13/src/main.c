@@ -251,6 +251,7 @@ void Init(void)
 	colno = 1;
 	TmpChar = ' ';
 	SymTable = Symtable_create();
+	LocalSymTable = NULL;
 	GetChar();
 	Next();
 	message("Init Done");

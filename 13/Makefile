@@ -28,6 +28,10 @@ $(TGT): $(LIBLCTHW) $(LIBLCTHW_H)
 	ar rcs $(TGT) *.o
 	rm *.o
 
+valgrind: 
+	valgrind --leak-check=full \
+		./main < ../test_data/kiss_procedures/procedure_param_list.txt
+	
 clean:
 	@rm -f main
 	@rm *.o

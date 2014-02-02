@@ -10,6 +10,7 @@ typedef struct SymbolTable {
 } SymbolTable;
 
 SymbolTable *SymTable;
+SymbolTable *LocalSymTable;
 
 /* Print out the symbol table for debug */
 int traverse_cb(HashmapNode *node)
@@ -21,11 +22,14 @@ error:
 	return 1;
 }
 
-void ShowSymTable(void)
+void Symtable_show(SymbolTable *symtbl)
 {
 	int rc;
-	log_info("SYMBOL TABLE:");
-	rc = Hashmap_traverse(SymTable->tbl, traverse_cb);
+	if (symtbl == NULL) {
+		log_info("(empty)");
+		return;
+	}
+	rc = Hashmap_traverse(symtbl->tbl, traverse_cb);
 	if (rc==1) {
 		log_err("Something went wrong on symbol table printout");
 	}
@@ -36,21 +40,52 @@ SymbolTable *Symtable_create(void)
 {
 	SymbolTable *symtbl = calloc(1, sizeof(SymbolTable));
 	symtbl->tbl = Hashmap_create(NULL, NULL);
+	check_mem(symtbl->tbl);
 	symtbl->identifiers = DArray_create(sizeof(bstring), MAXENTRY);
+	check_mem(symtbl->identifiers);
 	symtbl->num_symbols = 0;
 	return symtbl;
+
+error:
+	if(symtbl->tbl) {
+		Hashmap_destroy(symtbl->tbl);
+	}
+	if(symtbl->identifiers) {
+		DArray_destroy(symtbl->identifiers);
+	}
+	Abort("Failed to allocate mem for symbol table");
 }
 
 void Symtable_insert(SymbolTable *symtbl, char *ident, int val)
 {
+	char msg[MAXMSG];
 	int rc;
-	bstring b_ident = DArray_new(symtbl->identifiers);
-	b_ident = bfromcstr(ident);
-	rc = Hashmap_set(symtbl->tbl, b_ident, val);
+	bstring b_ident = bfromcstr(ident);
+
+	// check we aren't inserting a symbol more than once
+	if ( Hashmap_get(symtbl->tbl, b_ident) != -1 ) {
+		snprintf(msg, MAXMSG, "Dupe variable declaration : \'%s\'", ident);
+		Abort(msg);
+	}
+
+	// have we maxed out the symbol table?
+	if (symtbl->num_symbols == MAXENTRY) {
+		Abort("Symbol Table Full.");
+	}
+
+	// store the identifier string
+	bstring b = DArray_new(symtbl->identifiers);
+	b = bfromcstr(ident);
+
+	// insert the symbol into the table
+	rc = Hashmap_set(symtbl->tbl, b, val);
 	if (rc==-1) {
 		log_err("Can't insert into symboltable");
 	}
-	//free(b);
+	symtbl->num_symbols++;
+
+	// cleanup
+	//free(b_ident);
 }
 
 int Symtable_get(SymbolTable *symtbl, char *ident)
@@ -77,7 +112,7 @@ void Symtable_destroy(SymbolTable *symtbl)
 	Hashmap_destroy(symtbl->tbl);
 	DArray_destroy(symtbl->identifiers);
 	free(symtbl);
-	symtbl = NULL;	
+	//symtbl = NULL; // this doesn't clear the calling pointer.
 }
 
 /* Wrapper functions for new hashmap-based symbol table */
@@ -88,19 +123,6 @@ int InTable(char *ident)
 
 void AddEntry(char *ident)
 {
-	char msg[MAXMSG];
-	//ShowSymTable();
-	if ( InTable(ident) ) {
-		snprintf(msg, MAXMSG,
-		    "Dupe variable declaration : \'%s\'", ident);
-		Abort(msg);
-	}
-
-	if ( SymTable->num_symbols == MAXENTRY ) {
-		Abort("Symbol table full");
-	}
-	
 	Symtable_insert(SymTable, ident, 1);
-	SymTable->num_symbols++;
 }
 

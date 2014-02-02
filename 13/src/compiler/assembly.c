@@ -55,12 +55,30 @@ void Undefined(char *name)
 
 void LoadVar(char *name) {
 	char code[MAXMSG];
-	if (!InTable(name) ) {
-		Undefined(name);
+	int arg_position = -1;
+
+	//log_info("Global Symbol Table");
+	//Symtable_show(SymTable);
+	//log_info("Local Symbol Table");
+	//Symtable_show(LocalSymTable);
+
+	// look to see if the identifer is in the local symbol table...
+	if (LocalSymTable != NULL ) {
+		arg_position = Symtable_get(LocalSymTable, name);
 	}
-	snprintf(code, MAXMSG, "movl $%s, %%edx", name);
-	EmitLn(code);
-	EmitLn("movl (%edx), %eax");
+
+	if (arg_position == -1 ) {
+		// ... it's not, look in the global symbol table
+		if (!InTable(name) ) {
+			Undefined(name);
+		}
+		snprintf(code, MAXMSG, "movl $%s, %%edx", name);
+		EmitLn(code);
+		EmitLn("movl (%edx), %eax");
+	} else {
+		message("Found \"%s\" in local symbol table", name);
+		EmitLn("## (Arg read placeholder");
+	}
 }
 
 void PopAdd(void)

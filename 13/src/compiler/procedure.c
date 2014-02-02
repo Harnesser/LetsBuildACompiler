@@ -7,6 +7,8 @@ void FormalParam(void)
 	strncpy(name, Token, MAXNAME);
 	Next(); // eat identifier
 	message("Formal parameter: %s", name);
+
+	Symtable_insert(LocalSymTable, name, LocalSymTable->num_symbols); // keep track of position
 }
 
 void FormalList(void)
@@ -21,6 +23,12 @@ void FormalList(void)
 		}
 	}
 	MatchString(")");
+#ifdef ADSFASDF
+	log_info("Global Symbol Table");
+	Symtable_show(SymTable);
+	log_info("Local Symbol Table");
+	Symtable_show(LocalSymTable);
+#endif
 	message("Formal Parameter list done");
 }
 
@@ -31,11 +39,18 @@ void DoProc(void)
 	MatchString("PROCEDURE");
 	strncpy(name, Token, MAXNAME);
 	Next();
+
+	// set up a symbol table for this procedure
+	LocalSymTable = Symtable_create();
+
 	FormalList();
 	Semi();
 	AsmProcedureBegin(name);
         DoBeginBlock();
 	AsmProcedureEnd(name);
+	
+	Symtable_destroy(LocalSymTable);
+	LocalSymTable = NULL;
         message("Endprocedure");
 }
 

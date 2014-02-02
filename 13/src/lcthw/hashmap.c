@@ -42,8 +42,8 @@ Hashmap *Hashmap_create(Hashmap_compare compare, Hashmap_hash hash)
 	map->compare = compare == NULL ? default_compare : compare;
 	map->hash = hash == NULL ? default_hash : hash;
 	map->buckets = DArray_create(sizeof(DArray *), DEFAULT_NUMBER_OF_BUCKETS);
-	map->buckets->end = map->buckets->max;
 	check_mem(map->buckets);
+	map->buckets->end = map->buckets->max;
 
 	return map;
 
@@ -135,7 +135,6 @@ static inline int Hashmap_get_node(Hashmap *map, uint32_t hash, DArray *bucket, 
 	int i = 0;
 
 	for(i=0; i < DArray_end(bucket); i++ ) {
-		debug("TRY: %d", i );
 		HashmapNode *node = DArray_get(bucket, i);
 		if( node->hash == hash && map->compare(node->key, key) == 0 ) {
 			return i;
