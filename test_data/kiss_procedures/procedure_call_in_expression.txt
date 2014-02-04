@@ -1,0 +1,11 @@
+var c,ans;
+
+procedure add(a,b);
+begin
+	c = a+b;
+end
+
+program begin
+	ans = add(5,9);
+end
+ 

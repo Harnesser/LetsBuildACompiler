@@ -147,6 +147,7 @@ void Printable(char *pline, char tok)
 void Expression(void);
 void Block(void);
 void DoBeginBlock(void);
+void DoProcCall(void);
 
 // stuff
 #include "compiler/symboltable.c"

@@ -123,6 +123,13 @@ int InTable(char *ident)
 	return Symtable_exists(SymTable, ident);
 }
 
+int IsProcedure(char *ident)
+{
+	/* >= here cos we're keeping argument counts here too.
+           arg count = _get - SYM_FUNC */
+	return Symtable_get(SymTable, ident) >= SYM_FUNC;
+}
+
 void AddEntry(char *ident)
 {
 	Symtable_insert(SymTable, ident, SYM_VAR);

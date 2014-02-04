@@ -33,6 +33,8 @@ tests = {
 	'procedure_param_list.txt': 9,
 	'procedure_param_list_vars.txt': 40,
 	'procedure_nested_calls.txt': -21,
+	'procedure_call_in_expression.txt': 14,
+	'procedure_call_in_expression_mad.txt': 123,
 	}
 
 # these tests:
@@ -79,6 +81,6 @@ for test in all_tests:
         colour = C_RED
     else:
         colour = ''
-    print "%s%-35s %s %s" % (colour, test, results[test], C_OFF)
+    print "%s%-40s %s %s" % (colour, test, results[test], C_OFF)
 
 

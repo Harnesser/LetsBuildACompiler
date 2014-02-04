@@ -36,8 +36,15 @@ void Factor(void)
 		MatchString(")");
 	} else if ( IsAlpha(Token[0]) ) {
 		strncpy(name, Token, MAXNAME);
-		LoadVar(name);
-		Next();
+		/* decide whether this is a procedure call or a variable */
+		/* functions are registered only in the main symbol table as I'm
+		   not allowing nested procedure declarations.*/
+		if (IsProcedure(Token)) {
+			DoProcCall();
+		} else { /* variable */
+			LoadVar(name);
+			Next();
+		}
 	} else {
 		LoadConst(Value);
 		Next();

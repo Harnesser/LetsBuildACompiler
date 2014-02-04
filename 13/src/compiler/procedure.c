@@ -30,6 +30,7 @@ int FormalList(void)
 	return num_args; 
 }
 
+/* poop out the answer in %eax */
 void DoProc(void)
 {
 	int num_args=0;

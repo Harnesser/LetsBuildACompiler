@@ -1,0 +1,13 @@
+var ans, res;
+
+procedure add(a,b); begin
+	ans = a + b;
+end
+
+procedure mult(a,b); begin
+	ans = a * b;
+end
+
+program begin
+	res = add(1,2) * ( mult(5,4) + mult (7,3) )
+end
