@@ -23,6 +23,7 @@ tests = {
 	'write_m15_to_15': 0, # again, need to look at log
 	'maths_multiply' : -40,
 	'maths_divide' : -5,
+	'maths_parens' : 25,
 	'while_accum_whitespace_comments': 45,
 	'assignment_several_comments': 100,
 
