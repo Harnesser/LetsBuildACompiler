@@ -37,17 +37,19 @@ void Factor(void)
 	} else if ( IsAlpha(Token[0]) ) {
 		strncpy(name, Token, MAXNAME);
 		LoadVar(name);
+		Next();
 	} else {
 		LoadConst(Value);
+		Next();
 	}
 	message("End factor");
-	Next();
 	level--;
 }
 
 void NegFactor(void)
 {
 	level++;
+	message("NegFactor");
 	MatchString("-");
 	if (IsDigit(Token[0])) {
 		LoadConst(-Value);
@@ -85,9 +87,11 @@ void Multiply(void)
 
 void Divide(void)
 {
+	level++;
 	MatchString("/");
 	Factor();
 	PopDiv();
+	level--;
 }
 
 void Term1(void)
