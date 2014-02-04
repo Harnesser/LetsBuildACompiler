@@ -1,0 +1,19 @@
+var i,j,k;
+
+procedure func1(a,b);
+begin
+	i = a * b;
+end
+
+/* can't have a func in an expression yet */
+procedure func2(a,b);
+begin
+	func1(a,b);
+	j = i + a + b;
+end
+
+program begin
+	func2(4,-5)
+	j = j	
+end
+	

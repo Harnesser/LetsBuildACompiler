@@ -32,6 +32,7 @@ tests = {
 	'procedure_basic.txt': 3,
 	'procedure_param_list.txt': 9,
 	'procedure_param_list_vars.txt': 40,
+	'procedure_nested_calls.txt': -21,
 	}
 
 # these tests:
