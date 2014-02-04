@@ -14,18 +14,21 @@ int IsAddop(char tok) {
 void Assignment(void)
 {
 	char name[MAXNAME];
+	level++;
 	strncpy(name, Token, MAXNAME);
 	message("\n### Assignment to %s", name);
 	Next(); // identifier
 	MatchString("=");
 	BoolExpression();
 	Store(name);
+	level--;
 }
 
 
 void Factor(void)
 {
 	char name[MAXNAME];
+	level++;
 	message("Factor");
 	if ( (TokenId == T_OTHER ) && (Token[0] == '(') ) {
 		MatchString("(");
@@ -37,11 +40,14 @@ void Factor(void)
 	} else {
 		LoadConst(Value);
 	}
+	message("End factor");
 	Next();
+	level--;
 }
 
 void NegFactor(void)
 {
+	level++;
 	MatchString("-");
 	if (IsDigit(Token[0])) {
 		LoadConst(-Value);
@@ -49,10 +55,13 @@ void NegFactor(void)
 		Factor();
 		Negate();
 	}
+	level--;
 }
 
 void FirstFactor(void)
 {
+	level++;
+	message("First Factor");
 	if (Token[0]=='+') {
 		MatchString("+");
 		Factor();
@@ -61,13 +70,17 @@ void FirstFactor(void)
 	} else {
 		Factor();
 	}
+	level--;
 }
 
 void Multiply(void)
 {
+	level++;
+	message("multiply");
 	MatchString("*");
 	Factor();
 	PopMul();
+	level--;
 }
 
 void Divide(void)
@@ -79,6 +92,8 @@ void Divide(void)
 
 void Term1(void)
 {
+	level++;
+	message("Term1");
 	while ( (Token[0]=='*') || (Token[0]=='/') ) {
 		Push();
 		if (Token[0]=='*') {
@@ -87,25 +102,35 @@ void Term1(void)
 			Divide();
 		}
 	}
+	level--;
 }
 
 void Term(void)
 {
+	level++;
+	message("Term");
 	Factor();
 	Term1();
+	level--;
 }
 
 void FirstTerm(void)
 {
+	level++;
+	message("First Term");
 	FirstFactor();
 	Term1();
+	level--;
 }
 
 void Add(void)
 {
+	level++;
+	message("Add");
 	MatchString("+");
 	Term();
 	PopAdd();
+	level--;
 }
 
 void Sub(void)
@@ -117,6 +142,7 @@ void Sub(void)
 
 void Expression(void)
 {
+	level++;
 	message("Expression");
 	FirstTerm();
 	while (IsAddop(Token[0])) {
@@ -128,5 +154,6 @@ void Expression(void)
 		}
 	}
 	message("End of expression");
+	level--;
 }
 

@@ -45,6 +45,7 @@ int IsOp(char c)
 void GetName(char *name)
 {
 	int i=0;
+	level++;
 	if (!IsAlpha(Look)) {
 		Expected("Identifier");
 	}
@@ -53,12 +54,14 @@ void GetName(char *name)
 		GetChar();
 	}
 	name[i] = '\0';
+	level--;
 }
 
 // Look for a number and return it as an int
 void GetNum(void)
 {
 	Value = 0;
+	level++;
 	if (!IsDigit(Look)) {
 		Expected("Integer");
 	}
@@ -67,12 +70,15 @@ void GetNum(void)
 		GetChar();
 	}
 	TokenId = T_NUMBER;
+	level--;
 }
 
 // writes an operator to string `opstr`
 void GetOp(char *opstr)
 {
 	int i=0;
+	level++;
+	message("Get Op...");
 	if (!IsOp(Look)) {
 		Expected("Operator");
 	}
@@ -82,15 +88,19 @@ void GetOp(char *opstr)
 	}
 	opstr[i] = '\0';
 	TokenId = T_OPER;
+	message("Got operator \"%s\"", opstr);
+	level--;
 }
 
 void GetPunctuation(char *puncstr)
 {
+	level++;
 	message("Grabbing punctuation");
 	puncstr[0] = Look;
 	puncstr[1] = '\0';
 	TokenId = T_OTHER;
 	GetChar();
+	level--;
 }
 
 // Next() - get the next identifier, number, keyword or operator

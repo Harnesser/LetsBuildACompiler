@@ -7,14 +7,18 @@
 #include "lcthw/bstrlib.h"
 #include "lcthw/hashmap.h"
 
+int level=1;
+int il=0;
+
 #ifdef NMESSAGE
 #define message(M, ...)
 #else
 #define message(M, ...) \
 	Printable(pLook, Look); \
-	printf("### " M , ##__VA_ARGS__); \
-	printf(" Line %d col %d : Look '%s' Token '%s' TokenId '%d' \n", \
-		lineno, colno, pLook, Token, TokenId); \
+        for(il=0; il<level; il++) { printf("#"); } \
+	printf(" " M , ##__VA_ARGS__); \
+	printf(" Line %d col %d : Token '%s' TokenId '%d' Look '%s' \n", \
+		lineno, colno, Token, TokenId, pLook); \
 	fflush(NULL);
 #endif
 
@@ -97,8 +101,7 @@ void Abort(const char *msg)
 void Expected(const char *msg)
 {
 	char msgl[MAXMSG];
-	strncpy(msgl, msg, MAXMSG);
-	strncat(msgl, " Expected", MAXMSG);
+	snprintf(msgl, MAXMSG, " Expected \"%s\"", msg);
 	Abort(msgl);
 }
 
@@ -159,6 +162,7 @@ void DoBeginBlock(void);
 void DoDecl(void)
 {
 	char name[MAXNAME];
+	level++;
 	message("Declaration");
 	MatchString("VAR");
 	strncpy(name, Token, MAXNAME);
@@ -171,10 +175,12 @@ void DoDecl(void)
 		Alloc(name);
 	}
 	message("End of declaration");
+	level--;
 }
 
 void Block(void)
 {
+	level++;
 	Scan();
 	message("Block");
 	while ( ( TokenId != T_EOF ) &&
@@ -200,17 +206,21 @@ void Block(void)
 		Scan();
 	}
 	message("Endblock");
+	level--;
 }
 
 void DoBeginBlock(void)
 {
+	level++;
 	MatchString("BEGIN");
 	Block();
 	MatchString("END");	
+	level--;
 }
 
 void DoMain(void)
 {
+	level++;
 	message("Program");
 	MatchString("PROGRAM");
 	Semi();
@@ -220,6 +230,7 @@ void DoMain(void)
 	message("Endprogram");
 	AsmEpilog();
 	//ShowSymTable();
+	level--;
 }
 
 void DoFile(void)
