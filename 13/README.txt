@@ -228,11 +228,11 @@ Example program:
         c = a + func(a);
     END
     
-### Calling a Function
-A function call is noted by an identifier followed by braces: `func()`. The difference between the start of `<assignment>` and `<proc-call>` is the opening
+### Calling a Procedure
+A procedure call is noted by an identifier followed by braces: `func()`. The difference between the start of `<assignment>` and `<proc-call>` is the opening
 '('. I do a further lookahead to tell the difference.
 
-Once a procedure has been declared, I call it by simply doing a `call <name>`.
+Once a procedure has been declared, I call it by simply doing a `call <name>` in ASM.
 
 ### Passing Parameters
 * pass by value/reference
@@ -242,6 +242,38 @@ Once a procedure has been declared, I call it by simply doing a `call <name>`.
 * symbol table
 Includes hashmap which returns, `SYM_VAR` or `SYM_FUNC`+argument position. The
 global symbol table will return `SYM_VAR` or `SYM_FUNC`+number of arguments.
+
+### Using a Procedure call in an Expression
+I want to support assignments in the form `a = b + func(c,d)`, for example. With support for only one return value, two options spring to mind:
+1. Just look at `%eax` for the return value.
+2. Introduce the `return` keyword.
+
+I'll do it the simple way first, as that will get things working and is about
+half-way to the `return` statement solution. In fact, my `PROGRAM` block kinda
+has this behaviour already - I return the value in `%eax` to the operating 
+system and use it for regression testing!
+
+#### Simple
+This probably fits best in the `<factor>` rule. I need to add a function call
+to this rule, and again, this breaks the lookahead of the parser - I need to
+hit the main symbol table to see if the identifier is a variable or a function.
+
+    <factor> ::= <var> | <number> | <proc-call> | '(' <expression> ')'
+
+#### The `return` Keyword
+Say I introduce a rule for the return value of a function:
+    <return> :== RETURN ( <expression> ) [';']
+
+Now, lining this up with the rule for a procedure declaration (reprinted below
+for convenience) isn't helpful. The return rule should really go anywhere in
+the `<begin-block>`, as we might want to return early.
+
+    <procedure> ::= PROCEDURE <ident> '(' <param-list> ')' [';'] <begin-block>
+
+That said, we're only using the `<begin-block>` for main and procedure bodies,
+and a `return` makes sense in both contexts. For a `PROGRAM` we can return a
+value to the operating system. For a `PROCEDURE`, we can return a value to the
+calling function. So maybe that's OK.
 
 ### Assembly
 
