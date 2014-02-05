@@ -34,6 +34,6 @@ valgrind:
 	
 clean:
 	@rm -f main
-	@rm *.o
+	@rm -f *.o
 	@make -f Assembly.mk clean
 

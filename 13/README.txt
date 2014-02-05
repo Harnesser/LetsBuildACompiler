@@ -243,6 +243,13 @@ Once a procedure has been declared, I call it by simply doing a `call <name>` in
 Includes hashmap which returns, `SYM_VAR` or `SYM_FUNC`+argument position. The
 global symbol table will return `SYM_VAR` or `SYM_FUNC`+number of arguments.
 
+I'll allow local variable declarations between the `PROCEDURE` start line and
+it's boy, as shown above. I won't allow them in the main block yet because I
+haven't set up a local symboltable for the `PROGRAM` block yet.
+
+    <procedure> ::= PROCEDURE <ident> '(' <param-list> ')' [';'] < <begin-block>
+
+
 ### Using a Procedure call in an Expression
 I want to support assignments in the form `a = b + func(c,d)`, for example. With support for only one return value, two options spring to mind:
 1. Just look at `%eax` for the return value.
@@ -274,6 +281,9 @@ That said, we're only using the `<begin-block>` for main and procedure bodies,
 and a `return` makes sense in both contexts. For a `PROGRAM` we can return a
 value to the operating system. For a `PROCEDURE`, we can return a value to the
 calling function. So maybe that's OK.
+
+This worked out nicely. In `Factor()`, when we've an ascii token check to see
+if it's registered as a procedure, and if it is, call it.
 
 ### Assembly
 

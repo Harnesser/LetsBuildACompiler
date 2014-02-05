@@ -18,6 +18,8 @@ char asm_epilog[] = "\
 \tint $0x80	# call \n\
 ";
 
+const int BYTES_PER_WORD=4;
+
 void AsmHeader(void) { printf("%s\n", asm_header); }
 void AsmProlog(void) { printf("%s\n", asm_prolog); }
 void AsmEpilog(void) { printf("%s\n", asm_epilog); }
@@ -53,24 +55,25 @@ void Undefined(char *name)
 	Abort(msg);
 }
 
-void LoadParam(int arg_position)
+void LoadParam(int stack_offset)
 {
 	char code[MAXMSG];
-	int offset = 8 + 4*arg_position;
-	snprintf(code, MAXMSG, "movl %d(%%ebp), %%eax\t# Arg %d", offset, arg_position);
+	int offset = stack_offset * BYTES_PER_WORD;
+	if (offset > 0 ) {
+		offset += BYTES_PER_WORD;
+	}
+	snprintf(code, MAXMSG, "movl %d(%%ebp), %%eax\t# Arg %d", offset, stack_offset);
 	EmitLn(code);
 }
 
 void LoadVar(char *name) {
 	char code[MAXMSG];
-	int arg_position = -1;
+	int stack_offset;
 
 	// look to see if the identifer is in the local symbol table...
-	if (LocalSymTable != NULL ) {
-		arg_position = Symtable_get(LocalSymTable, name) - SYM_FUNC;
-	}
+	stack_offset = GetOffset(name);
 
-	if (arg_position < 0) {
+	if (stack_offset == 0) {
 		// ... it's not, look in the global symbol table
 		if (!InTable(name) ) {
 			Undefined(name);
@@ -80,7 +83,7 @@ void LoadVar(char *name) {
 		EmitLn("movl (%edx), %eax");
 	} else {
 		message("Found \"%s\" in local symbol table", name);
-		LoadParam(arg_position);
+		LoadParam(stack_offset);
 	}
 }
 
@@ -114,12 +117,29 @@ void PopDiv(void)
 void Store(char *name)
 {
 	char code[MAXMSG];
-	if (!InTable(name) ) {
-		Undefined(name);
+	int stack_offset=0;
+	message("Storing...");
+
+	// look to see if the identifer is in the local symbol table...
+	stack_offset = GetOffset(name);
+	message("Offset : %d", stack_offset);
+	if (stack_offset == 0) {
+		// ... it's not, look in the global symbol table
+		if (!InTable(name) ) {
+			Undefined(name);
+		}
+		snprintf(code, MAXMSG, "movl $%s,%%edx", name);
+		EmitLn(code);
+		EmitLn("movl %eax,(%edx)\t\t# assignment");
+	} else {
+		message("Found \"%s\" in local symbol table", name);
+		stack_offset = stack_offset * BYTES_PER_WORD;
+		if (stack_offset > 0 ) {
+			stack_offset +=BYTES_PER_WORD;
+		}
+		snprintf(code, MAXMSG, "movl %%eax,%d(%%ebp)", stack_offset);
+		EmitLn(code);
 	}
-	snprintf(code, MAXMSG, "movl $%s,%%edx", name);
-	EmitLn(code);
-	EmitLn("movl %eax,(%edx)\t\t# assignment");
 }
 
 /* ------------------------------------------------------------------------ */
@@ -234,7 +254,6 @@ void Alloc(char *name)
 {
 	int val = 0;
 	char sign = ' ';
-	char msg[MAXMSG];
 
 	message("Allocating");
 	AddEntry(name);
@@ -252,6 +271,32 @@ void Alloc(char *name)
 	}
 	printf("%s:\t .long %c%d\n", name, sign, val );
 	printf("### Token: \"%s\"\n", Token);
+}
+
+void AllocLocal(char *name)
+{
+	int val=0;
+	int sign=' ';
+	char code[MAXMSG];
+
+	message("Allocating local var on stack");
+	AddLocalEntry(name);
+
+	Next(); // sucks up identifier
+	if (Token[0]=='=') {
+		MatchString("=");
+		if (Token[0]=='-') {
+			sign = '-';
+			MatchString("-");
+		}
+		val = Value;
+		Next(); // suck up integer
+		if (sign=='-') {
+			val = -val;
+		}
+	}
+	snprintf(code, MAXMSG, "pushl $%d\t# local: %s", val, name);
+	EmitLn(code);
 }
 
 void CleanupStack(int num_args)

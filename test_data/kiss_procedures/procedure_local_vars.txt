@@ -1,0 +1,12 @@
+procedure func1(x,y);
+var ans, tmp;
+begin
+	tmp = x + y;
+	ans = 10 * tmp;
+end
+
+program begin
+	func1(5,5)
+end
+
+

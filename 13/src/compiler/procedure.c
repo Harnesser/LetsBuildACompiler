@@ -8,7 +8,7 @@ void FormalParam(void)
 	Next(); // eat identifier
 	message("Formal parameter: %s", name);
 
-	Symtable_insert(LocalSymTable, name, SYM_FUNC + LocalSymTable->num_symbols); // keep track of position
+	Symtable_insert(LocalSymTable, name, SYM_FUNC + LocalSymTable->num_symbols + 1); // keep track of position
 }
 
 int FormalList(void)
@@ -30,6 +30,32 @@ int FormalList(void)
 	return num_args; 
 }
 
+void ProcLocalVar(void)
+{
+	char name[MAXNAME];
+	level++;
+	message("Local vars");
+	MatchString("VAR");
+	strncpy(name, Token, MAXNAME);
+	AllocLocal(name);
+
+	while (Token[0]==',') {
+		MatchString(",");
+		strncpy(name, Token, MAXNAME);
+		AllocLocal(name);
+	}
+	level--;
+}
+
+void ProcLocalVars(void)
+{
+	Scan();
+	while ( TokenId == T_VAR ) {
+		ProcLocalVar();
+		Semi();
+	}
+}
+
 /* poop out the answer in %eax */
 void DoProc(void)
 {
@@ -45,6 +71,7 @@ void DoProc(void)
 	Symtable_insert(SymTable, name, SYM_FUNC+num_args);
 	Semi();
 	AsmProcedureBegin(name);
+	ProcLocalVars();
         DoBeginBlock();
 	AsmProcedureEnd(name);
 	

@@ -19,7 +19,7 @@
 <assignment> ::= <ident> '=' <bool-expr> ';'
 
 === Procedures
-<procedure> ::= PROCEDURE <ident> '(' <param-list> ')' [';'] <begin-block>
+<procedure> ::= PROCEDURE <ident> '(' <param-list> ')' [';'] <var-list> <begin-block>
 <proc-call> ::= <ident> '(' <param-list> ')'
 <param-list> ::= <parameter> ( ',' <parameter> )* | null
 
@@ -34,7 +34,7 @@
 <term> ::= <factor> <rest>
 <rest> ::= ( <mulop> <factor> )*
 <first factor> ::= [ <addop> ] <factor>
-<factor> ::= <var> | <number> | '(' <expression> ')'
+<factor> ::= <var> | <number> | <proc-call> | '(' <expression> ')'
 
 === Conditional Expressions
 <if> ::= IF <bool-expression> <block> [ ELSE <block> END]

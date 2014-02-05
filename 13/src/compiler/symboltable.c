@@ -3,12 +3,14 @@
 //  The hash table is modified to take integers as the values for each key
 //
 
-typedef enum { SYM_NONE, SYM_VAR, SYM_FUNC } sym_type_e;
+typedef enum { SYM_NONE, SYM_VAR=10, SYM_FUNC=100 } sym_type_e;
 
 typedef struct SymbolTable {
 	DArray *identifiers;  // store the identifiers as bstrings
 	Hashmap *tbl;  // nodes will point to a string in identifiers, and store and int
 	int num_symbols;
+	int num_args;
+	int num_locals;
 } SymbolTable;
 
 SymbolTable *SymTable;
@@ -46,6 +48,8 @@ SymbolTable *Symtable_create(void)
 	symtbl->identifiers = DArray_create(sizeof(bstring), MAXENTRY);
 	check_mem(symtbl->identifiers);
 	symtbl->num_symbols = 0;
+	symtbl->num_locals = 0;
+	symtbl->num_args = 0;
 	return symtbl;
 
 error:
@@ -56,6 +60,7 @@ error:
 		DArray_destroy(symtbl->identifiers);
 	}
 	Abort("Failed to allocate mem for symbol table");
+	return NULL;
 }
 
 void Symtable_insert(SymbolTable *symtbl, char *ident, int val)
@@ -84,7 +89,14 @@ void Symtable_insert(SymbolTable *symtbl, char *ident, int val)
 	if (rc==-1) {
 		log_err("Can't insert into symboltable");
 	}
+
+	// update symbol counts
 	symtbl->num_symbols++;
+	if (val >= SYM_FUNC ) {
+		symtbl->num_args++;
+	} else if (val >= SYM_VAR) {
+		symtbl->num_locals++;
+	}
 
 	// cleanup
 	//free(b_ident);
@@ -135,3 +147,63 @@ void AddEntry(char *ident)
 	Symtable_insert(SymTable, ident, SYM_VAR);
 }
 
+/* add an entry in the local symbol table for the variable.
+ encode the index of it in the hashmap so we have a handle on it when
+ we need to find it's place on the stack.
+*/
+void AddLocalEntry(char *ident)
+{
+	int var_index;
+
+	if (LocalSymTable == NULL) {
+		Abort("No local symbol table present!");
+	}
+
+	var_index = SYM_VAR + LocalSymTable->num_locals + 1;
+	message("var_index = %d", var_index);
+	Symtable_insert(LocalSymTable, ident, var_index);
+}
+
+/* look up the main symboltable and extract the number of
+ args the function has. Returns -1 if failed */
+int GetNumProcArgs(char *ident)
+{
+	int exists = Symtable_exists(SymTable, ident);
+	if (exists == 0) {
+		Abort("Expected to find function in main symbol table");
+		return -1;
+	}
+
+	return Symtable_get(SymTable, ident) - SYM_FUNC;
+}
+
+/* return the stack pointer offset to get at the variable:
+  negative : it's a local var
+      0    : it's a global
+  positive : it's a proc argument
+*/
+int GetOffset(char *ident)
+{
+	int offset = 0;
+
+	if (LocalSymTable == NULL ) {
+		return 0;
+	}
+
+	if (Symtable_exists(LocalSymTable, ident) == 0) {
+		message(" %s not found in local symbol table", ident);
+		return 0;
+	}
+
+	offset = Symtable_get(LocalSymTable, ident);
+	message("Offset: %d", offset);
+	if (offset == 0) {
+		Abort("Identifier is unexpectedly SYM_NONE");
+	} else if (offset > SYM_FUNC) {
+		offset -= SYM_FUNC;
+	} else {
+		offset -= SYM_VAR;
+		offset = -offset;
+	}
+	return offset;
+}

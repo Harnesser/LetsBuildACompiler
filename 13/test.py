@@ -35,6 +35,7 @@ tests = {
 	'procedure_nested_calls.txt': -21,
 	'procedure_call_in_expression.txt': 14,
 	'procedure_call_in_expression_mad.txt': 123,
+	'procedure_local_vars.txt': 100,
 	}
 
 # these tests:
